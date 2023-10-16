@@ -23,5 +23,5 @@ Route::get('/', function () {
 
 
 //BACKEND AREA
-Route::post('/login', LoginController::class, 'login');
-Route::post('/logout', LoginController::class, 'logout');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout']);
