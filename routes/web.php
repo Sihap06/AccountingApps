@@ -4,6 +4,7 @@ use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Auth\Register;
 use App\Http\Livewire\Dashboard\PointOfSales;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,3 +31,11 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', Login::class)->name('login');
 });
+
+
+
+
+
+//BACKEND AREA
+Route::post('/login', LoginController::class, 'login');
+Route::post('/logout', LoginController::class, 'logout');
