@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Livewire\Auth\Login;
+use App\Http\Livewire\Auth\Register;
+use App\Http\Livewire\Dashboard\PointOfSales;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::middleware(['auth'])->group(function () {
+});
+
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('index');
+    Route::get('point-of-sales', PointOfSales::class)->name('point-of-sales');
+});
+
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', Login::class)->name('login');
 });

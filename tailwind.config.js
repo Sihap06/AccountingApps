@@ -729,6 +729,7 @@ module.exports = {
       serif: ['SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace', "serif"],
       body: ["Roboto", "sans-serif"],
       awesome: ["FontAwesome"],
+      barlow: ["Barlow"]
     },
     fontSize: ({ theme }) => ({
       ...theme("spacing"),

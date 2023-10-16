@@ -16,7 +16,7 @@
 */
 var page = window.location.pathname.split("/").pop().split(".")[0];
 var aux = window.location.pathname.split("/");
-var to_build = (aux.includes('pages') || aux.includes('docs') ?'../':'./');
+var to_build = (aux.includes('pages') || aux.includes('docs') || aux.includes('dashboard') ? '../' : './');
 var root = window.location.pathname.split("/")
 if (!aux.includes("pages")) {
   page = "dashboard";
@@ -52,7 +52,7 @@ if (document.querySelector("[fixed-plugin]")) {
 }
 
 if (document.querySelector("[navbar-main]") || document.querySelector("[navbar-profile]")) {
-  if(document.querySelector("[navbar-main]")){
+  if (document.querySelector("[navbar-main]")) {
     loadJS(to_build + "assets/js/navbar-sticky.js", true);
   }
   if (document.querySelector("aside")) {

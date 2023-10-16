@@ -1,6 +1,6 @@
 <!-- sidenav  -->
 <aside
-    class="fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand z-990 xl:ml-6 rounded-2xl xl:left-0 xl:translate-x-0"
+    class="fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand z-990 xl:ml-6 rounded-2xl xl:left-0 md:translate-x-0"
     aria-expanded="false">
     <div class="h-19">
         <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times dark:text-white text-slate-400 xl:hidden"
@@ -17,8 +17,8 @@
     <div class="items-center block w-auto max-h-screen overflow-auto h-auto grow basis-full">
         <ul class="flex flex-col pl-0 mb-0">
             <li class="mt-0.5 w-full">
-                <a class="py-2.7 bg-blue-500/13 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 font-semibold text-slate-700 transition-colors"
-                    href="#">
+                <a class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 transition-colors {{ request()->routeIs('dashboard.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.index') }}">
                     <div
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-blue-500 ni ni-tv-2"></i>
@@ -28,7 +28,7 @@
             </li>
 
             <li class="mt-0.5 w-full">
-                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors"
                     href="#">
                     <div
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
@@ -39,8 +39,8 @@
             </li>
 
             <li class="mt-0.5 w-full">
-                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors"
-                    href="">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.point-of-sales') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.point-of-sales') }}">
                     <div
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center fill-current stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-emerald-500 ni ni-credit-card"></i>
