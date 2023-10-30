@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Livewire\Auth\Login;
-use App\Http\Livewire\Auth\Register;
-use App\Http\Livewire\Dashboard\PointOfSales;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Livewire\Dashboard\Dashboard;
