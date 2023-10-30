@@ -18,11 +18,13 @@
     <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Popper -->
-    <script src="https://unpkg.com/@popperjs/core@2"></script>
     <!-- Main Styling -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
     {{-- <link href="{{ asset('assets/css/argon-dashboard-tailwind.css?v=1.0.1') }}" rel="stylesheet" /> --}}
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     @livewireStyles
 </head>
@@ -47,7 +49,19 @@
 <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}" async></script>
 <!-- plugin for scrollbar  -->
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
+<!-- plugin for sweetalert  -->
+<script src="{{ asset('assets/js/plugins/sweetalert.min.js') }}" async></script>
 <!-- main script file  -->
 <script src="{{ asset('assets/js/argon-dashboard-tailwind.js?v=1.0.1') }}" async></script>
+
+<script src="{{ asset('js/app.js') }}" async></script>
+
+@stack('script')
+
+<script>
+    window.addEventListener('swal', function(e) {
+        Swal.fire(e.detail);
+    });
+</script>
 
 </html>

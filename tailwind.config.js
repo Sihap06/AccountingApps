@@ -6,6 +6,7 @@ module.exports = {
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
     "./resources/**/*.vue",
+    "./node_modules/tw-elements/dist/js/**/*.js",
   ],
   presets: [],
   darkMode: "class",
@@ -1452,5 +1453,6 @@ module.exports = {
         }),
       });
     }),
+    require("tw-elements/dist/plugin.cjs")
   ],
 };

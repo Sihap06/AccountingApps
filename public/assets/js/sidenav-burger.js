@@ -18,6 +18,7 @@ sidenav_trigger.addEventListener("click", function () {
     sidenav.setAttribute("aria-expanded", "false");
   }
   sidenav.classList.toggle("translate-x-0");
+  sidenav.classList.toggle('-translate-x-full')
   sidenav.classList.toggle("ml-6");
   sidenav.classList.toggle("shadow-xl");
   if (page == "rtl") {
