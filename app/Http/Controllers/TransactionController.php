@@ -60,6 +60,21 @@ class TransactionController extends Controller
             ],404);
         }
     }
+    public function latesTransaction(){
+        $data = Transaction::orderby('order_transaction', 'DESC')->first();
+        if ($data) {
+            return response()->json([
+                'status'=> 'success',
+                'message' => 'successfully get list transaction',
+                'data' => $data
+            ],200);
+        }else{
+            return response()->json([
+                'status'=> 'error',
+                'message' => 'no data found on our record',
+            ],404);
+        }
+    }
     public function deleteTransaction($id){
         $data = Transaction::fid($id)->delete();
         if ($data) {
