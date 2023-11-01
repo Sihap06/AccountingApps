@@ -87,10 +87,12 @@
                                                    class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                    <i class="fas fa-edit"></i>
                                                </a>
-                                               <button type="button" onclick="deleteConfirm()"
+                                               <button type="button" onclick="deleteConfirm('delete_form')"
                                                    class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                    <i class="fas fa-trash-alt"></i>
                                                </button>
+                                               <form wire:submit.prevent="delete({{ $item->id }})" hidden
+                                                   id="delete_form" />
                                            </td>
                                        </tr>
                                    @endforeach

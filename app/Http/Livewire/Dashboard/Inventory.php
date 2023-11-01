@@ -19,4 +19,9 @@ class Inventory extends Component
         return view('livewire.dashboard.inventory', compact('data'))
             ->layout('components.layouts.dashboard');
     }
+
+    public function delete($id)
+    {
+        dd($id);
+    }
 }

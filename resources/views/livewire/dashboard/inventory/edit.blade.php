@@ -22,7 +22,7 @@
                    </div>
 
                    <div class="flex-auto px-0 pt-0 pb-2">
-                       <form wire:submit.prevent="store">
+                       <form wire:submit.prevent="update">
                            <!--E-mail input-->
                            <div class="relative mb-8">
                                <x-ui.input-default wire:model="name" label="Name" />
@@ -79,7 +79,7 @@
                                </a>
 
                                <x-ui.button type="submit" title="Submit" color="primary" wireLoading
-                                   formAction="store" />
+                                   formAction="update" />
                            </div>
                        </form>
                    </div>

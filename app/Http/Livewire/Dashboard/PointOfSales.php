@@ -2,12 +2,21 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Http\Controllers\ProductController;
 use Livewire\Component;
 
 class PointOfSales extends Component
 {
     public $biaya;
+    public $inventory;
 
+    public function mount()
+    {
+        $response = app(ProductController::class)->listProduct();
+
+        $this->inventory = $response->getData(true)['data'];
+        dd($this->inventory);
+    }
 
     public function render()
     {

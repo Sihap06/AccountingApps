@@ -21,7 +21,7 @@
                      </div>
                  </div>
                  <div class="flex-auto p-6 mt-4">
-                     <form action="">
+                     <form wire:submit.prevent="submit">
                          <div class="flex flex-wrap -mx-3">
                              <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
                                  <x-ui.input label="Service" name="service" id="service" />
@@ -36,15 +36,16 @@
                                  <x-ui.select label="Teknisi" name="teknisi" id="teknisi" :options="['ya' => 'Andi', 'tidak' => 'Topek']" />
                              </div>
                              <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                 <x-ui.select label="Sparepart" name="sparepart" id="sparepart" :options="['al' => 'Alabama', 'wi' => 'Wisconsin']" />
+                                 <x-ui.select label="Sparepart" name="sparepart" id="sparepart" :options=""
+                                     search />
                              </div>
                              <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
                                  <x-ui.select label="Metode Pembayaran" name="metode_pembayaran" id="metode_pembayaran"
                                      search :options="['al' => 'Alabama', 'wi' => 'Wisconsin']" />
                              </div>
                              <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                 <x-ui.button type="submit" title="Submit" color="gray"
-                                     isLoading={{ true }} />
+                                 <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                                     formAction="submit" />
                              </div>
 
                          </div>
