@@ -52,11 +52,16 @@ class ProductController extends Controller
     }
     public function listProductAll(){
         $data = Product::all();
+        $response = [];
+        foreach($data as $item){
+            $response [$item->id] = 
+                $item->name;
+        }
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
                 'message' => 'successfully get list product',
-                'data' => $data
+                'data' => $response
             ],200);
         }else{
             return response()->json([
