@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/transaction/create', [TransactionController::class, 'postTransaction']);
 Route::get('/transaction/list/', [TransactionController::class, 'listTransaction']);
+Route::delete('/transaction/delete/{id}', [TransactionController::class, 'deleteTransaction']);
 
 Route::post('/product/create', [ProductController::class, 'postProduct']);
 Route::get('/product/list', [ProductController::class, 'listProduct']);
+Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
+Route::get('/product/detail/{id}', [ProductController::class, 'detailProduct']);

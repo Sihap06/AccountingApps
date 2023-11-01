@@ -35,12 +35,43 @@ class ProductController extends Controller
             'data' => $data
         ],201);
     }
-    public function listProduct(){
-        $data = Product::all();
+    public function detailProductlistProduct(){
+        $data = Product::paginate(10);
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
                 'message' => 'successfully get list product',
+                'data' => $data
+            ],200);
+        }else{
+            return response()->json([
+                'status'=> 'error',
+                'message' => 'no data found on our record',
+            ],404);
+        }
+    }
+    public function deleteProduct($id){
+        $data = Product::fid($id)->delete();
+        if ($data) {
+            return response()->json([
+                'status'=> 'success',
+                'message' => 'successfully delete product',
+                'data' => $data
+            ],200);
+        }else{
+            return response()->json([
+                'status'=> 'error',
+                'message' => 'no data found on our record',
+            ],404);
+        }
+    }
+    public function detailProduct($id){
+        $data = Product::find($id);
+
+        if($data){
+            return response()->json([
+                'status'=> 'success',
+                'message' => 'successfully get detail product',
                 'data' => $data
             ],200);
         }else{
