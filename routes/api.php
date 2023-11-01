@@ -25,5 +25,6 @@ Route::delete('/transaction/delete/{id}', [TransactionController::class, 'delete
 
 Route::post('/product/create', [ProductController::class, 'postProduct']);
 Route::get('/product/list', [ProductController::class, 'listProduct']);
+Route::get('/product/all', [ProductController::class, 'listProductAll']);
 Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 Route::get('/product/detail/{id}', [ProductController::class, 'detailProduct']);
