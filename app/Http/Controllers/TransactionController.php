@@ -14,7 +14,7 @@ class TransactionController extends Controller
             'payment_method' => 'required|max:255',
             'biaya' => 'required|numeric|between:1,99999999999999',
             'modal' => 'numeric|nullable',
-            'product_id' => 'numeric',
+            'product_id' => 'numeric|nullable',
             'order_transaction' => 'required|numeric',
             'technical_id' => 'numeric|nullable',
             'created_by' => 'required|numeric'
@@ -48,6 +48,21 @@ class TransactionController extends Controller
     public function listTransaction(){
         $data = Transaction::orderby('order_transaction', 'DESC')->get();
         if (count($data)!= 0) {
+            return response()->json([
+                'status'=> 'success',
+                'message' => 'successfully get list transaction',
+                'data' => $data
+            ],200);
+        }else{
+            return response()->json([
+                'status'=> 'error',
+                'message' => 'no data found on our record',
+            ],404);
+        }
+    }
+    public function latesTransaction(){
+        $data = Transaction::orderby('order_transaction', 'DESC')->first();
+        if ($data) {
             return response()->json([
                 'status'=> 'success',
                 'message' => 'successfully get list transaction',

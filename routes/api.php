@@ -22,9 +22,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/transaction/create', [TransactionController::class, 'postTransaction']);
 Route::get('/transaction/list/', [TransactionController::class, 'listTransaction']);
 Route::delete('/transaction/delete/{id}', [TransactionController::class, 'deleteTransaction']);
+Route::get('/transaction/latest', [TransactionController::class, 'latesTransaction']);
 
 Route::post('/product/create', [ProductController::class, 'postProduct']);
 Route::get('/product/list', [ProductController::class, 'listProduct']);
 Route::get('/product/all', [ProductController::class, 'listProductAll']);
 Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 Route::get('/product/detail/{id}', [ProductController::class, 'detailProduct']);
+
