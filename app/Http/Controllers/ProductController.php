@@ -36,9 +36,9 @@ class ProductController extends Controller
             'data' => $data
         ], 201);
     }
-    public function detailProductlistProduct()
+    public function listProduct()
     {
-        $data = Product::paginate(10);
+        $data = Product::paginate(5);
         if (count($data) != 0) {
             return response()->json([
                 'status' => 'success',
