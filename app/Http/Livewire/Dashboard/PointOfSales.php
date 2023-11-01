@@ -3,34 +3,48 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Http\Controllers\ProductController;
+use App\Models\Technician;
 use Livewire\Component;
 
 class PointOfSales extends Component
 {
     public $biaya;
+    public $service;
+    public $modal;
+    public $product_id;
+    public $technical_id;
+    public $metode_pembayaran;
+
     public $inventory;
+    public $technician;
+
+    protected $rules = [
+        'biaya' => 'required',
+        'service' => 'required',
+        'modal' => 'required',
+        'product_id' => 'required',
+        'technical_id' => 'required',
+        'metode_pembayaran' => 'required'
+    ];
 
     public function mount()
     {
-        $response = app(ProductController::class)->listProduct();
+        $response = app(ProductController::class)->listProductAll();
 
         $this->inventory = $response->getData(true)['data'];
-        dd($this->inventory);
+        $this->technician = Technician::all();
     }
 
     public function render()
     {
-        $listData = [
-            ['id' => 1, 'nama' => 'LCD Iphone 14', 'jumlah' => 2, 'harga' => 1000000],
-            // ['id' => 2, 'nama' => 'Battery Iphone 13', 'jumlah' => 1, 'harga' => 100000],
-            // ['id' => 3, 'nama' => 'IC Audio Iphone X', 'jumlah' => 1, 'harga' => 100000],
-        ];
-        return view('livewire.dashboard.point-of-sales', compact('listData'))
+        return view('livewire.dashboard.point-of-sales')
             ->layout('components.layouts.dashboard');
     }
 
-    public function save()
+    public function submit()
     {
+        $validateData = $this->validate();
+        dd($validateData);
         $currencyString = preg_replace("/[^0-9]/", "", $this->biaya);
         // dd($currencyString);
 

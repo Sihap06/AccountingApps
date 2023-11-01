@@ -35,6 +35,9 @@
                                    <tr>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                           No</th>
+                                       <th
+                                           class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                            Nama</th>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -51,48 +54,85 @@
                                    </tr>
                                </thead>
                                <tbody>
-                                   @foreach ($data as $item)
+                                   @foreach ($data as $index => $item)
                                        <tr>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <div class="flex px-2 py-1">
-                                                   <span
-                                                       class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                       {{ $item->name }}
-                                                   </span>
-                                               </div>
+                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                                   class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                   {{ $index + 1 }}
+                                               </span>
+
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span
+                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                                   class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                   {{ $item->name }}
+                                               </span>
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    {{ $item->kode }}
                                                </span>
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span
+                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    Rp {{ number_format($item->harga) }}
                                                </span>
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span
+                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item->stok }}</span>
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <a href="{{ route('dashboard.inventory.edit', $item->id) }}"
-                                                   class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                   <i class="fas fa-edit"></i>
-                                               </a>
-                                               <button type="button" onclick="deleteConfirm('delete_form')"
-                                                   class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                   <i class="fas fa-trash-alt"></i>
-                                               </button>
-                                               <form wire:submit.prevent="delete({{ $item->id }})" hidden
-                                                   id="delete_form" />
+                                               <div wire:loading.remove wire:target='gotoPage, previousPage, nextPage'>
+                                                   <a href="{{ route('dashboard.inventory.edit', $item->id) }}"
+                                                       class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                                       <i class="fas fa-edit"></i>
+                                                   </a>
+                                                   <button type="button"
+                                                       wire:click="$emit('triggerDelete',{{ $item->id }})"
+                                                       class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                                       <i class="fas fa-trash-alt" wire:loading.remove
+                                                           wire:target='delete({{ $item->id }})'></i>
+
+                                                       <div wire:loading wire:target='delete({{ $item->id }})'>
+                                                           <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                               role="status">
+                                                               <span
+                                                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                           </div>
+                                                       </div>
+                                                   </button>
+
+                                               </div>
+
+                                               <div data-placeholder wire:loading
+                                                   wire:target='gotoPage, previousPage, nextPage'
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                        </tr>
                                    @endforeach
@@ -109,3 +149,47 @@
        </div>
 
    </div>
+
+   @push('style')
+       <style>
+           [data-placeholder]::after {
+               content: " ";
+               box-shadow: 0 0 50px 9px rgba(254, 254, 254);
+               position: absolute;
+               top: 0;
+               left: -100%;
+               height: 100%;
+               animation: load 1s infinite;
+           }
+
+           @keyframes load {
+               0% {
+                   left: -100%
+               }
+
+               100% {
+                   left: 150%
+               }
+           }
+       </style>
+   @endpush
+
+   @push('script')
+       <script>
+           document.addEventListener('DOMContentLoaded', function() {
+
+               @this.on('triggerDelete', id => {
+                   Swal.fire({
+                       title: 'Are You Sure?',
+                       html: "You won't be able to revert this!",
+                       icon: 'warning',
+                       showCancelButton: true,
+                   }).then((result) => {
+                       if (result.value) {
+                           @this.call('delete', id)
+                       }
+                   });
+               });
+           })
+       </script>
+   @endpush

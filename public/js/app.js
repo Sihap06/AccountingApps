@@ -2066,6 +2066,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 __webpack_require__(/*! ./sweetalert */ "./resources/js/sweetalert.js");
 __webpack_require__(/*! ./masked */ "./resources/js/masked.js");
+window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 
 (0,tw_elements__WEBPACK_IMPORTED_MODULE_0__.initTE)({
   Select: tw_elements__WEBPACK_IMPORTED_MODULE_0__.Select
@@ -2090,7 +2091,6 @@ __webpack_require__(/*! ./masked */ "./resources/js/masked.js");
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-window.$ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -2141,45 +2141,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_0__);
 
-__webpack_require__(/*! jquery-mask-plugin */ "./node_modules/jquery-mask-plugin/dist/jquery.mask.js");
-window.deleteConfirm = function (formId) {
-  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-    icon: 'warning',
-    text: 'Do you want to delete this?',
-    showCancelButton: true,
-    confirmButtonText: 'Delete',
-    confirmButtonColor: '#e3342f'
-  }).then(function (result) {
-    if (result.isConfirmed) {
-      document.getElementById(formId).submit();
-    }
-  });
-};
-window.payment = function () {
-  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
-    title: '',
-    input: 'text',
-    inputLabel: 'Nominal Pembayaran',
-    inputPlaceholder: 'Masukkan nominal pembayaran',
-    showCancelButton: true,
-    confirmButtonText: 'Submit',
-    cancelButtonText: 'Batal',
-    inputAttributes: {
-      id: 'myInput'
-    },
-    didOpen: function didOpen() {
-      $('#myInput').mask('000.000.000.000.000,00', {
-        reverse: true
-      });
-    },
-    inputValidator: function inputValidator() {
-      var value = $('#myInput').cleanVal();
-      if (!value) {
-        return 'You need to write something!';
-      }
-    }
-  });
-};
 window.addEventListener('swal', function (e) {
   sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail);
 });

@@ -22,6 +22,12 @@ class Inventory extends Component
 
     public function delete($id)
     {
-        dd($id);
+        app(ProductController::class)->deleteProduct($id);
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Success',
+            'text' => "successfully inventory deleted.",
+            'icon' => 'success'
+        ]);
     }
 }

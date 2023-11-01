@@ -9,6 +9,7 @@ use App\Http\Livewire\Dashboard\Inventory\Create;
 use App\Http\Livewire\Dashboard\Inventory\Edit;
 use App\Http\Livewire\Dashboard\PointOfSales;
 use App\Http\Livewire\Dashboard\Reporting;
+use App\Http\Livewire\Dashboard\Teknisi;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,13 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('inventory')->name('inventory.')->group(function () {
             Route::get('/', Inventory::class)->name('index');
+            Route::get('create', Create::class)->name('create');
+            Route::get('edit/{id}', Edit::class)->name('edit');
+        });
+
+
+        Route::prefix('teknisi')->name('teknisi.')->group(function () {
+            Route::get('/', Teknisi::class)->name('index');
             Route::get('create', Create::class)->name('create');
             Route::get('edit/{id}', Edit::class)->name('edit');
         });

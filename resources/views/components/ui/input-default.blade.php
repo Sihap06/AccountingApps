@@ -1,4 +1,4 @@
-<div>
+<div @if ($inline ?? '') class="flex items-center gap-x-3" @endif>
     <label for="{{ $name ?? '' }}"
         class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white/80">{{ $label ?? '' }}</label>
     <input type="text" name="{{ $name ?? '' }}" id="{{ $id ?? '' }}" x-data="{{ $attributes->get('x-data') }}"

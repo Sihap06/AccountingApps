@@ -75,7 +75,7 @@ class ProductController extends Controller
     }
     public function deleteProduct($id)
     {
-        $data = Product::fid($id)->delete();
+        $data = Product::find($id)->delete();
         if ($data) {
             return response()->json([
                 'status' => 'success',

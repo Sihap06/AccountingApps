@@ -2,6 +2,8 @@ require('./bootstrap');
 require('./sweetalert');
 require('./masked');
 
+window.Swal = require('sweetalert2')
+
 import { Select, initTE, Input, Ripple, LoadingManagement, Modal } from "tw-elements";
 initTE({ Select });
 initTE({ Input });
