@@ -48,18 +48,6 @@
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <div wire:ignore>
-                                    <x-ui.select label="Modal" wire:model='modal' id="modal" size="lg">
-                                        <option value=""></option>
-                                        <option value="ya">Dengan Modal</option>
-                                        <option value="tidak">Tanpa Modal</option>
-                                    </x-ui.select>
-                                </div>
-                                @error('modal')
-                                    <div class="text-red-500 text-sm">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <div wire:ignore>
                                     <x-ui.select label="Teknisi" wire:model="technical_id" id="teknisi" search
                                         size="lg">
                                         <option value=""></option>
@@ -90,7 +78,7 @@
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <div wire:ignore>
-                                    <x-ui.select label="Metode Pembayaran" wire:model="metode_pembayaran"
+                                    <x-ui.select label="Metode Pembayaran" wire:model="payment_method"
                                         id="metode_pembayaran" size="lg">
                                         <option value=""></option>
                                         <option value="bca">BCA</option>
@@ -101,7 +89,7 @@
                                         <option value="cash">CASH</option>
                                     </x-ui.select>
                                 </div>
-                                @error('metode_pembayaran')
+                                @error('payment_method')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
                             </div>
