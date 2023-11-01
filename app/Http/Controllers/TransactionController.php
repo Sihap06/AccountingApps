@@ -14,6 +14,7 @@ class TransactionController extends Controller
             'biaya' => 'required|numeric|between:1,99999999999999',
             'modal' => 'numeric|nullable',
             'product_id' => 'numeric',
+            'order_transaction' => 'required|numeric',
             'technical_id' => 'numeric|nullable',
             'created_by' => 'required|numeric'
         ];
@@ -43,7 +44,7 @@ class TransactionController extends Controller
         ],201);
     }
     public function listTransaction(){
-        $data = Transaction::all();
+        $data = Transaction::orderby('order_transaction', 'DESC')->get();
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
@@ -57,6 +58,24 @@ class TransactionController extends Controller
             ],404);
         }
     }
+    public function deleteTransaction($id){
+        $data = Transaction::fid($id)->delete();
+        if ($data) {
+            return response()->json([
+                'status'=> 'success',
+                'message' => 'successfully delete transaction',
+                'data' => $data
+            ],200);
+        }else{
+            return response()->json([
+                'status'=> 'error',
+                'message' => 'no data found on our record',
+            ],404);
+        }
+    }
+
+
+
     private function getPerhitungan($technical_id, $biaya, $modal){
         if ($technical_id != null) {
             $countModal = $biaya * 40/100;
