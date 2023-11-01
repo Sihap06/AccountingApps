@@ -2,6 +2,7 @@
 <aside
     class="fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand z-990 xl:ml-6 rounded-2xl xl:left-0 md:translate-x-0"
     aria-expanded="false">
+
     <div class="h-19">
         <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times dark:text-white text-slate-400 xl:hidden"
             sidenav-close></i>
@@ -14,7 +15,7 @@
     <hr
         class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" />
 
-    <div class="items-center block w-auto max-h-screen overflow-auto h-auto grow basis-full">
+    <div class="items-center block w-auto max-h-screen overflow-auto h-sidenav grow basis-full">
         <ul class="flex flex-col pl-0 mb-0">
             <li class="mt-0.5 w-full">
                 <a class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 transition-colors {{ request()->routeIs('dashboard.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
@@ -28,8 +29,8 @@
             </li>
 
             <li class="mt-0.5 w-full">
-                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.inventory') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                    href="{{ route('dashboard.inventory') }}">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.inventory.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.inventory.index') }}">
                     <div
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-orange-500 ni ni-calendar-grid-58"></i>
@@ -61,6 +62,17 @@
             </li>
 
         </ul>
+    </div>
+
+    <div class="mx-4 absolute bottom-0 pb-4">
+        <div class="relative flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border"
+            sidenav-card="">
+            <img class="w-full mx-auto" src="{{ asset('assets/img/logo.png') }}" alt="logo">
+        </div>
+
+        <a class="relative mt-20 inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-slate-800 border-0 rounded-lg shadow-md select-none bg-150 bg-x-25 hover:shadow-xs hover:-translate-y-px"
+            href="https://www.creative-tim.com/product/argon-dashboard-pro-tailwind?ref=sidebarfree"
+            target="_blank">Logout</a>
     </div>
 
 </aside>

@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function postProduct(Request $request){
+    public function postProduct(Request $request)
+    {
         $rules = [
             'name' => 'required|max:255',
             'harga' => 'required|numeric|between:1,99999999999999',
@@ -18,10 +19,10 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
             return response()->json([
-                'status'=> 'error',
+                'status' => 'error',
                 'message' => 'bad request!',
                 'data' => $validator->errors()
-            ],400);
+            ], 400);
         }
         $data = new Product();
         $data->name = $request->get('name');
@@ -30,24 +31,25 @@ class ProductController extends Controller
         $data->kode = time();
         $data->save();
         return response()->json([
-            'status'=> 'success',
+            'status' => 'success',
             'message' => 'successfully store product',
             'data' => $data
-        ],201);
+        ], 201);
     }
-    public function listProduct(){
-        $data = Product::all();
-        if (count($data)!= 0) {
+    public function listProduct()
+    {
+        $data = Product::paginate(5);
+        if (count($data) != 0) {
             return response()->json([
-                'status'=> 'success',
+                'status' => 'success',
                 'message' => 'successfully get list product',
                 'data' => $data
-            ],200);
-        }else{
+            ], 200);
+        } else {
             return response()->json([
-                'status'=> 'error',
+                'status' => 'error',
                 'message' => 'no data found on our record',
-            ],404);
+            ], 404);
         }
     }
 }

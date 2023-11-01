@@ -43,3 +43,7 @@ window.payment = function () {
     }
   });
 }
+
+window.addEventListener('swal', function (e) {
+  Swal.fire(e.detail);
+});

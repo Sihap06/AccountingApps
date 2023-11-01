@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Dashboard\Dashboard;
 use App\Http\Livewire\Dashboard\Inventory;
+use App\Http\Livewire\Dashboard\Inventory\Create;
+use App\Http\Livewire\Dashboard\Inventory\Edit;
+use App\Http\Livewire\Dashboard\PointOfSales;
 use App\Http\Livewire\Dashboard\Reporting;
 
 /*
@@ -25,9 +28,14 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
-        Route::get('inventory', Inventory::class)->name('inventory');
         Route::get('point-of-sales', PointOfSales::class)->name('point-of-sales');
         Route::get('reporting', Reporting::class)->name('reporting');
+
+        Route::prefix('inventory')->name('inventory.')->group(function () {
+            Route::get('/', Inventory::class)->name('index');
+            Route::get('create', Create::class)->name('create');
+            Route::get('edit/{id}', Edit::class)->name('edit');
+        });
     });
 });
 

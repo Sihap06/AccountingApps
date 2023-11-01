@@ -2127,9 +2127,6 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
 
 __webpack_require__(/*! jquery-mask-plugin */ "./node_modules/jquery-mask-plugin/dist/jquery.mask.js");
-$('#biaya').mask('000,000,000,000,000', {
-  reverse: true
-});
 
 /***/ }),
 
@@ -2183,6 +2180,9 @@ window.payment = function () {
     }
   });
 };
+window.addEventListener('swal', function (e) {
+  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail);
+});
 
 /***/ }),
 

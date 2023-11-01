@@ -26,6 +26,8 @@
 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     @livewireStyles
 </head>
 
@@ -45,23 +47,17 @@
 
     @livewireScripts
 </body>
+
 <!-- plugin for charts  -->
 <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}" async></script>
 <!-- plugin for scrollbar  -->
 <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}" async></script>
-<!-- plugin for sweetalert  -->
-<script src="{{ asset('assets/js/plugins/sweetalert.min.js') }}" async></script>
 <!-- main script file  -->
 <script src="{{ asset('assets/js/argon-dashboard-tailwind.js?v=1.0.1') }}" async></script>
 
 <script src="{{ asset('js/app.js') }}" async></script>
 
-@stack('script')
 
-<script>
-    window.addEventListener('swal', function(e) {
-        Swal.fire(e.detail);
-    });
-</script>
+@stack('script')
 
 </html>
