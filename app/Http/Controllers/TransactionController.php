@@ -11,6 +11,7 @@ class TransactionController extends Controller
     public function postTransaction(Request $request){
         $rules = [
             'service' => 'required|max:255',
+            'payment_method' => 'required|max:255',
             'biaya' => 'required|numeric|between:1,99999999999999',
             'modal' => 'numeric|nullable',
             'product_id' => 'numeric',
@@ -36,6 +37,7 @@ class TransactionController extends Controller
         $data->fee_teknisi  = $perhitungan['fee_teknisi'];
         $data->untung = $perhitungan['untung'];
         $data->created_by = $request->get('created_by');
+        $data->payment_method = $request->get('payment_method');
         $data->save();
         return response()->json([
             'status'=> 'success',
@@ -72,6 +74,31 @@ class TransactionController extends Controller
                 'message' => 'no data found on our record',
             ],404);
         }
+    }
+
+    public function reportingTransaction(Request $request){
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        $limit = $request->input('limit');
+        
+        $query = Transaction::query();
+        if ($startDate) {
+            $query->where('created_at', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->where('created_at', '<=', $endDate);
+        }
+        if ($limit) {
+            $query->limit($limit);
+        }
+        $data = $query->get();
+
+        return response()->json([
+            'status'=> 'success',
+            'message' => 'successfully get list transaction',
+            'data' => $data
+        ],200);
+        
     }
 
 
