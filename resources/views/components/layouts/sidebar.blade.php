@@ -81,9 +81,12 @@
             <img class="w-full mx-auto" src="{{ asset('assets/img/logo.png') }}" alt="logo">
         </div>
 
-        <a class="relative mt-20 inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-slate-800 border-0 rounded-lg shadow-md select-none bg-150 bg-x-25 hover:shadow-xs hover:-translate-y-px"
-            href="https://www.creative-tim.com/product/argon-dashboard-pro-tailwind?ref=sidebarfree"
-            target="_blank">Logout</a>
+        <form action="{{ url('logout') }}" method="POST">
+            @csrf
+            <button type="submit"
+                class="relative mt-20 inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-slate-800 border-0 rounded-lg shadow-md select-none bg-150 bg-x-25 hover:shadow-xs hover:-translate-y-px"
+                target="_blank">Logout</button>
+        </form>
     </div>
 
 </aside>

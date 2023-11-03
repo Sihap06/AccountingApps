@@ -42,6 +42,17 @@ class PointOfSales extends Component
             ->layout('components.layouts.dashboard');
     }
 
+    public function resetValue()
+    {
+        $this->biaya = "";
+        $this->service = "";
+        $this->product_id = "";
+        $this->technical_id = "";
+        $this->payment_method = "";
+
+        $this->dispatchBrowserEvent('resetField', ['teknisi', 'metode_pembayaran', 'sparepart']);
+    }
+
     public function submit()
     {
         $validateData = $this->validate();
@@ -56,21 +67,25 @@ class PointOfSales extends Component
             $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];
             $validateData['modal'] = $product['harga'];
             $validateData['product_id'] = (int)$this->product_id;
+            $validateData['technical_id'] = null;
         } elseif ($validateData['technical_id'] !== null) {
             $validateData['modal'] = 0;
+            $validateData['product_id'] = null;
         }
 
         $request = new Request();
         $request->merge($validateData);
 
         $response = app(TransactionController::class)->postTransaction($request);
-
-        dd($response);
+        $status = $response->getData(true)['status'];
+        $message = $response->getData(true)['message'];
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Success',
-            'text' => "successfully transaction created.",
-            'icon' => 'success'
+            'title' => $status,
+            'text' => $message,
+            'icon' => $status
         ]);
+
+        $this->resetValue();
     }
 }

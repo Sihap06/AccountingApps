@@ -1,6 +1,7 @@
 require('./bootstrap');
 require('./sweetalert');
 require('./masked');
+require('./jquery')
 
 window.Swal = require('sweetalert2')
 

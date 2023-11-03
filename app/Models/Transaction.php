@@ -9,4 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Transaction extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class);
+    }
 }

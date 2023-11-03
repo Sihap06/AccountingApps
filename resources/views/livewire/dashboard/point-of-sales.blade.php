@@ -11,7 +11,6 @@
         </div>
     </div>
     <div class="flex justify-center">
-        {{-- @dd($inventory) --}}
         <div class="w-full max-w-full mt-6 md:w-8/12">
             <div
                 class=" border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl z-20 min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border items-center flex-1 mt-6">

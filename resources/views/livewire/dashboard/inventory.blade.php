@@ -23,8 +23,7 @@
                            <h6 class="dark:text-white">Inventory Table</h6>
                        </div>
                        <a href="{{ route('dashboard.inventory.create') }}"
-                           class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px"
-                           data-te-ripple-color="light">Tambah</a>
+                           class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px">Tambah</a>
                    </div>
 
                    <div class="flex-auto px-0 pt-0 pb-4">

@@ -2066,6 +2066,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 __webpack_require__(/*! ./sweetalert */ "./resources/js/sweetalert.js");
 __webpack_require__(/*! ./masked */ "./resources/js/masked.js");
+__webpack_require__(/*! ./jquery */ "./resources/js/jquery.js");
 window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 
 (0,tw_elements__WEBPACK_IMPORTED_MODULE_0__.initTE)({
@@ -2120,6 +2121,56 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/jquery.js":
+/*!********************************!*\
+  !*** ./resources/js/jquery.js ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+window.addEventListener('resetField', function (e) {
+  var array = e.detail;
+  array.forEach(function (element) {
+    var selectElement = document.getElementById(element);
+
+    // Reset its value to the default option value (assuming it is '')
+    selectElement.value = '';
+
+    // Get the visible input element created by tw-elements that shows the current value
+    var visibleInputElement = selectElement.closest('.relative').querySelector('[data-te-select-input-ref]');
+
+    // Reset the visible input element's display value
+    if (visibleInputElement) {
+      visibleInputElement.value = '';
+    }
+
+    // Create a new 'change' event
+    var event = new Event('change', {
+      bubbles: true
+    });
+
+    // Dispatch it on the select element
+    selectElement.dispatchEvent(event);
+
+    // If you have a label that changes based on the select state, you might need to update that too
+    // Reset any active states on the label
+    var label = selectElement.closest('.relative').querySelector('[data-te-select-label-ref]');
+    if (label) {
+      label.removeAttribute('data-te-input-state-active');
+    }
+    var notch = selectElement.closest('.relative').querySelector('[data-te-input-notch-ref]');
+    if (notch) {
+      notch.removeAttribute('data-te-input-state-active');
+    }
+  });
+});
+
+/***/ }),
+
 /***/ "./resources/js/masked.js":
 /*!********************************!*\
   !*** ./resources/js/masked.js ***!
@@ -2144,6 +2195,25 @@ __webpack_require__.r(__webpack_exports__);
 window.addEventListener('swal', function (e) {
   sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail);
 });
+window.addEventListener('swal:delete', function (e) {
+  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail).then(function (willDelete) {
+    if (willDelete) {
+      window.livewire.emitTo('delete', e.detail.id);
+    }
+  });
+});
+window.confirmMessage = function (id, formId) {
+  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+    title: 'Are You Sure?',
+    html: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true
+  }).then(function (result) {
+    if (result.value) {
+      livewire.emitTo('dashboard.reporting.expenditure', 'delete', id);
+    }
+  });
+};
 
 /***/ }),
 

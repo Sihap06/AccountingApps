@@ -12,8 +12,8 @@
                                   <p class="mb-0">Enter your email and password to sign in</p>
                               </div>
                               <div class="flex-auto p-6">
-                                  <form role="form" method="POST" action="{{url('login')}}">
-                                    @csrf
+                                  <form role="form" method="POST" action="{{ url('login') }}">
+                                      @csrf
                                       <div class="mb-4">
                                           <input type="email" placeholder="Email" name="email"
                                               class="focus:shadow-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
@@ -29,13 +29,6 @@
                                               in</button>
                                       </div>
                                   </form>
-                              </div>
-                              <div
-                                  class="border-black/12.5 rounded-b-2xl border-t-0 border-solid p-6 text-center pt-0 px-1 sm:px-6">
-                                  <p class="mx-auto mb-6 leading-normal text-sm">Don't have an account? <a
-                                          href="{{ url('register') }}"
-                                          class="font-semibold text-transparent bg-clip-text bg-gradient-to-tl from-blue-500 to-violet-500">Sign
-                                          up</a></p>
                               </div>
                           </div>
                       </div>
