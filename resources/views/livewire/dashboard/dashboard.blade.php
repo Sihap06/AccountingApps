@@ -24,7 +24,9 @@
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Transaction</p>
-                                   <h5 class="mb-0 font-bold dark:text-white">0</h5>
+                                   <h5 class="mb-0 font-bold dark:text-white">
+                                       {{ number_format($todayTransaction) }}
+                                   </h5>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -49,7 +51,9 @@
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Income</p>
-                                   <h5 class="mb-0 font-bold dark:text-white">0</h5>
+                                   <h5 class="mb-0 font-bold dark:text-white">
+                                       {{ number_format($todayIncome) }}
+                                   </h5>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
