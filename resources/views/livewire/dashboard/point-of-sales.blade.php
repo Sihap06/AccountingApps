@@ -24,9 +24,10 @@
                         <div class="flex flex-wrap -mx-3">
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <div wire:ignore>
-                                    <x-ui.input label="Order ID" wire:model="order_id" id="order_id" />
+                                    <x-ui.input label="Order ID" wire:model="order_transaction"
+                                        id="order_transaction" />
                                 </div>
-                                @error('order_id')
+                                @error('order_transaction')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
                             </div>

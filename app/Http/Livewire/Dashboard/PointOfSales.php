@@ -16,14 +16,14 @@ class PointOfSales extends Component
     public $product_id;
     public $technical_id;
     public $payment_method;
-    public $order_id;
+    public $order_transaction;
 
     public $inventory;
     public $technician;
 
     protected $rules = [
         'biaya' => 'required',
-        'order_id' => 'required',
+        'order_transaction' => 'required',
         'service' => 'required',
         'product_id' => '',
         'technical_id' => '',
@@ -47,7 +47,7 @@ class PointOfSales extends Component
     public function resetValue()
     {
         $this->biaya = "";
-        $this->order_id = "";
+        $this->order_transaction = "";
         $this->service = "";
         $this->product_id = "";
         $this->technical_id = "";
@@ -63,7 +63,6 @@ class PointOfSales extends Component
         $currencyString = preg_replace("/[^0-9]/", "", $this->biaya);
 
         $validateData['biaya'] = $currencyString;
-        $validateData['order_transaction'] = '00001';
         $validateData['created_by'] = Auth::user()->id;
 
         if ($validateData['product_id'] !== null) {
