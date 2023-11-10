@@ -30,7 +30,7 @@ class TransactionController extends Controller
         }
         if($request->get('product_id') != null){
             $product = Product::find($request->get('product_id'));
-            if($product->stok = 0){
+            if($product->stok == 0){
                 return response()->json([
                     'status'=> 'failed',
                     'message' => 'out of stock!',
