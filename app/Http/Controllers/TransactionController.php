@@ -15,7 +15,7 @@ class TransactionController extends Controller
             'biaya' => 'required|numeric|between:1,99999999999999',
             'modal' => 'numeric|nullable',
             'product_id' => 'numeric|nullable',
-            'order_transaction' => 'required|numeric',
+            'order_transaction' => 'required',
             'technical_id' => 'numeric|nullable',
             'created_by' => 'required|numeric'
         ];
@@ -47,7 +47,7 @@ class TransactionController extends Controller
         ],201);
     }
     public function listTransaction(){
-        $data = Transaction::orderby('order_transaction', 'DESC')->get();
+        $data = Transaction::orderby('id', 'DESC')->get();
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
@@ -62,7 +62,7 @@ class TransactionController extends Controller
         }
     }
     public function latesTransaction(){
-        $data = Transaction::orderby('order_transaction', 'DESC')->first();
+        $data = Transaction::orderby('id', 'DESC')->first();
         if ($data) {
             return response()->json([
                 'status'=> 'success',
