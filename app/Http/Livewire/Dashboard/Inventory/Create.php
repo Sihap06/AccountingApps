@@ -41,12 +41,14 @@ class Create extends Component
         $request->merge($validateData);
 
 
-        app(ProductController::class)->postProduct($request);
+        $response = app(ProductController::class)->postProduct($request);
+        $status = $response->getData(true)['status'];
+        $message = $response->getData(true)['message'];
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Success',
-            'text' => "successfully inventory created.",
-            'icon' => 'success'
+            'title' => $status,
+            'text' => $message,
+            'icon' => $status
         ]);
 
         $this->resetValue();
