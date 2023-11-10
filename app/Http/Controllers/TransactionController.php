@@ -38,6 +38,7 @@ class TransactionController extends Controller
         $data->untung = $perhitungan['untung'];
         $data->created_by = $request->get('created_by');
         $data->payment_method = $request->get('payment_method');
+        $data->order_transaction = $request->get('order_transaction');
         $data->save();
         return response()->json([
             'status'=> 'success',
