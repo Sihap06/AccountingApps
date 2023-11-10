@@ -47,7 +47,7 @@ class TransactionController extends Controller
         ],201);
     }
     public function listTransaction(){
-        $data = Transaction::orderby('id', 'DESC')->get();
+        $data = Transaction::orderby('id', 'ASC')->get();
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
