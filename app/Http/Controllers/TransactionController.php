@@ -47,7 +47,7 @@ class TransactionController extends Controller
         ],201);
     }
     public function listTransaction(){
-        $data = Transaction::orderby('order_transaction', 'DESC')->get();
+        $data = Transaction::orderby('id', 'DESC')->get();
         if (count($data)!= 0) {
             return response()->json([
                 'status'=> 'success',
@@ -62,7 +62,7 @@ class TransactionController extends Controller
         }
     }
     public function latesTransaction(){
-        $data = Transaction::orderby('order_transaction', 'DESC')->first();
+        $data = Transaction::orderby('id', 'DESC')->first();
         if ($data) {
             return response()->json([
                 'status'=> 'success',
