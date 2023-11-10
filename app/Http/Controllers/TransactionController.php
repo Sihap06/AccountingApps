@@ -15,7 +15,7 @@ class TransactionController extends Controller
             'biaya' => 'required|numeric|between:1,99999999999999',
             'modal' => 'numeric|nullable',
             'product_id' => 'numeric|nullable',
-            'order_transaction' => 'required|numeric',
+            'order_transaction' => 'required',
             'technical_id' => 'numeric|nullable',
             'created_by' => 'required|numeric'
         ];
