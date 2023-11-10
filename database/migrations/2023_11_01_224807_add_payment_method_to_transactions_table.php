@@ -14,7 +14,7 @@ class AddPaymentMethodToTransactionsTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->integer('payment_method')->nullable();
+            $table->string('payment_method')->nullable();
         });
     }
 
