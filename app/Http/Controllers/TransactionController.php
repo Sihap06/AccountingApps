@@ -37,6 +37,7 @@ class TransactionController extends Controller
                 ],400);
             }
             $product->stok = $product->stok - 1;
+            $product->save();
         }
         $perhitungan = $this->getPerhitungan($request->get('technical_id'), $request->get('biaya'), $request->get('modal'));
         $data = new Transaction();
