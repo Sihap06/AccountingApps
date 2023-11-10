@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -26,6 +27,16 @@ class TransactionController extends Controller
                 'message' => 'bad request!',
                 'data' => $validator->errors()
             ],400);
+        }
+        if($request->get('product_id') != null){
+            $product = Product::find($request->get('product_id'));
+            if($product->stok = 0){
+                return response()->json([
+                    'status'=> 'failed',
+                    'message' => 'out of stock!',
+                ],400);
+            }
+            $product->stok = $product->stok - 1;
         }
         $perhitungan = $this->getPerhitungan($request->get('technical_id'), $request->get('biaya'), $request->get('modal'));
         $data = new Transaction();
