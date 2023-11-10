@@ -16,12 +16,14 @@ class PointOfSales extends Component
     public $product_id;
     public $technical_id;
     public $payment_method;
+    public $order_id;
 
     public $inventory;
     public $technician;
 
     protected $rules = [
         'biaya' => 'required',
+        'order_id' => 'required',
         'service' => 'required',
         'product_id' => '',
         'technical_id' => '',
@@ -45,6 +47,7 @@ class PointOfSales extends Component
     public function resetValue()
     {
         $this->biaya = "";
+        $this->order_id = "";
         $this->service = "";
         $this->product_id = "";
         $this->technical_id = "";

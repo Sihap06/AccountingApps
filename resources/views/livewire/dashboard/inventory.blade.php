@@ -26,6 +26,14 @@
                            class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px">Tambah</a>
                    </div>
 
+                   <div class="flex justify-end px-6 my-4">
+                       <div class="flex w-full md:w-4/12 items-center gap-x-3">
+                           <input type="text" wire:model.debounce="searchTerm"
+                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                               placeholder="Masukkan nama atau kode" />
+                       </div>
+                   </div>
+
                    <div class="flex-auto px-0 pt-0 pb-4">
                        <div class="p-2 overflow-x-auto">
                            <table
@@ -36,7 +44,7 @@
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                            No</th>
                                        <th
-                                           class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                           class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                            Nama</th>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -54,60 +62,45 @@
                                </thead>
                                <tbody>
                                    @foreach ($data as $index => $item)
-                                       <tr>
+                                       <tr wire:loading.remove
+                                           wire:target='gotoPage, previousPage, nextPage, searchTerm'>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                               <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    {{ $index + 1 }}
                                                </span>
 
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
-
                                            </td>
                                            <td
-                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                               class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    {{ $item->name }}
                                                </span>
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                               <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    {{ $item->kode }}
                                                </span>
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                               <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                    Rp {{ number_format($item->harga) }}
                                                </span>
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <span wire:loading.remove wire:target='gotoPage, previousPage, nextPage'
+                                               <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item->stok }}</span>
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                            <td
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                               <div wire:loading.remove wire:target='gotoPage, previousPage, nextPage'>
+                                               <div>
                                                    <a href="{{ route('dashboard.inventory.edit', $item->id) }}"
                                                        class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                        <i class="fas fa-edit"></i>
@@ -128,13 +121,46 @@
                                                    </button>
 
                                                </div>
-
-                                               <div data-placeholder wire:loading
-                                                   wire:target='gotoPage, previousPage, nextPage'
-                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                            </td>
                                        </tr>
                                    @endforeach
+
+                                   @for ($i = 0; $i <= 10; $i++)
+                                       <tr wire:loading.class="table-row" class="hidden"
+                                           wire:loading.class.remove="hidden"
+                                           wire:target='gotoPage, previousPage, nextPage, searchTerm'>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                           <td
+                                               class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                               <div
+                                                   class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                           </td>
+                                       </tr>
+                                   @endfor
 
                                </tbody>
                            </table>
@@ -151,7 +177,7 @@
 
    @push('style')
        <style>
-           [data-placeholder]::after {
+           []::after {
                content: " ";
                box-shadow: 0 0 50px 9px rgba(254, 254, 254);
                position: absolute;

@@ -13,9 +13,14 @@ class Inventory extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public $searchTerm;
+
     public function render()
     {
-        $data = Product::paginate(10);
+        $data = Product::where(function ($sub_query) {
+            $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
+                ->orWhere('kode', 'like', '%' . $this->searchTerm . '%');
+        })->paginate(10);
         return view('livewire.dashboard.inventory', compact('data'))
             ->layout('components.layouts.dashboard');
     }

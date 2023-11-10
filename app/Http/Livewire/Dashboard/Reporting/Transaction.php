@@ -14,7 +14,7 @@ class Transaction extends Component
 
     public function render()
     {
-        $data = ModelsTransaction::select('transactions.*', 'products.name as product_name')->join('products', 'products.id', '=', 'transactions.product_id')->paginate(10);
+        $data = ModelsTransaction::paginate(10);
         return view('livewire.dashboard.reporting.transaction', compact('data'));
     }
 }
