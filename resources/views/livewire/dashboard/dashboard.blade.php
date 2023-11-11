@@ -1,4 +1,4 @@
-   <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
+   <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen max-h-screen">
 
        <div class="flex justify-between items-center ">
            <div class=" mb-0 border-b-0 border-solid ">
@@ -52,7 +52,7 @@
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Income</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
-                                       {{ number_format($todayIncome) }}
+                                       Rp {{ number_format($todayIncome) }}
                                    </h5>
                                </div>
                            </div>
@@ -78,7 +78,9 @@
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Expenditure</p>
-                                   <h5 class="mb-0 font-bold dark:text-white">0</h5>
+                                   <h5 class="mb-0 font-bold dark:text-white">
+                                       Rp {{ number_format($todayExpenditure) }}
+                                   </h5>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -104,7 +106,7 @@
                    </div>
                    <div class="flex-auto p-4">
                        <div>
-                           <canvas id="chart-line" height="400"></canvas>
+                           <canvas id="transaction-chart" height="400"></canvas>
                        </div>
                    </div>
                </div>
@@ -118,27 +120,32 @@
                    </div>
                    <div class="flex-auto p-4">
                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
-                           {{-- <li
-                               class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
-                               <div class="flex items-center">
-                                   <div
-                                       class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
-                                       <i class="text-white ni ni-mobile-button relative top-0.75 text-xxs"></i>
+                           @foreach ($dataTransaction as $item)
+                               <li
+                                   class="relative flex justify-between py-2 pr-4 mb-2 border-0 rounded-t-lg rounded-xl text-inherit">
+                                   <div class="flex items-center">
+                                       <div
+                                           class="inline-block w-8 h-8 mr-4 text-center text-black bg-center shadow-sm fill-current stroke-none bg-gradient-to-tl from-zinc-800 to-zinc-700 dark:bg-gradient-to-tl dark:from-slate-750 dark:to-gray-850 rounded-xl">
+                                           <i class="text-white fas fa-hashtag relative top-0.75 text-xxs"></i>
+                                       </div>
+                                       <div class="flex flex-col">
+                                           <h6
+                                               class="mb-1 text-sm leading-normal text-slate-700 dark:text-white capitalize">
+                                               {{ $item->service }}
+                                           </h6>
+                                           <span class="text-xs leading-tight dark:text-white/80">Rp
+                                               {{ number_format($item->biaya) }}</span>
+                                       </div>
                                    </div>
-                                   <div class="flex flex-col">
-                                       <h6 class="mb-1 text-sm leading-normal text-slate-700 dark:text-white">Devices
-                                       </h6>
-                                       <span class="text-xs leading-tight dark:text-white/80">250 in stock, <span
-                                               class="font-semibold">346+ sold</span></span>
+                                   <div class="flex">
+                                       <button
+                                           class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white"><i
+                                               class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
+                                               aria-hidden="true"></i></button>
                                    </div>
-                               </div>
-                               <div class="flex">
-                                   <button
-                                       class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white"><i
-                                           class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                                           aria-hidden="true"></i></button>
-                               </div>
-                           </li> --}}
+                               </li>
+                           @endforeach
+
                        </ul>
                    </div>
                </div>
@@ -147,3 +154,94 @@
 
 
    </div>
+
+   @push('script')
+       <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
+
+       <script>
+           var data = @json($dataChart);
+           var label = @json($labelChart);
+
+           var ctx1 = document.getElementById("transaction-chart").getContext("2d");
+
+           var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+
+           gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+           gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+           gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
+           new Chart(ctx1, {
+               type: "line",
+               data: {
+                   labels: label,
+                   datasets: [{
+                       label: "Transactions",
+                       tension: 0.4,
+                       borderWidth: 0,
+                       pointRadius: 0,
+                       borderColor: "#5e72e4",
+                       backgroundColor: gradientStroke1,
+                       borderWidth: 3,
+                       fill: true,
+                       data: data,
+                       maxBarThickness: 6
+
+                   }],
+               },
+               options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: {
+                           display: false,
+                       }
+                   },
+                   interaction: {
+                       intersect: false,
+                       mode: 'index',
+                   },
+                   scales: {
+                       y: {
+                           grid: {
+                               drawBorder: false,
+                               display: true,
+                               drawOnChartArea: true,
+                               drawTicks: false,
+                               borderDash: [5, 5]
+                           },
+                           ticks: {
+                               display: true,
+                               padding: 10,
+                               color: '#fbfbfb',
+                               font: {
+                                   size: 11,
+                                   family: "Open Sans",
+                                   style: 'normal',
+                                   lineHeight: 2
+                               },
+                           }
+                       },
+                       x: {
+                           grid: {
+                               drawBorder: false,
+                               display: false,
+                               drawOnChartArea: false,
+                               drawTicks: false,
+                               borderDash: [5, 5]
+                           },
+                           ticks: {
+                               display: true,
+                               color: '#ccc',
+                               padding: 20,
+                               font: {
+                                   size: 11,
+                                   family: "Open Sans",
+                                   style: 'normal',
+                                   lineHeight: 2
+                               },
+                           }
+                       },
+                   },
+               },
+           });
+       </script>
+   @endpush

@@ -2067,6 +2067,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 __webpack_require__(/*! ./sweetalert */ "./resources/js/sweetalert.js");
 __webpack_require__(/*! ./masked */ "./resources/js/masked.js");
 __webpack_require__(/*! ./jquery */ "./resources/js/jquery.js");
+__webpack_require__(/*! ./chart */ "./resources/js/chart.js");
 window.Swal = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 
 (0,tw_elements__WEBPACK_IMPORTED_MODULE_0__.initTE)({
@@ -2121,16 +2122,21 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /***/ }),
 
+/***/ "./resources/js/chart.js":
+/*!*******************************!*\
+  !*** ./resources/js/chart.js ***!
+  \*******************************/
+/***/ (() => {
+
+
+
+/***/ }),
+
 /***/ "./resources/js/jquery.js":
 /*!********************************!*\
   !*** ./resources/js/jquery.js ***!
   \********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/***/ (() => {
 
 window.addEventListener('resetField', function (e) {
   var array = e.detail;
@@ -2166,6 +2172,15 @@ window.addEventListener('resetField', function (e) {
     if (notch) {
       notch.removeAttribute('data-te-input-state-active');
     }
+  });
+});
+window.addEventListener('appendField', function (e) {
+  var array = e.detail;
+  array.forEach(function (element) {
+    var selectElement = document.getElementById(element);
+    selectElement.setAttribute('data-te-input-state-active', '');
+    var notch = selectElement.closest('.relative').querySelector('[data-te-input-notch-ref]');
+    notch.setAttribute('data-te-input-state-active', '');
   });
 });
 

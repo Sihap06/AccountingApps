@@ -1,5 +1,4 @@
-<div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
-
+<div class="w-full px-6 py-4 mx-auto flex flex-col h-screen max-h-screen">
     <div
         class="flex items-center justify-between bg-white rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
@@ -47,7 +46,7 @@
 
     </div>
 
-    <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
+    <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow my-6">
         @if ($tabActive === 'transaction')
             @livewire('dashboard.reporting.transaction')
         @elseif($tabActive === 'expenditure')

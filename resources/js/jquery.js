@@ -1,4 +1,3 @@
-import jQuery from "jquery";
 
 window.addEventListener('resetField', function (e) {
   const array = e.detail
@@ -33,6 +32,20 @@ window.addEventListener('resetField', function (e) {
     if (notch) {
       notch.removeAttribute('data-te-input-state-active')
     }
+
+  });
+
+});
+
+window.addEventListener('appendField', function (e) {
+  const array = e.detail
+  array.forEach(element => {
+
+    var selectElement = document.getElementById(element);
+    selectElement.setAttribute('data-te-input-state-active', '')
+
+    var notch = selectElement.closest('.relative').querySelector('[data-te-input-notch-ref]');
+    notch.setAttribute('data-te-input-state-active', '')
 
   });
 
