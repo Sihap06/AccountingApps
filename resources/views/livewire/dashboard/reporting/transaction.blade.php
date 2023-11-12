@@ -1,8 +1,45 @@
 <div
     class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-full">
     <div class="{{ $isEdit ? 'hidden' : 'block' }}">
-        <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+        <div class="flex flex-col md:flex-row justify-between p-6 pb-0 mb-6 ">
             <h6 class="dark:text-white">Transaction Table</h6>
+            <div class="w-3/12 border border-slate-200 rounded-lg p-4 text-slate-900">
+                <div class="flex justify-between mb-2">
+                    <span>Total Biaya</span>
+                    <span>Rp {{ number_format($totalBiaya) }}</span>
+                </div>
+                <div class="flex justify-between ">
+                    <span>Total Modal</span>
+                    <span>Rp {{ number_format($totalModal) }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="my-4 px-6 flex items-center justify-between">
+            <div class="flex gap-x-4 items-center w-full">
+                <p class="mb-0">Filter :</p>
+                <div class="flex w-full md:w-2/12 items-center">
+                    <input type="date" wire:model.debounce.500ms="selectedDate"
+                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                </div>
+                <div class="flex w-full md:w-3/12 items-center">
+                    <select wire:model.debounce.500ms="selectedPaymentMethod"
+                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                        <option value="">Semua Metode Pembayaran</option>
+                        <option value="cash">CASH</option>
+                        <option value="qris">QRIS</option>
+                        <option value="bca">BCA</option>
+                        <option value="debit">DEBIT</option>
+                        <option value="mandiri">MANDIRI</option>
+                        <option value="transfer">TRANSFER</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex w-full md:w-3/12 items-center">
+                <input type="text" wire:model.debounce.500ms="searchTerm"
+                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                    placeholder="Masukkan order id" />
+            </div>
         </div>
         <div class="flex-auto p-6">
             <div class="p-0 overflow-x-auto">
@@ -40,8 +77,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $item)
-                            <tr wire:loading.remove wire:target='gotoPage, previousPage, nextPage'>
+                        @foreach ($data as $index => $item)
+                            <tr wire:key='{{ $index }}' wire:loading.remove
+                                wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <span
@@ -106,7 +144,7 @@
 
                         @for ($i = 0; $i <= 10; $i++)
                             <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
-                                wire:target='gotoPage, previousPage, nextPage'>
+                                wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
@@ -140,9 +178,6 @@
 
                     </tbody>
                 </table>
-                <div class="mt-4 px-4">
-                    {{ $data->links() }}
-                </div>
             </div>
         </div>
     </div>
@@ -188,8 +223,8 @@
                     </div>
                     <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                         <div wire:ignore>
-                            <x-ui.select label="Teknisi" wire:model="technical_id" id="teknisi" search size="lg"
-                                disabled>
+                            <x-ui.select label="Teknisi" wire:model="technical_id" id="teknisi" search
+                                size="lg" disabled>
                                 <option value=""></option>
                                 @foreach ($technician as $value)
                                     <option value="{{ $value->id }}">{{ $value->name }}
@@ -203,8 +238,8 @@
                     </div>
                     <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                         <div wire:ignore>
-                            <x-ui.select label="Sparepart" wire:model="product_id" id="sparepart" search size="lg"
-                                disabled>
+                            <x-ui.select label="Sparepart" wire:model="product_id" id="sparepart" search
+                                size="lg" disabled>
                                 <option value=""></option>
                                 @foreach ($inventory as $index => $value)
                                     <option value="{{ $index }}">{{ $value }}

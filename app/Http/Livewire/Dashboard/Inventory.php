@@ -5,14 +5,9 @@ namespace App\Http\Livewire\Dashboard;
 use App\Http\Controllers\ProductController;
 use App\Models\Product;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Inventory extends Component
 {
-    use WithPagination;
-
-    protected $paginationTheme = 'tailwind';
-
     public $searchTerm;
 
     public function render()
@@ -20,7 +15,7 @@ class Inventory extends Component
         $data = Product::where(function ($sub_query) {
             $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
                 ->orWhere('kode', 'like', '%' . $this->searchTerm . '%');
-        })->paginate(10);
+        })->get();
         return view('livewire.dashboard.inventory', compact('data'))
             ->layout('components.layouts.dashboard');
     }

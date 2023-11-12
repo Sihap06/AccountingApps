@@ -33,6 +33,10 @@ window.addEventListener('resetField', function (e) {
       notch.removeAttribute('data-te-input-state-active')
     }
 
+    var optionsList = document.querySelector('[data-te-select-option-ref]')
+
+    console.log(optionsList);
+
   });
 
 });

@@ -11,12 +11,12 @@ use Livewire\Component;
 
 class PointOfSales extends Component
 {
-    public $biaya;
-    public $service;
-    public $product_id;
-    public $technical_id;
-    public $payment_method;
-    public $order_transaction;
+    public $biaya = '';
+    public $service = '';
+    public $product_id = '';
+    public $technical_id = '';
+    public $payment_method = '';
+    public $order_transaction = '';
 
     public $inventory;
     public $technician;
@@ -46,12 +46,12 @@ class PointOfSales extends Component
 
     public function resetValue()
     {
-        $this->biaya = "";
-        $this->order_transaction = "";
-        $this->service = "";
-        $this->product_id = "";
-        $this->technical_id = "";
-        $this->payment_method = "";
+        $this->biaya = '';
+        $this->order_transaction = '';
+        $this->service = '';
+        $this->product_id = '';
+        $this->technical_id = '';
+        $this->payment_method = '';
 
         $this->dispatchBrowserEvent('resetField', ['teknisi', 'metode_pembayaran', 'sparepart']);
     }
@@ -65,14 +65,22 @@ class PointOfSales extends Component
         $validateData['biaya'] = $currencyString;
         $validateData['created_by'] = Auth::user()->id;
 
-        if ($validateData['product_id'] !== null) {
+        if ($validateData['product_id'] !== '') {
             $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];
             $validateData['modal'] = $product['harga'];
             $validateData['product_id'] = (int)$this->product_id;
             $validateData['technical_id'] = null;
-        } elseif ($validateData['technical_id'] !== null) {
+        } elseif ($validateData['technical_id'] !== '') {
             $validateData['modal'] = 0;
             $validateData['product_id'] = null;
+        }
+
+        if ($validateData['product_id'] === '') {
+            $validateData['product_id'] = null;
+        }
+
+        if ($validateData['technical_id'] === '') {
+            $validateData['technical_id'] = null;
         }
 
         $request = new Request();
@@ -89,5 +97,7 @@ class PointOfSales extends Component
         ]);
 
         $this->resetValue();
+
+        return redirect()->route('dashboard.point-of-sales');
     }
 }

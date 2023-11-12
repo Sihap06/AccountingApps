@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Dashboard\Reporting;
 use App\Http\Controllers\ProductController;
 use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -15,8 +16,8 @@ class Transaction extends Component
     protected $paginationTheme = 'tailwind';
 
     public $isEdit = false;
-    public $inventory;
-    public $technician;
+    public $inventory = [];
+    public $technician = [];
 
     public $selectedId;
 
@@ -26,6 +27,13 @@ class Transaction extends Component
     public $technical_id;
     public $payment_method;
     public $order_transaction;
+
+    public $selectedDate;
+    public $searchTerm;
+    public $selectedPaymentMethod = '';
+
+    public $totalBiaya = 0;
+    public $totalModal = 0;
 
     protected $rules = [
         'biaya' => 'required',
@@ -38,15 +46,32 @@ class Transaction extends Component
 
     public function mount()
     {
-        $response = app(ProductController::class)->listProductAll();
+        if (count($this->inventory) == 0 && count($this->technician) == 0) {
+            $response = app(ProductController::class)->listProductAll();
 
-        $this->inventory = $response->getData(true)['data'];
-        $this->technician = Technician::all();
+            $this->inventory = $response->getData(true)['data'];
+            $this->technician = Technician::all();
+        }
+
+        $this->selectedDate = Carbon::now()->format('Y-m-d');
     }
 
     public function render()
     {
-        $data = ModelsTransaction::paginate(10);
+        $data = ModelsTransaction::whereDate('created_at', $this->selectedDate)
+            ->where(function ($sub_query) {
+                $sub_query->where('order_transaction', 'like', '%' . $this->searchTerm . '%');
+            });
+
+        if ($this->selectedPaymentMethod !== '') {
+            $data->where('payment_method', $this->selectedPaymentMethod);
+        }
+
+        $data = $data->get();
+        $this->totalBiaya = $data->sum('biaya');
+        $this->totalModal = $data->sum('modal');
+
+
         return view('livewire.dashboard.reporting.transaction', compact('data'));
     }
 

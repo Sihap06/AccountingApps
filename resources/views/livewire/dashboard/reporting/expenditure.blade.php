@@ -38,8 +38,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($data as $item)
-                            <tr>
+                        @foreach ($data as $index => $item)
+                            <tr wire:key='{{ $index }}'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <span
