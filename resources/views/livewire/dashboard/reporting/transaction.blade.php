@@ -3,25 +3,21 @@
     <div class="{{ $isEdit ? 'hidden' : 'block' }}">
         <div class="flex flex-col md:flex-row justify-between p-6 pb-0 mb-6 ">
             <h6 class="dark:text-white">Transaction Table</h6>
-            <div class="w-3/12 border border-slate-200 rounded-lg p-4 text-slate-900">
+            <div class="w-3/12 text-slate-900 font-bold">
                 <div class="flex justify-between mb-2">
-                    <span>Total Biaya</span>
+                    <span>Today's Omset</span>
                     <span>Rp {{ number_format($totalBiaya) }}</span>
-                </div>
-                <div class="flex justify-between ">
-                    <span>Total Modal</span>
-                    <span>Rp {{ number_format($totalModal) }}</span>
                 </div>
             </div>
         </div>
-        <div class="my-4 px-6 flex items-center justify-between">
+        <div class="my-6 px-6 flex items-center justify-between">
             <div class="flex gap-x-4 items-center w-full">
                 <p class="mb-0">Filter :</p>
-                <div class="flex w-full md:w-2/12 items-center">
+                <div class="flex w-full md:w-3/12 items-center">
                     <input type="date" wire:model.debounce.500ms="selectedDate"
                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
                 </div>
-                <div class="flex w-full md:w-3/12 items-center">
+                <div class="flex w-full md:w-4/12 items-center">
                     <select wire:model.debounce.500ms="selectedPaymentMethod"
                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                         <option value="">Semua Metode Pembayaran</option>
@@ -78,7 +74,7 @@
                     </thead>
                     <tbody>
                         @foreach ($data as $index => $item)
-                            <tr wire:key='{{ $index }}' wire:loading.remove
+                            <tr wire:key='{{ $item->created_at }}' wire:loading.remove
                                 wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -125,11 +121,11 @@
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <div>
-                                        <button wire:click='edit({{ $item->id }})'
+                                        <button wire:click='edit("{{ $item->id }}")'
                                             class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                             <i class="fas fa-edit" wire:loading.remove
-                                                wire:target='edit({{ $item->id }})'></i>
-                                            <div wire:loading wire:target='edit({{ $item->id }})'>
+                                                wire:target='edit("{{ $item->id }}")'></i>
+                                            <div wire:loading wire:target='edit("{{ $item->id }}")'>
                                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                     role="status">
                                                     <span
@@ -191,6 +187,10 @@
             <form wire:submit.prevent="update">
                 <div class="flex flex-wrap -mx-3">
                     <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
+                        <input type="date" wire:model.defer="order_date"
+                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                    </div>
+                    <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                         <div wire:ignore>
                             <x-ui.input label="Order ID" wire:model="order_transaction" id="order_transaction" />
                         </div>
@@ -224,7 +224,7 @@
                     <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                         <div wire:ignore>
                             <x-ui.select label="Teknisi" wire:model="technical_id" id="teknisi" search
-                                size="lg" disabled>
+                                size="lg">
                                 <option value=""></option>
                                 @foreach ($technician as $value)
                                     <option value="{{ $value->id }}">{{ $value->name }}
@@ -239,7 +239,7 @@
                     <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                         <div wire:ignore>
                             <x-ui.select label="Sparepart" wire:model="product_id" id="sparepart" search
-                                size="lg" disabled>
+                                size="lg">
                                 <option value=""></option>
                                 @foreach ($inventory as $index => $value)
                                     <option value="{{ $index }}">{{ $value }}

@@ -3,17 +3,21 @@
         class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border transition-all h-full {{ $isAdd || $isEdit ? 'w-8/12' : 'w-full' }}">
         <div class="flex justify-between p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
             <h6 class="dark:text-white">Expenditure Table</h6>
-            <button type="button" wire:click='setShowAdd'
-                class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px">
-                <div wire:loading wire:target='setShowAdd'>
-                    <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                        role="status">
-                        <span
-                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            <div class="text-right">
+                <button type="button" wire:click='setShowAdd'
+                    class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px">
+                    <div wire:loading wire:target='setShowAdd'>
+                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                            role="status">
+                            <span
+                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                        </div>
                     </div>
-                </div>
-                {{ $isAdd || $isEdit ? 'Batal' : 'Tambah' }}
-            </button>
+                    {{ $isAdd || $isEdit ? 'Batal' : 'Tambah' }}
+                </button>
+                <h4 class="mt-6">Rp {{ number_format($totalAmount) }}</h4>
+
+            </div>
         </div>
         <div class="flex-auto p-6">
             <div class="p-0 overflow-x-auto">

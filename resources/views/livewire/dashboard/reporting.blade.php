@@ -12,7 +12,7 @@
                 <li class="z-30 flex-auto text-center transition-all">
                     <button
                         class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'transaction' ? 'bg-primary text-white' : '' }}"
-                        nav-link wire:click="$set('tabActive', 'transaction')">
+                        nav-link wire:click="changeActiveTab('transaction')">
                         <span class="ml-1">Transaction</span>
                     </button>
                 </li>
@@ -23,13 +23,15 @@
                         <span class="ml-1">Expenditure</span>
                     </button>
                 </li>
-                <li class="z-30 flex-auto text-center transition-all">
-                    <button
-                        class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'income' ? 'bg-primary text-white' : '' }}"
-                        nav-link wire:click="changeActiveTab('income')">
-                        <span class="ml-1">Income & Fee</span>
-                    </button>
-                </li>
+                @if (auth()->user()->name !== 'sysadmin')
+                    <li class="z-30 flex-auto text-center transition-all">
+                        <button
+                            class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'income' ? 'bg-primary text-white' : '' }}"
+                            nav-link wire:click="changeActiveTab('income')">
+                            <span class="ml-1">Income & Fee</span>
+                        </button>
+                    </li>
+                @endif
             </ul>
         </div>
     </div>

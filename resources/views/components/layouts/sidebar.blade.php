@@ -64,17 +64,19 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Reporting</span>
                 </a>
             </li>
+            @if (auth()->user()->name !== 'sysadmin')
+                <li class="mt-0.5 w-full">
+                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.teknisi.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                        href="{{ route('dashboard.teknisi.index') }}">
+                        <div
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="relative top-0 text-sm leading-normal text-yellow-500 ni ni-planet"></i>
+                        </div>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Technician</span>
+                    </a>
+                </li>
+            @endif
 
-            <li class="mt-0.5 w-full">
-                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.teknisi.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                    href="{{ route('dashboard.teknisi.index') }}">
-                    <div
-                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                        <i class="relative top-0 text-sm leading-normal text-yellow-500 ni ni-planet"></i>
-                    </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Technician</span>
-                </a>
-            </li>
 
         </ul>
     </div>

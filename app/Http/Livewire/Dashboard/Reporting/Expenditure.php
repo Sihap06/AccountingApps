@@ -20,6 +20,8 @@ class Expenditure extends Component
     public $jenis;
     public $total;
 
+    public $totalAmount;
+
     protected $rules = [
         'tanggal' => 'required',
         'jenis' => 'required',
@@ -110,7 +112,8 @@ class Expenditure extends Component
     public function render()
     {
         $component_id = $this->id;
-        $data = ModelsExpenditure::paginate(10);
+        $data = ModelsExpenditure::all();
+        $this->totalAmount = ModelsExpenditure::sum('total');
         return view('livewire.dashboard.reporting.expenditure', compact('data', 'component_id'));
     }
 }

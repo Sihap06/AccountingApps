@@ -50,7 +50,7 @@
                                <div>
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Income</p>
+                                       Today's Omset</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayIncome) }}
                                    </h5>

@@ -22,11 +22,11 @@ class Dashboard extends Component
     public function mount()
     {
         $now = Carbon::now()->format('Y-m-d');
-        $transaction = Transaction::select(DB::raw("SUM(untung) as income"), DB::raw("COUNT(id) as transaction"))
+        $transaction = Transaction::select(DB::raw("SUM(biaya) as biaya"), DB::raw("COUNT(id) as transaction"))
             ->whereDate('created_at', $now)->get();
 
         $this->todayTransaction = $transaction[0]['transaction'];
-        $this->todayIncome = $transaction[0]['income'];
+        $this->todayIncome = $transaction[0]['biaya'];
 
         $expenditur = Expenditure::select(DB::raw("SUM('total') as total"))
             ->whereDate('created_at', $now)
