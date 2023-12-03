@@ -3,14 +3,11 @@
 namespace App\Http\Livewire\Dashboard\Reporting;
 
 use App\Models\Expenditure as ModelsExpenditure;
+use Carbon\Carbon;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Expenditure extends Component
 {
-    use WithPagination;
-
-    protected $paginationTheme = 'tailwind';
 
     public $isAdd = false;
     public $isEdit = false;
@@ -21,6 +18,9 @@ class Expenditure extends Component
     public $total;
 
     public $totalAmount;
+
+    public $selectedYear = '';
+    public $selectedMonth = '';
 
     protected $rules = [
         'tanggal' => 'required',
@@ -109,11 +109,35 @@ class Expenditure extends Component
         $this->isAdd = false;
     }
 
+    public function mount()
+    {
+        $this->selectedYear = Carbon::now()->format('Y');
+        $this->selectedMonth = Carbon::now()->format('m');
+    }
+
     public function render()
     {
-        $component_id = $this->id;
-        $data = ModelsExpenditure::all();
-        $this->totalAmount = ModelsExpenditure::sum('total');
-        return view('livewire.dashboard.reporting.expenditure', compact('data', 'component_id'));
+        $query = ModelsExpenditure::whereMonth('tanggal', $this->selectedMonth)
+            ->whereYear('tanggal', $this->selectedYear);
+        $data = $query->get();
+        $this->totalAmount = $data->sum('total');
+
+        $listYear = ['2023', '2024', '2025', '2026', '2027'];
+        $listMonth = [
+            '01' => 'Januari',
+            '02' => 'Februari',
+            '03' => 'Maret',
+            '04' => 'April',
+            '05' => 'Mei',
+            '06' => 'Juni',
+            '07' => 'Juli',
+            '08' => 'Agustus',
+            '09' => 'September',
+            '10' => 'Oktober',
+            '11' => 'November',
+            '12' => 'Desember'
+        ];
+
+        return view('livewire.dashboard.reporting.expenditure', ['data' => $data, 'listMonth' => $listMonth, 'listYear' => $listYear]);
     }
 }

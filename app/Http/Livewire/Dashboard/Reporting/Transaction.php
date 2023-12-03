@@ -7,13 +7,9 @@ use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
 use Carbon\Carbon;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Transaction extends Component
 {
-    use WithPagination;
-
-    protected $paginationTheme = 'tailwind';
 
     public $isEdit = false;
     public $inventory = [];
@@ -34,6 +30,7 @@ class Transaction extends Component
     public $selectedPaymentMethod = '';
 
     public $totalBiaya = 0;
+
 
     protected $rules = [
         'biaya' => 'required',

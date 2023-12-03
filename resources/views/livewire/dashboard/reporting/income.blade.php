@@ -1,11 +1,11 @@
-<div class="flex flex-col md:flex-row gap-4  justify-center w-full">
+<div class="flex flex-col md:flex-row gap-4 justify-center w-full h-full">
     <div
         class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-full">
         <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
             <h6 class="dark:text-white">Income Table</h6>
         </div>
         <div class="flex-auto p-6">
-            <div class="p-0 overflow-x-auto">
+            <div class="p-0 overflow-y-auto h-sidenav">
                 <table class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                     <thead class="align-bottom">
                         <tr>
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 @if (count($dataFeeTechnician) > 0)
-                    <div class="p-0 overflow-x-auto" wire:loading.remove wire:target='selectTechnician'>
+                    <div class="p-0 overflow-y-auto h-sidenav" wire:loading.remove wire:target='selectTechnician'>
                         <table
                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                             <thead class="align-bottom">

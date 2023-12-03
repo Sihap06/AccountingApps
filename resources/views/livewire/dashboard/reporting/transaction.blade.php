@@ -1,7 +1,7 @@
 <div
-    class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-full">
+    class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-full">
     <div class="{{ $isEdit ? 'hidden' : 'block' }}">
-        <div class="flex flex-col md:flex-row justify-between p-6 pb-0 mb-6 ">
+        <div class="flex flex-col md:flex-row justify-between p-6 pb-0 ">
             <h6 class="dark:text-white">Transaction Table</h6>
             <div class="w-3/12 text-slate-900 font-bold">
                 <div class="flex justify-between mb-2">
@@ -10,7 +10,7 @@
                 </div>
             </div>
         </div>
-        <div class="my-6 px-6 flex items-center justify-between">
+        <div class="my-4 px-6 flex items-center justify-between">
             <div class="flex gap-x-4 items-center w-full">
                 <p class="mb-0">Filter :</p>
                 <div class="flex w-full md:w-3/12 items-center">
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="flex-auto p-6">
-            <div class="p-0 overflow-x-auto">
+            <div class="p-0 overflow-y-auto h-sidenav">
                 <table class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                     <thead class="align-bottom">
                         <tr>
@@ -140,7 +140,7 @@
 
                         @for ($i = 0; $i <= 10; $i++)
                             <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
-                                wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
+                                wire:target='searchTerm, selectedDate, selectedPaymentMethod'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
