@@ -15,7 +15,9 @@ class Inventory extends Component
         $data = Product::where(function ($sub_query) {
             $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
                 ->orWhere('kode', 'like', '%' . $this->searchTerm . '%');
-        })->get();
+        })
+            ->orderby('name', 'ASC')
+            ->get();
         return view('livewire.dashboard.inventory', compact('data'))
             ->layout('components.layouts.dashboard');
     }

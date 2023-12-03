@@ -34,8 +34,8 @@
                        </div>
                    </div>
 
-                   <div class="flex-auto px-0 pt-0 pb-4">
-                       <div class="p-2 overflow-x-auto">
+                   <div class="flex-auto px-0 pt-0 mt-4 pb-4">
+                       <div class="p-2">
                            <table
                                class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                                <thead class="align-bottom">
