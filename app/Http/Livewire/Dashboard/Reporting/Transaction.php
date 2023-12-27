@@ -119,14 +119,16 @@ class Transaction extends Component
     public function update()
     {
         $validateData = $this->validate();
-
         $time = Carbon::now()->format('H:i:s');
         $order_date = Carbon::parse($validateData['order_date'])->format('Y-m-d');
+
+        $currencyString = preg_replace("/[^0-9]/", "", $this->biaya);
+        $validateData['biaya'] = $currencyString;
 
         $transaction = ModelsTransaction::findOrFail($this->selectedId);
         $transaction->order_transaction = $this->order_transaction;
         $transaction->service = $this->service;
-        $transaction->biaya = $this->biaya;
+        $transaction->biaya = $validateData['biaya'];
         $transaction->payment_method = $this->payment_method;
         $transaction->product_id = $validateData['product_id'] === '' ? null : $validateData['product_id'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
