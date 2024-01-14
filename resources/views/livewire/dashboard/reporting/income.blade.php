@@ -34,10 +34,22 @@
         <div
             class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-full">
             <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                <div class="flex flex-col md:flex-row justify-between p-6 pb-0">
-                    <h6 class="dark:text-white">Income Table</h6>
+                <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
+                    <h6 class="dark:text-white">Income</h6>
                     <div class="w-3/12 text-slate-900 font-bold text-right">
                         <span>Rp {{ number_format($totalIncome) }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
+                    <h6 class="dark:text-white">Expenditure</h6>
+                    <div class="w-3/12 text-slate-900 font-bold text-right">
+                        <span>Rp {{ number_format($totalExpenditure) }}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
+                    <h6 class="dark:text-white">Netto</h6>
+                    <div class="w-3/12 text-slate-900 font-bold text-right">
+                        <span>Rp {{ number_format($totalNetto) }}</span>
                     </div>
                 </div>
             </div>

@@ -5,14 +5,6 @@ window.addEventListener('swal', function (e) {
   Swal.fire(e.detail);
 });
 
-window.addEventListener('swal:delete', function (e) {
-  Swal.fire(e.detail).then((willDelete) => {
-    if (willDelete) {
-      window.livewire.emitTo('delete', e.detail.id);
-    }
-  })
-})
-
 
 window.confirmMessage = function (id, formId) {
   Swal.fire({

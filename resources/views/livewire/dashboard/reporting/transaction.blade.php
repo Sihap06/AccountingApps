@@ -75,7 +75,7 @@
                     <tbody>
                         @foreach ($data as $index => $item)
                             <tr wire:key='{{ $item->created_at }}' wire:loading.remove
-                                wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
+                                wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod, delete'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <span
@@ -120,12 +120,24 @@
                                 </td>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                    <div>
+                                    <div class="flex flex-row gap-x-3">
                                         <button wire:click='edit("{{ $item->id }}")'
                                             class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                             <i class="fas fa-edit" wire:loading.remove
                                                 wire:target='edit("{{ $item->id }}")'></i>
                                             <div wire:loading wire:target='edit("{{ $item->id }}")'>
+                                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                    role="status">
+                                                    <span
+                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                        <button wire:click='onModalDelete("{{ $item->id }}")'
+                                            class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                            <i class="fas fa-trash" wire:loading.remove
+                                                wire:target='onModalDelete("{{ $item->id }}")'></i>
+                                            <div wire:loading wire:target='onModalDelete("{{ $item->id }}")'>
                                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                     role="status">
                                                     <span
@@ -140,7 +152,7 @@
 
                         @for ($i = 0; $i <= 10; $i++)
                             <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
-                                wire:target='searchTerm, selectedDate, selectedPaymentMethod'>
+                                wire:target='searchTerm, selectedDate, selectedPaymentMethod, delete'>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                     <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
@@ -297,4 +309,14 @@
             </form>
         </div>
     </div>
+
+    <script>
+        window.addEventListener('swal-delete', function(e) {
+            Swal.fire(e.detail).then((willDelete) => {
+                if (willDelete.isConfirmed) {
+                    @this.call('delete', e.detail.id)
+                }
+            })
+        })
+    </script>
 </div>

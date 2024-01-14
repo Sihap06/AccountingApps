@@ -48,8 +48,8 @@
         @include('components.layouts.navbar')
 
         {{ $slot }}
-
     </main>
+
 </body>
 
 <!-- plugin for charts  -->

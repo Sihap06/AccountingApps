@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard\Reporting;
 
+use App\Models\Expenditure;
 use App\Models\Technician;
 use App\Models\Transaction;
 use Carbon\Carbon;
@@ -47,6 +48,12 @@ class Income extends Component
             ->whereYear('created_at', $this->selectedYear)
             ->sum('untung');
 
+        $totalExpenditure = Expenditure::whereMonth('created_at', $this->selectedMonth)
+            ->whereYear('created_at', $this->selectedYear)
+            ->sum('total');
+
+        $totalNetto = $totalIncome - $totalExpenditure;
+
         $listYear = ['2023', '2024', '2025', '2026', '2027'];
         $listMonth = [
             '01' => 'Januari',
@@ -64,6 +71,6 @@ class Income extends Component
         ];
 
 
-        return view('livewire.dashboard.reporting.income', compact('technician', 'dataFeeTechnician', 'income', 'listYear', 'listMonth', 'totalFeeTeknisi', 'totalIncome'));
+        return view('livewire.dashboard.reporting.income', compact('technician', 'dataFeeTechnician', 'income', 'listYear', 'listMonth', 'totalFeeTeknisi', 'totalIncome', 'totalExpenditure', 'totalNetto'));
     }
 }

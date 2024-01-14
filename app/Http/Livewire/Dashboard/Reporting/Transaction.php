@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Dashboard\Reporting;
 
 use App\Http\Controllers\ProductController;
+use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
 use Carbon\Carbon;
@@ -163,5 +164,36 @@ class Transaction extends Component
     public function batal()
     {
         $this->isEdit = false;
+    }
+
+    public function onModalDelete($id)
+    {
+        $this->dispatchBrowserEvent('swal-delete', [
+            'title' => 'Are you sure?',
+            'text' => "You won't be able to revert this!",
+            'icon' => 'warning',
+            'id' => $id,
+            'confirmButtonText' => "Yes, delete it!",
+            'showCancelButton' => true,
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $transaction = ModelsTransaction::findOrFail($id);
+
+        if ($transaction->product_id !== null) {
+            $product = Product::findOrFail($transaction->product_id);
+            $product->stok = $product->stok + 1;
+            $product->save();
+        }
+
+        $transaction->delete();
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Success',
+            'text' => 'Successfully delete transaction',
+            'icon' => 'success'
+        ]);
     }
 }
