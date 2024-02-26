@@ -131,12 +131,22 @@ class Transaction extends Component
         $transaction->service = $this->service;
         $transaction->biaya = $validateData['biaya'];
         $transaction->payment_method = $this->payment_method;
-        $transaction->product_id = $validateData['product_id'] === '' ? null : $validateData['product_id'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
         $transaction->created_at = $order_date . ' ' . $time;
 
         $validateData['modal'] = 0;
 
+        if ($validateData['product_id'] != $transaction->product_id) {
+            $currentProduct = Product::findOrFail($transaction->product_id);
+            $currentProduct->stok = $currentProduct->stok + 1;
+            $currentProduct->save();
+
+            $newProduct = Product::findOrFail($validateData['product_id']);
+            $newProduct->stok = $newProduct->stok - 1;
+            $newProduct->save();
+
+            $transaction->product_id = $validateData['product_id'] === '' ? null : $validateData['product_id'];
+        }
 
         if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
             $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];

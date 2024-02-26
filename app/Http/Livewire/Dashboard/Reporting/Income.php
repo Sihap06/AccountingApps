@@ -48,8 +48,8 @@ class Income extends Component
             ->whereYear('created_at', $this->selectedYear)
             ->sum('untung');
 
-        $totalExpenditure = Expenditure::whereMonth('created_at', $this->selectedMonth)
-            ->whereYear('created_at', $this->selectedYear)
+        $totalExpenditure = Expenditure::whereMonth('tanggal', $this->selectedMonth)
+            ->whereYear('tanggal', $this->selectedYear)
             ->sum('total');
 
         $totalNetto = $totalIncome - $totalExpenditure;

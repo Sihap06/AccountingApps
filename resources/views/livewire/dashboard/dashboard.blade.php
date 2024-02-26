@@ -101,10 +101,32 @@
            <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
                <div
                    class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
-                   <div class="border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
+                   <div
+                       class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
                        <h6 class="capitalize dark:text-white">Transactions Chart</h6>
+                       <div class="flex gap-x-3 w-full md:w-3/12 items-center">
+                           <select wire:model="selectedYear"
+                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                               <option value="2023">2023</option>
+                               <option value="2024">2024</option>
+                           </select>
+
+                           <button wire:click='updateChart()'
+                               class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                               Update
+                           </button>
+                       </div>
                    </div>
-                   <div class="flex-auto p-4">
+                   <div class="flex text-center items-center justify-center">
+                       <div wire:loading wire:target='updateChart'>
+                           <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                               role="status">
+                               <span
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="flex-auto p-4" wire:loading.remove wire:target='updateChart'>
                        <div>
                            <canvas id="transaction-chart" height="400"></canvas>
                        </div>
@@ -159,17 +181,17 @@
        <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
 
        <script>
-           var data = @json($dataChart);
-           var label = @json($labelChart);
+           const data = @json($dataChart);
+           const label = @json($labelChart);
 
-           var ctx1 = document.getElementById("transaction-chart").getContext("2d");
+           const context = document.getElementById("transaction-chart").getContext("2d");
 
-           var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);
+           const gradient = context.createLinearGradient(0, 230, 0, 50);
 
-           gradientStroke1.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-           gradientStroke1.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-           gradientStroke1.addColorStop(0, 'rgba(94, 114, 228, 0)');
-           new Chart(ctx1, {
+           gradient.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+           gradient.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+           gradient.addColorStop(0, 'rgba(94, 114, 228, 0)');
+           new Chart(context, {
                type: "line",
                data: {
                    labels: label,
@@ -179,7 +201,7 @@
                        borderWidth: 0,
                        pointRadius: 0,
                        borderColor: "#5e72e4",
-                       backgroundColor: gradientStroke1,
+                       backgroundColor: gradient,
                        borderWidth: 3,
                        fill: true,
                        data: data,
@@ -242,6 +264,20 @@
                        },
                    },
                },
+           });
+       </script>
+
+       <script>
+           window.livewire.on('chartUpdate', (dataChart, labelChart) => {
+               const chart = Chart.getChart("transaction-chart");
+
+               chart.data.datasets.forEach((dataset, key) => {
+                   dataset.data = dataChart;
+               });
+
+               chart.data.labels = labelChart;
+
+               chart.update();
            });
        </script>
    @endpush

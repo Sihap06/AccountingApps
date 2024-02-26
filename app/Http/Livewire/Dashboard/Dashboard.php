@@ -10,29 +10,27 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $todayTransaction;
-    public $todayIncome;
-    public $todayExpenditure;
-
-    public $dataChart;
-    public $labelChart;
-
-    public $dataTransaction;
+    public $selectedYear;
 
     public function mount()
+    {
+        $this->selectedYear = Carbon::now()->format('Y');
+    }
+
+    public function render()
     {
         $now = Carbon::now()->format('Y-m-d');
         $transaction = Transaction::select(DB::raw("SUM(biaya) as biaya"), DB::raw("COUNT(id) as transaction"))
             ->whereDate('created_at', $now)->get();
 
-        $this->todayTransaction = $transaction[0]['transaction'];
-        $this->todayIncome = $transaction[0]['biaya'];
+        $todayTransaction = $transaction[0]['transaction'];
+        $todayIncome = $transaction[0]['biaya'];
 
         $expenditur = Expenditure::select(DB::raw("SUM(total) as total"))
             ->whereDate('created_at', $now)
             ->get();
 
-        $this->todayExpenditure = $expenditur[0]['total'];
+        $todayExpenditure = $expenditur[0]['total'];
 
         $transactionChart =
             DB::table('transactions as t1')
@@ -40,19 +38,36 @@ class Dashboard extends Component
             ->fromSub(function ($query) {
                 $query->from('transactions')
                     ->selectRaw("SUM(biaya) as total_fee, MONTHNAME(created_at) as month")
+                    ->whereYear('created_at', $this->selectedYear)
                     ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'));
             }, 't1')
             ->get();
 
-        $this->dataChart = explode(',', $transactionChart[0]->monthly_fees);
-        $this->labelChart = explode(',', $transactionChart[0]->month);
+        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
+        $labelChart = explode(',', $transactionChart[0]->month);
 
-        $this->dataTransaction = Transaction::take(6)->latest()->get();
+        $dataTransaction = Transaction::take(6)->latest()->get();
+
+        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction'))
+            ->layout('components.layouts.dashboard');
     }
 
-    public function render()
+    public function updateChart()
     {
-        return view('livewire.dashboard.dashboard')
-            ->layout('components.layouts.dashboard');
+        $transactionChart =
+            DB::table('transactions as t1')
+            ->selectRaw("GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees, GROUP_CONCAT(month SEPARATOR ', ') as month")
+            ->fromSub(function ($query) {
+                $query->from('transactions')
+                    ->selectRaw("SUM(biaya) as total_fee, MONTHNAME(created_at) as month")
+                    ->whereYear('created_at', $this->selectedYear)
+                    ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'));
+            }, 't1')
+            ->get();
+
+        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
+        $labelChart = explode(',', $transactionChart[0]->month);
+
+        $this->emit('chartUpdate', $dataChart, $labelChart);
     }
 }
