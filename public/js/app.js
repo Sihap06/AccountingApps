@@ -2172,6 +2172,8 @@ window.addEventListener('resetField', function (e) {
     if (notch) {
       notch.removeAttribute('data-te-input-state-active');
     }
+    var optionsList = document.querySelector('[data-te-select-option-ref]');
+    console.log(optionsList);
   });
 });
 window.addEventListener('appendField', function (e) {
@@ -2209,13 +2211,6 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('swal', function (e) {
   sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail);
-});
-window.addEventListener('swal:delete', function (e) {
-  sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire(e.detail).then(function (willDelete) {
-    if (willDelete) {
-      window.livewire.emitTo('delete', e.detail.id);
-    }
-  });
 });
 window.confirmMessage = function (id, formId) {
   sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({

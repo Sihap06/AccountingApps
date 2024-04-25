@@ -31,6 +31,13 @@
                             <span class="ml-1">Income & Fee</span>
                         </button>
                     </li>
+                    <li class="z-30 flex-auto text-center transition-all">
+                        <button
+                            class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'export' ? 'bg-primary text-white' : '' }}"
+                            nav-link wire:click="changeActiveTab('export')">
+                            <span class="ml-1">Export</span>
+                        </button>
+                    </li>
                 @endif
             </ul>
         </div>
@@ -57,6 +64,9 @@
         </div>
         <div class="{{ $tabActive === 'income' ? 'block' : 'hidden' }} w-full">
             @livewire('dashboard.reporting.income', key('income'))
+        </div>
+        <div class="{{ $tabActive === 'export' ? 'block' : 'hidden' }} w-full">
+            @livewire('dashboard.reporting.export', key('export'))
         </div>
     </div>
 
