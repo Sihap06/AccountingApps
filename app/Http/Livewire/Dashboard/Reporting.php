@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class Reporting extends Component
 {
-    public $tabActive = 'export';
+    public $tabActive = 'transaction';
 
     public function changeActiveTab($tab)
     {
