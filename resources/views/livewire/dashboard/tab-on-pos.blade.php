@@ -11,21 +11,21 @@
             <ul class="relative flex flex-wrap gap-x-3 p-1 list-none bg-transparent rounded-xl">
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'cashier' ? 'bg-primary text-white' : '' }}"
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'cashier' ? 'bg-primary text-white' : '' }}"
                         nav-link wire:click="changeActiveTab('cashier')">
                         <span class="ml-1">Cashier</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'process' ? 'bg-primary text-white' : '' }}"
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'process' ? 'bg-primary text-white' : '' }}"
                         nav-link wire:click="changeActiveTab('process')">
                         <span class="ml-1">Transaction Process</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'cancel' ? 'bg-danger text-white' : '' }}"
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'cancel' ? 'bg-danger text-white' : '' }}"
                         nav-link wire:click="changeActiveTab('cancel')">
                         <span class="ml-1">Transaction Cancel</span>
                     </button>
