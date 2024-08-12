@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Dashboard\Reporting;
 use App\Models\Expenditure;
 use App\Models\Technician;
 use App\Models\Transaction;
+use App\Models\TransactionItem;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -21,32 +22,98 @@ class Income extends Component
         $this->selectedMonth = Carbon::now()->format('m');
     }
 
-    public function render()
+    public function getIncome()
     {
-        $dataFeeTechnician = [];
-        $totalFeeTeknisi = 0;
-        if ($this->selectTechnician !== null) {
-            $queryTeknisi = Transaction::select('service', 'fee_teknisi', 'order_transaction', 'created_at')
-                ->where('technical_id', $this->selectTechnician)
+        $queryTransaction = Transaction::select('id', 'service', 'untung', 'created_at', 'order_transaction')
+            ->whereMonth('created_at', $this->selectedMonth)
+            ->whereYear('created_at', $this->selectedYear)
+            ->where('status', 'done');
+
+        $dataIncomeTransaction = $queryTransaction->get()->toArray();
+        $dataIncome = [...$dataIncomeTransaction];
+
+        foreach ($dataIncomeTransaction as $key => $value) {
+            $queryTransactionItem = TransactionItem::select('service', 'untung', 'created_at')
+                ->addSelect(DB::raw("'" . $value['order_transaction'] . "' as order_transaction"))
+                ->addSelect(DB::raw("'" . $value['id'] . "' as id"))
+                ->where('transaction_id', $value['id'])
                 ->whereMonth('created_at', $this->selectedMonth)
                 ->whereYear('created_at', $this->selectedYear);
 
-            $dataFeeTechnician = $queryTeknisi->get();
-            $totalFeeTeknisi = $queryTeknisi->sum('fee_teknisi');
+            $dataIncomeTransactionItem = $queryTransactionItem->get()->toArray();
+            $dataIncome = [...$dataIncome, ...$dataIncomeTransactionItem];
+        }
+
+        $collection = collect($dataIncome);
+        $income = $collection->groupBy(function ($item) {
+            return Carbon::parse($item['created_at'])->toDateString(); // Group by date part only
+        })->map(function ($group) {
+            return [
+                'tanggal' => $group->first()['created_at'],
+                'total' => $group->sum('untung')
+            ];
+        });
+
+        $totalIncome = $collection->sum('untung');
+
+        return [
+            'income' => $income,
+            'total_income' => $totalIncome,
+        ];
+    }
+
+    public function getTechnician()
+    {
+        $dataFeeTechnician = [];
+        $totalFeeTeknisi = 0;
+
+        if ($this->selectTechnician === '') {
+            $this->selectTechnician = null;
         }
 
 
+        if ($this->selectTechnician !== null) {
+            $queryTeknisiTransaction = Transaction::select('id', 'service', 'fee_teknisi', 'created_at', 'order_transaction')
+                ->whereMonth('created_at', $this->selectedMonth)
+                ->whereYear('created_at', $this->selectedYear)
+                ->where('status', 'done')
+                ->where('technical_id', $this->selectTechnician);
+
+            $dataFeeTechnicianTransaction = $queryTeknisiTransaction->get()->toArray();
+            $dataFeeTechnician = [...$dataFeeTechnicianTransaction];
+
+            foreach ($dataFeeTechnicianTransaction as $key => $value) {
+                $queryTeknisiTransactionItem = TransactionItem::select('service', 'fee_teknisi', 'created_at')
+                    ->addSelect(DB::raw("'" . $value['order_transaction'] . "' as order_transaction"))
+                    ->addSelect(DB::raw("'" . $value['id'] . "' as id"))
+                    ->where('transaction_id', $value['id'])
+                    ->where('technical_id', $this->selectTechnician)
+                    ->whereMonth('created_at', $this->selectedMonth)
+                    ->whereYear('created_at', $this->selectedYear);
+
+                $dataFeeTechnicianTransactionItem = $queryTeknisiTransactionItem->get()->toArray();
+                $dataFeeTechnician = [...$dataFeeTechnician, ...$dataFeeTechnicianTransactionItem];
+            }
+
+            $totalFeeTeknisi = array_sum(array_column($dataFeeTechnician, 'fee_teknisi'));
+        }
+
+        return [
+            'dataFeeTechnician' => $dataFeeTechnician,
+            'totalFeeTeknisi' => $totalFeeTeknisi,
+        ];
+    }
+
+    public function render()
+    {
+        $dataFeeTechnician = $this->getTechnician()['dataFeeTechnician'];
+        $totalFeeTeknisi = $this->getTechnician()['totalFeeTeknisi'];
+
         $technician = Technician::all();
 
-        $income = Transaction::select(DB::raw("SUM(untung) as total"), DB::raw('Date(created_at) as tanggal'))
-            ->whereMonth('created_at', $this->selectedMonth)
-            ->whereYear('created_at', $this->selectedYear)
-            ->groupBy(DB::raw('Date(created_at)'))
-            ->get();
+        $income = $this->getIncome()['income'];
 
-        $totalIncome = Transaction::whereMonth('created_at', $this->selectedMonth)
-            ->whereYear('created_at', $this->selectedYear)
-            ->sum('untung');
+        $totalIncome = $this->getIncome()['total_income'];
 
         $totalExpenditure = Expenditure::whereMonth('tanggal', $this->selectedMonth)
             ->whereYear('tanggal', $this->selectedYear)

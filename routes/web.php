@@ -3,12 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Livewire\Auth\Login;
+use App\Http\Livewire\Dashboard\Customers;
 use App\Http\Livewire\Dashboard\Dashboard;
 use App\Http\Livewire\Dashboard\Inventory;
 use App\Http\Livewire\Dashboard\Inventory\Create;
 use App\Http\Livewire\Dashboard\Inventory\Edit;
 use App\Http\Livewire\Dashboard\PointOfSales;
 use App\Http\Livewire\Dashboard\Reporting;
+use App\Http\Livewire\Dashboard\TabOnPos;
 use App\Http\Livewire\Dashboard\Teknisi;
 
 /*
@@ -29,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
-        Route::get('point-of-sales', PointOfSales::class)->name('point-of-sales');
+        Route::get('point-of-sales', TabOnPos::class)->name('point-of-sales');
         Route::get('reporting', Reporting::class)->name('reporting');
 
         Route::prefix('inventory')->name('inventory.')->group(function () {
@@ -43,6 +45,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', Teknisi::class)->name('index');
             Route::get('create', Create::class)->name('create');
             Route::get('edit/{id}', Edit::class)->name('edit');
+        });
+
+        Route::prefix('customers')->name('customers.')->group(function () {
+            Route::get('/', Customers::class)->name('index');
         });
     });
 });

@@ -10,23 +10,33 @@
                               <div class="p-6 pb-0 mb-0">
                                   <h4 class="font-bold">Sign In</h4>
                                   <p class="mb-0">Enter your email and password to sign in</p>
+
+                                  @if ($isError)
+                                      <div class="bg-red-400 rounded-md p-3 mt-4">
+                                          <p class="mb-0 text-neutral-800">Email atau password salah!</p>
+                                      </div>
+                                  @endif
                               </div>
                               <div class="flex-auto p-6">
-                                  <form role="form" method="POST" action="{{ url('login') }}">
-                                      @csrf
+                                  <form wire:submit.prevent='handleLogin'>
                                       <div class="mb-4">
-                                          <input type="email" placeholder="Email" name="email"
+                                          <input type="email" placeholder="Email" wire:model="email"
                                               class="focus:shadow-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                          @error('email')
+                                              <div class="text-red-500 text-sm">{{ $message }}</div>
+                                          @enderror
                                       </div>
                                       <div class="mb-4">
-                                          <input type="password" placeholder="Password" name="password"
+                                          <input type="password" placeholder="Password" wire:model="password"
                                               class="focus:shadow-primary-outline dark:bg-gray-950 dark:placeholder:text-white/80 dark:text-white/80 text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding p-3 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-fuchsia-300 focus:outline-none" />
+                                          @error('password')
+                                              <div class="text-red-500 text-sm">{{ $message }}</div>
+                                          @enderror
                                       </div>
 
                                       <div class="text-center">
-                                          <button type="submit"
-                                              class="inline-block w-full px-16 py-3.5 mt-6 mb-0 font-bold leading-normal text-center text-white align-middle transition-all bg-blue-500 border-0 rounded-lg cursor-pointer hover:-translate-y-px active:opacity-85 hover:shadow-xs text-sm ease-in tracking-tight-rem shadow-md bg-150 bg-x-25">Sign
-                                              in</button>
+                                          <x-ui.button type="submit" title="Sign In" color="primary" wireLoading
+                                              formAction="handleLogin" />
                                       </div>
                                   </form>
                               </div>

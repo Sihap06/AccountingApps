@@ -1,13 +1,17 @@
+
+window.Swal = require('sweetalert2')
+
+import { Select, initTE, Input, Ripple, LoadingManagement, Modal } from "tw-elements";
+
 require('./bootstrap');
 require('./sweetalert');
 require('./masked');
 require('./jquery')
 require('./chart')
+// require('./te-elements-init')
 
-window.Swal = require('sweetalert2')
+initTE({ Select, Input, Modal, Ripple, LoadingManagement });
 
-import { Select, initTE, Input, Ripple, LoadingManagement, Modal } from "tw-elements";
-initTE({ Select });
-initTE({ Input });
-initTE({ Modal, Ripple })
-initTE({ LoadingManagement })
+window.addEventListener('reInitTwElement', function () {
+  initTE({ Select, Input, Modal, Ripple, LoadingManagement });
+})

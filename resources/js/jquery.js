@@ -1,3 +1,5 @@
+import { Select, initTE } from "tw-elements";
+initTE({ Select });
 
 window.addEventListener('resetField', function (e) {
   const array = e.detail
@@ -41,18 +43,24 @@ window.addEventListener('resetField', function (e) {
 
 });
 
+window.addEventListener('setSelectedValue', function (e) {
+  const array = e.detail
+  Object.entries(array).forEach(([key, value]) => {
+    const singleSelect = document.querySelector("#" + key);
+    const singleSelectInstance = Select.getInstance(singleSelect);
+    singleSelectInstance.setValue(value);
+  });
+});
+
 window.addEventListener('appendField', function (e) {
   const array = e.detail
   array.forEach(element => {
-
     var selectElement = document.getElementById(element);
     selectElement.setAttribute('data-te-input-state-active', '')
 
     var notch = selectElement.closest('.relative').querySelector('[data-te-input-notch-ref]');
     notch.setAttribute('data-te-input-state-active', '')
-
   });
-
 });
 
 

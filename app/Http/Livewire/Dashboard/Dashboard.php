@@ -48,7 +48,41 @@ class Dashboard extends Component
 
         $dataTransaction = Transaction::take(6)->latest()->get();
 
-        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction'))
+        $subQuery = DB::table('transactions')
+            ->leftJoin('transaction_items', function ($join) {
+                $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                    ->whereNull('transaction_items.deleted_at'); // Only join valid transaction items
+            })
+            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->select(
+                'transactions.id',
+                'transactions.status',
+                DB::raw('CASE WHEN transactions.status = "done" THEN transactions.biaya ELSE 0 END as first_item_biaya_done'),
+                DB::raw('CASE WHEN transactions.status = "cancel" THEN transactions.biaya ELSE 0 END as first_item_biaya_cancel'),
+                DB::raw('SUM(CASE WHEN transactions.status = "done" THEN transaction_items.biaya ELSE 0 END) as sum_other_items_biaya_done'),
+                DB::raw('SUM(CASE WHEN transactions.status = "cancel" THEN transaction_items.biaya ELSE 0 END) as sum_other_items_biaya_cancel'),
+            )
+            ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->groupBy(
+                'transactions.id',
+                'transactions.status',
+                'transactions.biaya'
+            );
+
+        $transactionsMonthly = DB::table(DB::raw("({$subQuery->toSql()}) as sub"))
+            ->select(
+                DB::raw('SUM(sub.first_item_biaya_done) as total_first_item_biaya_done'),
+                DB::raw('SUM(sub.first_item_biaya_cancel) as total_first_item_biaya_cancel'),
+                DB::raw('SUM(sub.sum_other_items_biaya_done) as total_sum_other_items_biaya_done'),
+                DB::raw('SUM(sub.sum_other_items_biaya_cancel) as total_sum_other_items_biaya_cancel'),
+                DB::raw('SUM(CASE WHEN sub.status = "done" THEN 1 ELSE 0 END) as total_transaksi_done'),
+                DB::raw('SUM(CASE WHEN sub.status = "cancel" THEN 1 ELSE 0 END) as total_transaksi_cancel'),
+            )
+            ->mergeBindings($subQuery)
+            ->get();
+
+
+        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction', 'transactionsMonthly'))
             ->layout('components.layouts.dashboard');
     }
 

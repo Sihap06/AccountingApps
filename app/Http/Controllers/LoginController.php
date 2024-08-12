@@ -13,12 +13,22 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
+
         $credentials = $request->only('email', 'password');
+
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('/dashboard');
+            return response()->json([
+                'status' => 'success',
+                'message' => 'successfully login'
+            ], 201);
         }
-        return redirect()->back()->withErrors(['error' => 'Email atau password salah!']);
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Email atau password salah!'
+        ], 400);
     }
+
     public function logout()
     {
         Auth::logout();

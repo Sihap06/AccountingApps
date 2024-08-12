@@ -36,19 +36,19 @@
             <div class="p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Income</h6>
-                    <div class="w-3/12 text-slate-900 font-bold text-right">
+                    <div class="text-slate-900 font-bold text-right">
                         <span>Rp {{ number_format($totalIncome) }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Expenditure</h6>
-                    <div class="w-3/12 text-slate-900 font-bold text-right">
+                    <div class="text-slate-900 font-bold text-right">
                         <span>Rp {{ number_format($totalExpenditure) }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Netto</h6>
-                    <div class="w-3/12 text-slate-900 font-bold text-right">
+                    <div class="text-slate-900 font-bold text-right">
                         <span>Rp {{ number_format($totalNetto) }}</span>
                     </div>
                 </div>
@@ -78,14 +78,14 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}
+                                            {{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y') }}
                                         </span>
                                     </td>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp {{ number_format($item->total) }}
+                                            Rp {{ number_format($item['total']) }}
                                         </span>
                                     </td>
                                 </tr>
@@ -129,15 +129,11 @@
                         <thead class="align-bottom">
                             <tr>
                                 <th
-                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Tanggal
                                 </th>
                                 <th
-                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    ID Transaksi
-                                </th>
-                                <th
-                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Service
                                 </th>
                                 <th
@@ -151,31 +147,24 @@
                                 <tr wire:key='fee-{{ $index }}' wire:loading.remove
                                     wire:target='selectedMonth, selectedYear, selectTechnician'>
                                     <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ $item->order_transaction }}
+                                            {{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y') }}
                                         </span>
                                     </td>
                                     <td
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ $item->service }}
+                                            {{ $item['service'] }}
                                         </span>
                                     </td>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp {{ number_format($item->fee_teknisi) }}
+                                            Rp {{ number_format($item['fee_teknisi']) }}
                                         </span>
                                     </td>
                                 </tr>
@@ -184,10 +173,6 @@
                             @for ($i = 0; $i <= 5; $i++)
                                 <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
                                     wire:target='selectedMonth, selectedYear, selectTechnician'>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
-                                    </td>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />

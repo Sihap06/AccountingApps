@@ -6,7 +6,9 @@ use App\Http\Controllers\ProductController;
 use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
+use App\Models\TransactionItem;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class Transaction extends Component
@@ -31,6 +33,13 @@ class Transaction extends Component
     public $selectedPaymentMethod = '';
 
     public $totalBiaya = 0;
+
+    protected $listeners = ['updateIsEdit' => 'handleUpdateIsEdit'];
+
+    public function handleUpdateIsEdit($isEdit)
+    {
+        $this->isEdit = $isEdit;
+    }
 
 
     protected $rules = [
@@ -57,24 +66,53 @@ class Transaction extends Component
 
     public function render()
     {
-        $data = ModelsTransaction::whereDate('created_at', $this->selectedDate)
-            ->where(function ($sub_query) {
-                $sub_query->where('order_transaction', 'like', '%' . $this->searchTerm . '%');
-            });
+        $data = ModelsTransaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->select(
+                'transactions.created_at',
+                'customers.name as customer_name',
+                'transactions.id',
+                'transactions.order_transaction',
+                DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
+                DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Modal untuk item lainnya dari transaction_items
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
+                'transactions.payment_method',
+            )
+            ->whereDate('transactions.created_at', $this->selectedDate)
+            ->where('transactions.status', 'done')
+            ->whereNull('transactions.deleted_at')
+            ->groupBy(
+                'transactions.created_at',
+                'customers.name',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method'
+            );
 
+        // Menambahkan filter untuk payment_method jika ada
         if ($this->selectedPaymentMethod !== '') {
-            $data->where('payment_method', $this->selectedPaymentMethod);
+            $data->where('transactions.payment_method', $this->selectedPaymentMethod);
         }
 
+        // Menambahkan filter untuk searchTerm jika ada
         if ($this->searchTerm !== '') {
-            $data = ModelsTransaction::where(function ($sub_query) {
-                $sub_query->where('order_transaction', 'like', '%' . $this->searchTerm . '%');
-            })->get();
-        } else {
-            $data = $data->get();
+            $data->where(function ($sub_query) {
+                $sub_query->where('transactions.order_transaction', 'like', '%' . $this->searchTerm . '%')
+                    ->orWhere('customers.name', 'like', '%' . $this->searchTerm . '%');
+            });
         }
 
-        $this->totalBiaya = $data->sum('biaya');
+        // Mengambil hasil query
+        $data = $data->get();
+
+        $this->totalBiaya = $data->sum('total_biaya');
 
 
         return view('livewire.dashboard.reporting.transaction', compact('data'));
@@ -82,20 +120,10 @@ class Transaction extends Component
 
     public function edit($id)
     {
-        $transaction = ModelsTransaction::findOrFail($id);
-
         $this->selectedId = $id;
-        $this->order_transaction = $transaction->order_transaction;
-        $this->service = $transaction->service;
-        $this->biaya = $transaction->biaya;
-        $this->product_id = $transaction->product_id;
-        $this->technical_id = $transaction->technical_id;
-        $this->payment_method = $transaction->payment_method;
-        $this->order_date = Carbon::parse($transaction->created_at)->format('Y-m-d');
-
         $this->isEdit = true;
 
-        $this->dispatchBrowserEvent('appendField', ['order_transaction', 'teknisi', 'service', 'biaya', 'sparepart', 'metode_pembayaran']);
+        $this->dispatchBrowserEvent('reInitTwElement');
     }
 
     private function getPerhitungan($technical_id, $biaya, $modal)
@@ -176,18 +204,6 @@ class Transaction extends Component
         $this->isEdit = false;
     }
 
-    public function onModalDelete($id)
-    {
-        $this->dispatchBrowserEvent('swal-delete', [
-            'title' => 'Are you sure?',
-            'text' => "You won't be able to revert this!",
-            'icon' => 'warning',
-            'id' => $id,
-            'confirmButtonText' => "Yes, delete it!",
-            'showCancelButton' => true,
-        ]);
-    }
-
     public function delete($id)
     {
         $transaction = ModelsTransaction::findOrFail($id);
@@ -197,6 +213,18 @@ class Transaction extends Component
             $product->stok = $product->stok + 1;
             $product->save();
         }
+
+        $transactionItems = TransactionItem::where('transaction_id', $id)->get();
+        foreach ($transactionItems as $item) {
+            if ($item->product_id !== null) {
+                $product_item = Product::findOrFail($item->product_id);
+                $product_item->stok = $product_item->stok + 1;
+                $product_item->save();
+            }
+
+            $item->delete();
+        }
+
 
         $transaction->delete();
 
