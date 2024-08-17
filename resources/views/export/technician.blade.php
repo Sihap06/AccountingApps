@@ -11,13 +11,13 @@
          @endphp
          @foreach ($data as $item)
              @php
-                 $total = $total + $item->fee_teknisi;
+                 $total = $total + $item['fee_teknisi'];
              @endphp
              <tr>
-                 <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
-                 <td>{{ $item->name }}</td>
-                 <td>{{ $item->service }}</td>
-                 <td>{{ $item->fee_teknisi }}</td>
+                 <td>{{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y') }}</td>
+                 <td>{{ $item['name'] }}</td>
+                 <td>{{ $item['service'] }}</td>
+                 <td>{{ $item['fee_teknisi'] }}</td>
              </tr>
          @endforeach
 

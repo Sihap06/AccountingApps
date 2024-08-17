@@ -3,7 +3,9 @@
 namespace App\Exports;
 
 use App\Models\Transaction;
+use App\Models\TransactionItem;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -21,13 +23,37 @@ class TransactionReport implements FromView, ShouldAutoSize, WithColumnFormattin
         $this->year = $year;
     }
 
+    function compareByCreatedAt($a, $b)
+    {
+        return strtotime($a['created_at']) - strtotime($b['created_at']);
+    }
+
     public function view(): View
     {
-        $data = Transaction::leftJoin('technicians', 'technicians.id', '=', 'transactions.technical_id')
-            ->select('transactions.created_at', 'technicians.kode', 'transactions.service', 'transactions.biaya', 'transactions.modal', 'transactions.untung')
+        $data = [];
+        $queryDataTransaction = Transaction::leftJoin('technicians', 'technicians.id', '=', 'transactions.technical_id')
+            ->select('transactions.created_at', 'technicians.kode', 'transactions.service', 'transactions.biaya', 'transactions.modal', 'transactions.untung', 'transactions.status', 'transactions.id')
             ->whereMonth('transactions.created_at', $this->month)
             ->whereYear('transactions.created_at', $this->year)
-            ->get();
+            ->whereNull('transactions.deleted_at')
+            ->where('status', 'done');
+
+        $dataTransaction = $queryDataTransaction->get()->toArray();
+        $data = [...$dataTransaction];
+
+        foreach ($dataTransaction as $key => $value) {
+            $queryDataTransactionItem = TransactionItem::leftJoin('technicians', 'technicians.id', '=', 'transaction_items.technical_id')
+                ->select('transaction_items.created_at', 'technicians.kode', 'transaction_items.service', 'transaction_items.biaya', 'transaction_items.modal', 'transaction_items.untung')
+                ->whereNull('transaction_items.deleted_at')
+                ->where('transaction_id', $value['id']);
+
+            $dataTransactionItemDone = $queryDataTransactionItem->get()->toArray();
+            $data = [...$data, ...$dataTransactionItemDone];
+        }
+
+        usort($data, function ($a, $b) {
+            return strtotime($a['created_at']) - strtotime($b['created_at']);
+        });
 
         return view('export.transaction', [
             'data' => $data

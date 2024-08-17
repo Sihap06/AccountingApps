@@ -2,18 +2,20 @@
 
 namespace App\Exports;
 
+use App\Models\Expenditure;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class IncomeReport implements FromView, ShouldAutoSize, WithColumnFormatting, WithTitle
+class NettoExport implements FromView, ShouldAutoSize, WithColumnFormatting, WithTitle
 {
     private $month;
     private $year;
@@ -47,17 +49,17 @@ class IncomeReport implements FromView, ShouldAutoSize, WithColumnFormatting, Wi
         }
 
         $collection = collect($dataIncome);
-        $data = $collection->groupBy(function ($item) {
-            return Carbon::parse($item['created_at'])->toDateString(); // Group by date part only
-        })->map(function ($group) {
-            return [
-                'tanggal' => $group->first()['created_at'],
-                'total' => $group->sum('untung')
-            ];
-        });
+        $income = $collection->sum('untung');
 
-        return view('export.income', [
-            'data' => $data
+        $expend = Expenditure::whereMonth('created_at', $this->month)
+            ->whereYear('created_at', $this->year)
+            ->sum('total');
+        $netto = $income - $expend;
+
+        return view('export.netto', [
+            'income' => $income,
+            'expend' => $expend,
+            'netto' => $netto,
         ]);
     }
 
@@ -70,6 +72,6 @@ class IncomeReport implements FromView, ShouldAutoSize, WithColumnFormatting, Wi
 
     public function title(): string
     {
-        return 'Income';
+        return 'Netto';
     }
 }

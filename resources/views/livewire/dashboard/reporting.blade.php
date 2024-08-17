@@ -1,6 +1,6 @@
 <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen max-h-screen">
     <div
-        class="flex items-center justify-between bg-white rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
+        class="flex items-center justify-between rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
             <h5 class="mb-1 font-serif">Reporting</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">

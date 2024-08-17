@@ -62,6 +62,16 @@ class Income extends Component
         ];
     }
 
+    protected function filterByColumnValue(array $data)
+    {
+        $filtered = array_filter($data, function ($item) {
+            return $item['technical_id'] === (int)$this->selectTechnician;
+        });
+
+        // Reindex the array to remove any gaps in keys
+        return array_values($filtered);
+    }
+
     public function getTechnician()
     {
         $dataFeeTechnician = [];
@@ -71,16 +81,15 @@ class Income extends Component
             $this->selectTechnician = null;
         }
 
-
         if ($this->selectTechnician !== null) {
-            $queryTeknisiTransaction = Transaction::select('id', 'service', 'fee_teknisi', 'created_at', 'order_transaction')
+            $queryTeknisiTransaction = Transaction::select('id', 'service', 'fee_teknisi', 'created_at', 'order_transaction', 'technical_id')
                 ->whereMonth('created_at', $this->selectedMonth)
                 ->whereYear('created_at', $this->selectedYear)
-                ->where('status', 'done')
-                ->where('technical_id', $this->selectTechnician);
+                ->where('status', 'done');
 
             $dataFeeTechnicianTransaction = $queryTeknisiTransaction->get()->toArray();
-            $dataFeeTechnician = [...$dataFeeTechnicianTransaction];
+            $dataFeeSelectedTechnicain = $this->filterByColumnValue($dataFeeTechnicianTransaction, 'technical_id', $this->selectTechnician);
+            $dataFeeTechnician = [...$dataFeeSelectedTechnicain];
 
             foreach ($dataFeeTechnicianTransaction as $key => $value) {
                 $queryTeknisiTransactionItem = TransactionItem::select('service', 'fee_teknisi', 'created_at')

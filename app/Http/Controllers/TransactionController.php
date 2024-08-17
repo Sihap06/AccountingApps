@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use Illuminate\Http\Request;
@@ -166,8 +167,11 @@ class TransactionController extends Controller
     private function getPerhitungan($technical_id, $biaya, $modal)
     {
         if ($technical_id != null) {
-            $countModal = $biaya * 40 / 100;
-            $countUntung = $biaya * 60 / 100;
+            $tecnician = Technician::findOrFail($technical_id);
+            $percentModal = $tecnician->percent_fee;
+            $percentUntung = 100 - $percentModal;
+            $countModal = $biaya * $percentModal / 100;
+            $countUntung = $biaya * $percentUntung / 100;
             return [
                 'fee_teknisi' => $countModal,
                 'modal' => $countModal,

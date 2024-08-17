@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class Export extends Component
 {
     public  $year, $month;
-    public $selectItems = ['transaction', 'expenditure', 'income', 'technician'];
+    public $selectItems = ['transaction', 'expenditure', 'income', 'technician', 'netto'];
 
     protected $rules = [
         'month' => 'required',

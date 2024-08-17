@@ -14,8 +14,8 @@
          @endphp
          @foreach ($data as $index => $item)
              @php
-                 $date = \Carbon\Carbon::parse($item->created_at)->format('d/m/Y');
-                 $tempTotal = $tempTotal + $item->untung;
+                 $date = \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y');
+                 $tempTotal = $tempTotal + $item['untung'];
              @endphp
 
              <tr>
@@ -24,11 +24,11 @@
                          {{ $date }}
                      @endif
                  </td>
-                 <td>{{ $item->kode }}</td>
-                 <td>{{ $item->service }}</td>
-                 <td>{{ $item->biaya }}</td>
-                 <td>{{ $item->modal }}</td>
-                 <td>{{ $item->untung }}</td>
+                 <td>{{ $item['kode'] }}</td>
+                 <td>{{ $item['service'] }}</td>
+                 <td>{{ $item['biaya'] }}</td>
+                 <td>{{ $item['modal'] }}</td>
+                 <td>{{ $item['untung'] }}</td>
              </tr>
              @php
                  $tempDate = $date;

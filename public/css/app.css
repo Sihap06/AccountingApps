@@ -2378,6 +2378,11 @@ h6 {
   --tw-gradient-to: rgb(94 114 228 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
+.from-cyan-600 {
+  --tw-gradient-from: #0891b2 var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(8 145 178 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
 .from-emerald-500 {
   --tw-gradient-from: #2dce89 var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(45 206 137 / 0) var(--tw-gradient-to-position);
@@ -2404,6 +2409,9 @@ h6 {
 }
 .to-orange-600 {
   --tw-gradient-to: #f56036 var(--tw-gradient-to-position);
+}
+.to-sky-600 {
+  --tw-gradient-to: #3ea1ec var(--tw-gradient-to-position);
 }
 .to-teal-400 {
   --tw-gradient-to: #2dcecc var(--tw-gradient-to-position);
@@ -4903,10 +4911,6 @@ h6 {
     height: 100vh;
   }
 
-  .sm\:w-1\/2 {
-    width: 50%;
-  }
-
   .sm\:w-10 {
     width: 2.5rem;
   }
@@ -5162,10 +5166,6 @@ h6 {
 
   .xl\:w-4\/12 {
     width: 33.333333%;
-  }
-
-  .xl\:w-6\/12 {
-    width: 50%;
   }
 
   .xl\:p-2 {

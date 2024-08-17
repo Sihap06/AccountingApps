@@ -57,12 +57,9 @@ class Dashboard extends Component
             ->select(
                 'transactions.id',
                 'transactions.status',
-                DB::raw('CASE WHEN transactions.status = "done" THEN transactions.biaya ELSE 0 END as first_item_biaya_done'),
-                DB::raw('CASE WHEN transactions.status = "cancel" THEN transactions.biaya ELSE 0 END as first_item_biaya_cancel'),
-                DB::raw('SUM(CASE WHEN transactions.status = "done" THEN transaction_items.biaya ELSE 0 END) as sum_other_items_biaya_done'),
-                DB::raw('SUM(CASE WHEN transactions.status = "cancel" THEN transaction_items.biaya ELSE 0 END) as sum_other_items_biaya_cancel'),
             )
             ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereNull('transactions.deleted_at')
             ->groupBy(
                 'transactions.id',
                 'transactions.status',
@@ -71,12 +68,9 @@ class Dashboard extends Component
 
         $transactionsMonthly = DB::table(DB::raw("({$subQuery->toSql()}) as sub"))
             ->select(
-                DB::raw('SUM(sub.first_item_biaya_done) as total_first_item_biaya_done'),
-                DB::raw('SUM(sub.first_item_biaya_cancel) as total_first_item_biaya_cancel'),
-                DB::raw('SUM(sub.sum_other_items_biaya_done) as total_sum_other_items_biaya_done'),
-                DB::raw('SUM(sub.sum_other_items_biaya_cancel) as total_sum_other_items_biaya_cancel'),
                 DB::raw('SUM(CASE WHEN sub.status = "done" THEN 1 ELSE 0 END) as total_transaksi_done'),
                 DB::raw('SUM(CASE WHEN sub.status = "cancel" THEN 1 ELSE 0 END) as total_transaksi_cancel'),
+                DB::raw('SUM(CASE WHEN sub.status = "proses" THEN 1 ELSE 0 END) as total_transaksi_proses'),
             )
             ->mergeBindings($subQuery)
             ->get();

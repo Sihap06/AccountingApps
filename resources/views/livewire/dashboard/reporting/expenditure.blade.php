@@ -1,6 +1,6 @@
 <div
-    class="flex w-full gap-x-4 h-full min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl">
-    <div class="relative flex flex-col  bg-clip-border transition-all {{ $isAdd || $isEdit ? 'w-8/12' : 'w-full' }}">
+    class="flex w-full gap-x-4 h-full min-w-0 break-words border-0 border-transparent border-solid shadow-xl  dark:shadow-dark-xl rounded-2xl">
+    <div class="relative flex flex-col bg-white  {{ $isAdd || $isEdit ? 'w-8/12' : 'w-full' }}">
         <div class="flex flex-col md:flex-row justify-between p-6 pb-0">
             <h6 class="dark:text-white">Expenditure Table</h6>
             <div class="w-3/12 text-slate-900 font-bold text-right">
@@ -139,7 +139,7 @@
     </div>
     @if ($isAdd || $isEdit)
         <div
-            class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full w-4/12 transition-all">
+            class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl h-full w-4/12 transition-all">
             <div
                 class="flex justify-between p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <h6 class="dark:text-white">{{ $isAdd ? 'Add' : 'Edit' }} Expenditure</h6>

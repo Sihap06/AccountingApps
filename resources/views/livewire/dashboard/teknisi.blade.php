@@ -53,6 +53,9 @@
                                         Kode</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Persentase</th>
+                                    <th
+                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
                                 </tr>
                             </thead>
@@ -78,6 +81,13 @@
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                 {{ $item->kode }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item->percent_fee !== null ? $item->percent_fee . '%' : '-' }}
                                             </span>
                                         </td>
                                         <td
@@ -145,6 +155,13 @@
                             <div class="relative mb-8">
                                 <x-ui.input-default wire:model="kode" label="Kode" />
                                 @error('kode')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+
+                            </div>
+                            <div class="relative mb-8">
+                                <x-ui.input-default wire:model="percent_fee" label="Persentase" />
+                                @error('percent_fee')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
 

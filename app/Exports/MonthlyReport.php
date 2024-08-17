@@ -33,6 +33,8 @@ class MonthlyReport implements WithMultipleSheets
                 $sheets[] = new IncomeReport($this->month, $this->year);
             } elseif ($value === 'technician') {
                 $sheets[] = new TechnicianReport($this->month, $this->year);
+            } elseif ($value === 'netto') {
+                $sheets[] = new NettoExport($this->month, $this->year);
             }
         }
 

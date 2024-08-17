@@ -9,11 +9,11 @@
          @endphp
          @foreach ($data as $item)
              @php
-                 $total = $total + $item->total;
+                 $total = $total + $item['total'];
              @endphp
              <tr>
-                 <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                 <td>{{ $item->total }}</td>
+                 <td>{{ \Carbon\Carbon::parse($item['tanggal'])->format('d/m/Y') }}</td>
+                 <td>{{ $item['total'] }}</td>
              </tr>
          @endforeach
          <tr>

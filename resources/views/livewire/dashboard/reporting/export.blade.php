@@ -42,6 +42,15 @@
                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Technician</label>
                     </div>
                 </div>
+                <div class="w-full md:w-4/12">
+                    <div class="flex items-center">
+                        <input wire:model.defer='selectItems' id="netto" type="checkbox" value="netto"
+                            @if (in_array('netto', $selectItems)) checked @endif
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="netto"
+                            class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Netto</label>
+                    </div>
+                </div>
             </div>
             @if ($errors->has('selectItems'))
                 <span class="text-red-500 text-xs">{{ $errors->first('selectItems') }}</span>

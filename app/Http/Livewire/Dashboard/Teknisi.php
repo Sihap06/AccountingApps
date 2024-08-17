@@ -16,11 +16,20 @@ class Teknisi extends Component
     public $isEdit = false;
     public $name;
     public $kode;
+    public $percent_fee;
     public $currentId;
 
     protected $rules = [
         'name' => 'required',
         'kode' => 'required',
+        'percent_fee' => 'required|numeric'
+    ];
+
+    protected $messages =  [
+        'name.required' => 'Nama teknisi tidak boleh kosong',
+        'kode.required' => 'Kode teknisi tidak boleh kosong',
+        'percent_fee.required' => 'Persentase fee tidak boleh kosong',
+        'percent_fee.numeric' => 'Persentase fee harus berupa angka'
     ];
 
     public function setShowAdd()
@@ -53,6 +62,7 @@ class Teknisi extends Component
         $data = Technician::findOrFail($id);
         $this->name = $data->name;
         $this->kode = $data->kode;
+        $this->percent_fee = $data->percent_fee;
 
         $this->currentId = $id;
 
