@@ -16,7 +16,14 @@
                    <div
                        class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                        <button wire:click='create'
-                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px">
+                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center">
+                           <div wire:loading wire:target='create'>
+                               <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                   role="status">
+                                   <span
+                                       class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                               </div>
+                           </div>
                            New Customer
                        </button>
                        <div class="flex w-full md:w-4/12 items-center gap-x-3">
@@ -144,7 +151,7 @@
                                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                <span
                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                   {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
+                                                   {{ $index + 1 }}
                                                </span>
                                            </td>
                                            <td
@@ -240,9 +247,6 @@
                                    @endfor
                                </tbody>
                            </table>
-                           <div class="px-6 py-3">
-                               {{ $data->links() }}
-                           </div>
                        </div>
                    </div>
                </div>

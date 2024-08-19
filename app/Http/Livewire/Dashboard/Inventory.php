@@ -155,7 +155,7 @@ class Inventory extends Component
                 ->orWhere('kode', 'like', '%' . $this->searchTerm . '%');
         })
             ->orderby('name', 'ASC')
-            ->paginate(10);
+            ->get();
         return view('livewire.dashboard.inventory', compact('data'))
             ->layout('components.layouts.dashboard');
     }

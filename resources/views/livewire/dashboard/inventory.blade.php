@@ -1,7 +1,7 @@
 <div class="flex flex-wrap -mx-3 custom-height">
     <div class="flex-none w-full max-w-full px-3 h-full">
         <div
-            class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
+            class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
             <div
                 class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <button wire:click='openModal' type="button"
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <div class="flex-auto px-0 pt-0 mt-4 pb-4 overflow-auto h-full">
+            <div class="flex-auto px-0 pt-0 mt-4 overflow-auto h-full">
                 <div class="p-0">
                     <table
                         class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
@@ -56,7 +56,7 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
+                                            {{ $index + 1 }}
                                         </span>
                                     </td>
                                     <td
@@ -156,9 +156,6 @@
                             @endfor
                         </tbody>
                     </table>
-                    <div class="px-6 py-3">
-                        {{ $data->links() }}
-                    </div>
                 </div>
             </div>
         </div>

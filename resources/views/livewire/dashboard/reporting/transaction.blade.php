@@ -153,6 +153,20 @@
                                                     </div>
                                                 </button>
                                             @endif
+
+                                            <button type="button"
+                                                wire:click="$emit('triggerComplaint',{{ $item->id }})"
+                                                class="px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md flex gap-x-2 items-center">
+                                                <div wire:loading wire:target='complaint("{{ $item->id }}")'>
+                                                    <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                        role="status">
+                                                        <span
+                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                    </div>
+                                                </div>
+                                                <span>Complaint</span>
+
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -215,6 +229,19 @@
 @push('script')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+
+            @this.on('triggerComplaint', id => {
+                Swal.fire({
+                    title: 'Confirm Complaint This Transaction?',
+                    html: "",
+                    icon: 'warning',
+                    showCancelButton: true,
+                }).then((result) => {
+                    if (result.value) {
+                        @this.call('complaint', id)
+                    }
+                });
+            });
 
             @this.on('triggerDelete', id => {
                 Swal.fire({

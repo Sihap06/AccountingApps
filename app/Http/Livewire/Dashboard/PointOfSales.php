@@ -119,6 +119,18 @@ class PointOfSales extends Component
         $this->dispatchBrowserEvent('setSelectedValue', ['teknisi' => '', 'sparepart' => '']);
     }
 
+    public function resetAll()
+    {
+        $this->biaya = '';
+        $this->service = '';
+        $this->product_id = '';
+        $this->technical_id = '';
+        $this->customer_id = null;
+        $this->serviceItems = [];
+
+        $this->dispatchBrowserEvent('setSelectedValue', ['teknisi' => '', 'sparepart' => '', 'customer_id' => '']);
+    }
+
     public function findProductById($id)
     {
         $product = Product::find($id);
@@ -197,8 +209,9 @@ class PointOfSales extends Component
             'icon' => $status
         ]);
 
-        $this->resetValue();
+        $this->resetAll();
+        $this->order_transaction = Transaction::generateOrderId();
 
-        return redirect()->route('dashboard.point-of-sales');
+        // return redirect()->route('dashboard.point-of-sales');
     }
 }

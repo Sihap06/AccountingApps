@@ -58,6 +58,14 @@ class Customers extends Component
     {
         $this->validate();
 
+        $checkIfExistCustomer = Customer::where('no_telp', $this->no_telp)->first();
+        if ($checkIfExistCustomer) {
+            return $this->dispatchBrowserEvent('swal', [
+                'title' => 'customer has registered',
+                'icon' => 'error'
+            ]);
+        }
+
         Customer::create([
             'name' => $this->name,
             'no_telp' => $this->no_telp,
@@ -112,7 +120,7 @@ class Customers extends Component
                 ->orWhere('no_telp', 'like', '%' . $this->searchTerm . '%');
         })
             ->orderby('name', 'ASC')
-            ->paginate(10);
+            ->get();
         return view('livewire.dashboard.customers', compact('data'))
             ->layout('components.layouts.dashboard');
     }

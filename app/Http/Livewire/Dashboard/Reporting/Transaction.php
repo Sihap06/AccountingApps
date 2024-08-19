@@ -234,4 +234,18 @@ class Transaction extends Component
             'icon' => 'success'
         ]);
     }
+
+    public function complaint($id)
+    {
+        $data = ModelsTransaction::findOrFail($id);
+        $data->status = 'proses';
+        $data->payment_method = null;
+        $data->save();
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Success',
+            'text' => 'Successfully complaint transaction',
+            'icon' => 'success'
+        ]);
+    }
 }

@@ -18,5 +18,13 @@
                 class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
         </div>
     @endif
-    {{ $title }}
+    @if ($color === 'white')
+        <span class="text-neutral-900 font-medium">
+            {{ $title }}
+        </span>
+    @else
+        <span class="text-neutral-50 font-medium">
+            {{ $title }}
+        </span>
+    @endif
 </button>

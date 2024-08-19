@@ -72,7 +72,7 @@ class TransactionProcess extends Component
         $results = $transactions->map(function ($items, $transactionId) {
             $transaction = $items->first();
 
-            $total = 0;
+            $total = $transaction->transaction_biaya;
 
             return [
                 'id' => $transaction->transaction_id,
@@ -90,9 +90,7 @@ class TransactionProcess extends Component
                 'untung' => $transaction->transaction_untung,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
-                    if ($index === 0) {
-                        $total += $item->transaction_biaya + $item->item_biaya;
-                    } else {
+                    if ($index > 0) {
                         $total += $item->item_biaya;
                     }
 
@@ -171,7 +169,13 @@ class TransactionProcess extends Component
             })->paginate(10);
 
         $paymentMethods = [
-            'bca', 'mandiri', 'transfer', 'debit', 'qris', 'cash'
+            'bca',
+            'mandiri',
+            'transfer',
+            'debit',
+            'qris',
+            'cash',
+            'kartu kredit'
         ];
 
         return view('livewire.dashboard.transaction-process', compact('data', 'paymentMethods'))->layout('components.layouts.dashboard');
