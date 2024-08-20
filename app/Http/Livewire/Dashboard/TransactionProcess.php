@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -129,6 +130,7 @@ class TransactionProcess extends Component
         $data = Transaction::findOrFail($this->transaction_id);
         $data->status = 'done';
         $data->payment_method = $this->payment_method;
+        $data->created_at = Carbon::now();
         $data->save();
 
         $this->closeModal();
@@ -138,8 +140,6 @@ class TransactionProcess extends Component
             'text' => '',
             'icon' => 'success'
         ]);
-
-        return redirect()->route('dashboard.point-of-sales');
     }
 
     public function handleCancelTransaction($id)
@@ -154,8 +154,6 @@ class TransactionProcess extends Component
             'text' => '',
             'icon' => 'danger'
         ]);
-
-        return redirect()->route('dashboard.point-of-sales');
     }
 
     public function render()

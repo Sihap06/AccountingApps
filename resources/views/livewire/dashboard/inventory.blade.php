@@ -199,7 +199,7 @@
                                         @enderror
                                     </div>
                                     <div class="relative mb-8">
-                                        <x-ui.input-default wire:model="stok" id="stok" label="Stock"
+                                        <x-ui.input-default disabled wire:model="stok" id="stok" label="Stock"
                                             x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
@@ -211,23 +211,6 @@
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
-
-                                    @if ($action === 'edit')
-                                        <div class="relative mb-8">
-                                            <x-ui.input-default wire:model="add_stok" id="add_stok"
-                                                label="Add Stock" x-data="{
-                                                    formatNumber: function(event) {
-                                                        const input = event.target;
-                                                        const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-                                                        input.value = new Intl.NumberFormat('en-US').format(value);
-                                                    }
-                                                }"
-                                                x-on:input="formatNumber($event)" />
-                                            @error('add_stok')
-                                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    @endif
 
                                     <div class="flex gap-x-2">
                                         <button type="button" wire:click='closeModal'

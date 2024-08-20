@@ -19,7 +19,6 @@ class Inventory extends Component
     public $name;
     public $harga;
     public $stok;
-    public $add_stok;
     public $productId;
 
     public $action = 'add';
@@ -27,8 +26,7 @@ class Inventory extends Component
     protected $rules = [
         'name' => 'required',
         'harga' => 'required',
-        'stok' => 'required',
-        'add_stok' => ''
+        'stok' => 'required'
     ];
 
     protected $messages = [
@@ -108,36 +106,38 @@ class Inventory extends Component
         $currencyString = preg_replace("/[^0-9]/", "", $this->harga);
 
         $validateData["harga"] = (int)$currencyString;
-        $validateData["stok"] = (int)$this->stok + (int)$this->add_stok;
+        $validateData["stok"] = (int)$this->stok;
 
         $product = Product::findOrFail($this->productId);
 
-        $log = new LogActivityProduct();
-        $log->user = Auth::user()->name;
-        $log->activity = 'update';
-        $log->product = $product->name;
+        if ($this->name !== $product->name || $this->harga !== $product->harga || $this->stok !== $product->stok) {
+            $log = new LogActivityProduct();
+            $log->user = Auth::user()->name;
+            $log->activity = 'update';
+            $log->product = $product->name;
 
-        if ($product->name !== $this->name) {
-            $log->new_name = $this->name;
-            $log->old_name = $product->name;
-        }
+            if ($product->name !== $this->name) {
+                $log->new_name = $this->name;
+                $log->old_name = $product->name;
+            }
 
-        if ($product->harga !== $this->harga) {
-            $log->new_price = $this->harga;
-            $log->old_price = $product->harga;
-        }
+            if ($product->harga !== $this->harga) {
+                $log->new_price = $this->harga;
+                $log->old_price = $product->harga;
+            }
 
-        if ((int)$this->add_stok !== 0) {
-            $log->new_stok = (int)$this->stok + (int)$this->add_stok;
-            $log->old_stok = $product->stok;
+            if ((int)$this->stok !== $product->stok) {
+                $log->new_stok = (int)$this->stok;
+                $log->old_stok = $product->stok;
+            }
+
+            $log->save();
         }
 
         $request = new Request();
         $request->merge($validateData);
 
         $res = app(ProductController::class)->upadteProduct($request, $this->productId);
-
-        $log->save();
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',

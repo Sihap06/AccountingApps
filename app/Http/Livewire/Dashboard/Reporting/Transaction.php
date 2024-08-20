@@ -83,7 +83,6 @@ class Transaction extends Component
                 DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
                 'transactions.payment_method',
             )
-            ->whereDate('transactions.created_at', $this->selectedDate)
             ->where('transactions.status', 'done')
             ->whereNull('transactions.deleted_at')
             ->groupBy(
@@ -107,6 +106,8 @@ class Transaction extends Component
                 $sub_query->where('transactions.order_transaction', 'like', '%' . $this->searchTerm . '%')
                     ->orWhere('customers.name', 'like', '%' . $this->searchTerm . '%');
             });
+        } else {
+            $data->whereDate('transactions.created_at', $this->selectedDate);
         }
 
         // Mengambil hasil query

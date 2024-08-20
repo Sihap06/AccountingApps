@@ -73,7 +73,8 @@
                                                     @endif
                                                     @if ($item->old_stok !== null && $item->new_stok !== null)
                                                         <li>
-                                                            Add product stok {{ $item->new_stok - $item->old_stok }}
+                                                            Update product stok from {{ $item->old_stok }} to
+                                                            {{ $item->new_stok }}
                                                         </li>
                                                     @endif
                                                 </ul>

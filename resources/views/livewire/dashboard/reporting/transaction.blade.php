@@ -30,6 +30,7 @@
                             <option value="debit">DEBIT</option>
                             <option value="mandiri">MANDIRI</option>
                             <option value="transfer">TRANSFER</option>
+                            <option value="kartu kredit">KARTU KREDIT</option>
                         </select>
                     </div>
                 </div>

@@ -73,7 +73,7 @@
         }
 
         .custom-height {
-            height: calc(100vh - 155px);
+            height: calc(100vh - 160px);
         }
     </style>
 @endpush
