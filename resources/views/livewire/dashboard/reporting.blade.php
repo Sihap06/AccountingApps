@@ -56,18 +56,34 @@
     </div>
 
     <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
-        <div class="{{ $tabActive === 'transaction' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.reporting.transaction', key('transaction'))
-        </div>
-        <div class="{{ $tabActive === 'expenditure' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.reporting.expenditure', key('expenditure'))
-        </div>
-        <div class="{{ $tabActive === 'income' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.reporting.income', key('income'))
-        </div>
-        <div class="{{ $tabActive === 'export' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.reporting.export', key('export'))
-        </div>
+        @if ($tabActive === 'transaction')
+            <div class="w-full">
+                @livewire('dashboard.reporting.transaction', key('transaction'))
+            </div>
+        @elseif ($tabActive === 'expenditure')
+            <div class=" w-full">
+                @livewire('dashboard.reporting.expenditure', key('expenditure'))
+            </div>
+        @elseif($tabActive === 'income')
+            <div class="w-full">
+                @livewire('dashboard.reporting.income', key('income'))
+            </div>
+        @else
+            <div class="w-full">
+                @livewire('dashboard.reporting.export', key('export'))
+            </div>
+        @endif
+
+
+
     </div>
+
+    <script>
+        // Listen for Livewire events
+        window.addEventListener('refresh-child-component', event => {
+            // Trigger a re-render of the specified child component
+            Livewire.emit('refreshComponent');
+        });
+    </script>
 
 </div>

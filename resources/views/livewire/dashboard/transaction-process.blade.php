@@ -41,7 +41,7 @@
                 </thead>
                 <tbody>
                     @foreach ($data as $index => $item)
-                        <tr wire:key='{{ $index }}' wire:loading.remove
+                        <tr wire:key='{{ $index . time() }}' wire:loading.remove
                             wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod, delete'>
                             <td
                                 class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -151,20 +151,27 @@
                 <div
                     class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full sm:p-6">
 
-                    <div class="border-b-2 flex justify-between items-center">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    <div class="border-b-2 flex justify-between items-center mb-4">
+                        <h3 class="mb-0 text-lg leading-6 font-medium text-gray-900" id="modal-title">
                             Detail Transaction
                         </h3>
-                        <span class="cursor-pointer" wire:click='closeModal'>
-                            <i wire:loading.remove wire:target='closeModal' class="ni ni-fat-remove"></i>
-                            <div wire:loading wire:target='closeModal'>
-                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                    role="status">
-                                    <span
-                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                </div>
+                        <button wire:loading.remove='closeModal' type="button" wire:click='closeModal'>
+                            <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+
+                        <div wire:loading wire:target='closeModal'>
+                            <div class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                role="status">
+                                <span
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
-                        </span>
+                        </div>
                     </div>
 
 
@@ -220,7 +227,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr wire:key='{{ time() }}'>
 
                                     <td
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -251,8 +258,8 @@
                                         </span>
                                     </td>
                                 </tr>
-                                @foreach ($detailItem['items'] as $item)
-                                    <tr>
+                                @foreach ($detailItem['items'] as $index => $item)
+                                    <tr wire:key='{{ time() . $index }}'>
                                         <td
                                             class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span

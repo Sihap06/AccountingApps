@@ -40,6 +40,7 @@ class PointOfSales extends Component
         'order_transaction' => '',
     ];
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
 
     public function resetFieldCustomer()
     {

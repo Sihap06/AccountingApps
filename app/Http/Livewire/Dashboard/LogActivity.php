@@ -9,7 +9,8 @@ class LogActivity extends Component
 {
     public function render()
     {
-        $data = LogActivityProduct::paginate(10);
-        return view('livewire.dashboard.log-activity', compact('data'));
+        $data = LogActivityProduct::all();
+        return view('livewire.dashboard.log-activity', compact('data'))
+            ->layout('components.layouts.dashboard');
     }
 }

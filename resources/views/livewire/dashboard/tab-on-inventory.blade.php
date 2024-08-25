@@ -8,7 +8,7 @@
             </p>
         </div>
         <div class="relative w-1/2">
-            <ul class="relative flex flex-wrap gap-x-3 p-1 list-none bg-transparent rounded-xl">
+            {{-- <ul class="relative flex flex-wrap gap-x-3 p-1 list-none bg-transparent rounded-xl">
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
                         class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'inventory' ? 'bg-primary text-white' : '' }}"
@@ -23,28 +23,13 @@
                         <span class="ml-1">Catatan Aktivitas</span>
                     </button>
                 </li>
-            </ul>
+            </ul> --}}
         </div>
     </div>
 
-    <div wire:loading.flex wire:target='changeActiveTab'
-        class="flex flex-grow border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl z-20 min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border items-center mt-6 custom-height">
-        <div class="flex flex-1 items-center content-center">
-            <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                role="status">
-                <span
-                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-            </div>
-        </div>
-
-    </div>
-
-    <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
-        <div class="{{ $tabActive === 'inventory' ? 'block' : 'hidden' }} w-full">
+    <div class="flex flex-grow mt-6">
+        <div class="w-full">
             @livewire('dashboard.inventory', key('inventory'))
-        </div>
-        <div class="{{ $tabActive === 'log_activity' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.log-activity', key('log_activity'))
         </div>
     </div>
 

@@ -11,6 +11,8 @@ class Export extends Component
     public  $year, $month;
     public $selectItems = ['transaction', 'expenditure', 'income', 'technician', 'netto'];
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
     protected $rules = [
         'month' => 'required',
         'year' => 'required',

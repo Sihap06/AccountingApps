@@ -6,11 +6,13 @@ use Livewire\Component;
 
 class TabOnPos extends Component
 {
-    public $tabActive = 'cashier';
+    public $tabActive = 'point-of-sales';
 
     public function changeActiveTab($tab)
     {
         $this->tabActive = $tab;
+
+        $this->dispatchBrowserEvent('refresh-child-component');
         $this->dispatchBrowserEvent('reInitTwElement');
     }
 

@@ -14,6 +14,8 @@ class TransactionCancel extends Component
     public $detailItem;
     public $isOpen = false;
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
     public function openModal()
     {
         $this->isOpen = true;

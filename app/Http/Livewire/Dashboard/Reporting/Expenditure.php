@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Dashboard\Reporting;
 
 use App\Models\Expenditure as ModelsExpenditure;
+use App\Models\LogActivityExpenditure;
 use Carbon\Carbon;
 use Livewire\Component;
 
@@ -21,6 +22,8 @@ class Expenditure extends Component
 
     public $selectedYear = '';
     public $selectedMonth = '';
+
+    protected $listeners = ['refreshComponent' => '$refresh'];
 
     protected $rules = [
         'tanggal' => 'required',
@@ -43,6 +46,15 @@ class Expenditure extends Component
         $validateData['total'] = $convertedCurrency;
 
         ModelsExpenditure::create($validateData);
+
+        LogActivityExpenditure::create([
+            'user' => auth()->user()->name,
+            'activity' => 'store',
+            'jenis' => $validateData['jenis'],
+            'new_jenis' => $validateData['jenis'],
+            'new_tanggal' => $validateData['tanggal'],
+            'new_total' => $validateData['total'],
+        ]);
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',
@@ -75,7 +87,32 @@ class Expenditure extends Component
         $convertedCurrency = (int)$currencyString;
         $validateData['total'] = $convertedCurrency;
 
+        $expend = ModelsExpenditure::findOrFail($this->currentId);
+
+        if ($this->jenis !== $expend->jenis || $this->tanggal !== $expend->tanggal || $validateData['total'] !== $expend->total) {
+            $log = new LogActivityExpenditure();
+            $log->user = auth()->user()->name;
+            $log->activity = 'update';
+
+            if ($this->tanggal !== $expend->tanggal) {
+                $log->old_tanggal = $expend->tanggal;
+                $log->new_tanggal = $this->tanggal;
+            }
+
+            if ($this->jenis !== $expend->jenis) {
+                $log->old_jenis = $expend->jenis;
+                $log->new_jenis = $this->jenis;
+            }
+
+            if ($this->total !== $expend->total) {
+                $log->old_total = $expend->total;
+                $log->new_total = $validateData['total'];
+            }
+            $log->save();
+        }
+
         ModelsExpenditure::findOrFail($this->currentId)->update($validateData);
+
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',

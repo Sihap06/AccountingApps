@@ -18,6 +18,8 @@ class TransactionProcess extends Component
     public $payment_method;
     public $transaction_id;
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
     public function openModal()
     {
         $this->isOpen = true;
@@ -133,7 +135,9 @@ class TransactionProcess extends Component
         $data->created_at = Carbon::now();
         $data->save();
 
-        $this->closeModal();
+        // $this->closeModal();
+
+        $this->reset();
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Transaction Done',

@@ -8,9 +8,11 @@ use App\Http\Livewire\Dashboard\Dashboard;
 use App\Http\Livewire\Dashboard\Inventory;
 use App\Http\Livewire\Dashboard\Inventory\Create;
 use App\Http\Livewire\Dashboard\Inventory\Edit;
+use App\Http\Livewire\Dashboard\LogActivity;
 use App\Http\Livewire\Dashboard\PointOfSales;
 use App\Http\Livewire\Dashboard\Reporting;
 use App\Http\Livewire\Dashboard\TabOnInventory;
+use App\Http\Livewire\Dashboard\TabOnLogActivity;
 use App\Http\Livewire\Dashboard\TabOnPos;
 use App\Http\Livewire\Dashboard\Teknisi;
 
@@ -47,6 +49,10 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('customers')->name('customers.')->group(function () {
             Route::get('/', Customers::class)->name('index');
+        });
+
+        Route::prefix('log_activity')->name('log_activity.')->group(function () {
+            Route::get('/', TabOnLogActivity::class)->name('index');
         });
     });
 });

@@ -11,22 +11,22 @@
             <ul class="relative flex flex-wrap gap-x-3 p-1 list-none bg-transparent rounded-xl">
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'cashier' ? 'bg-primary text-white' : '' }}"
-                        nav-link wire:click="changeActiveTab('cashier')">
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'point-of-sales' ? 'bg-primary text-white' : '' }}"
+                        nav-link wire:click="changeActiveTab('point-of-sales')">
                         <span class="ml-1">Cashier</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'process' ? 'bg-primary text-white' : '' }}"
-                        nav-link wire:click="changeActiveTab('process')">
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'transaction-process' ? 'bg-primary text-white' : '' }}"
+                        nav-link wire:click="changeActiveTab('transaction-process')">
                         <span class="ml-1">Transaction Process</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
-                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'cancel' ? 'bg-danger text-white' : '' }}"
-                        nav-link wire:click="changeActiveTab('cancel')">
+                        class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out  text-slate-700 {{ $tabActive === 'transaction-cancel' ? 'bg-danger text-white' : '' }}"
+                        nav-link wire:click="changeActiveTab('transaction-cancel')">
                         <span class="ml-1">Transaction Cancel</span>
                     </button>
                 </li>
@@ -47,15 +47,23 @@
     </div>
 
     <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
-        <div class="{{ $tabActive === 'cashier' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.point-of-sales', key('cashier'))
+        <div class="{{ $tabActive === 'point-of-sales' ? 'block' : 'hidden' }} w-full">
+            @livewire('dashboard.point-of-sales', key('cashier{{ time() }}'))
         </div>
-        <div class="{{ $tabActive === 'process' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.transaction-process', key('process'))
+        <div class="{{ $tabActive === 'transaction-process' ? 'block' : 'hidden' }} w-full">
+            @livewire('dashboard.transaction-process', key('process{{ time() }}'))
         </div>
-        <div class="{{ $tabActive === 'cancel' ? 'block' : 'hidden' }} w-full">
-            @livewire('dashboard.transaction-cancel', key('cancel'))
+        <div class="{{ $tabActive === 'transaction-cancel' ? 'block' : 'hidden' }} w-full">
+            @livewire('dashboard.transaction-cancel', key('cancel{{ time() }}'))
         </div>
     </div>
+
+    <script>
+        // Listen for Livewire events
+        window.addEventListener('refresh-child-component', event => {
+            // Trigger a re-render of the specified child component
+            Livewire.emit('refreshComponent');
+        });
+    </script>
 
 </div>

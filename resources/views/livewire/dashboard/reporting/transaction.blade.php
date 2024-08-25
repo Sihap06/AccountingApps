@@ -63,10 +63,12 @@
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Biaya
                                 </th>
-                                <th
-                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Modal
-                                </th>
+                                @if (auth()->user()->role !== 'sysadmin')
+                                    <th
+                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Modal
+                                    </th>
+                                @endif
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Metode Pembayaran
@@ -79,7 +81,7 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $index => $item)
-                                <tr wire:key='{{ $item->created_at }}' wire:loading.remove
+                                <tr wire:key='{{ $item->created_at . time() }}' wire:loading.remove
                                     wire:target='gotoPage, previousPage, nextPage, searchTerm, selectedDate, selectedPaymentMethod'>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -110,14 +112,16 @@
                                             {{ number_format($item->first_item_biaya + $item->other_items_biaya) }}
                                         </span>
                                     </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp
-                                            {{ number_format($item->first_item_modal + $item->other_items_modal) }}
-                                        </span>
-                                    </td>
+                                    @if (auth()->user()->role !== 'sysadmin')
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                Rp
+                                                {{ number_format($item->first_item_modal + $item->other_items_modal) }}
+                                            </span>
+                                        </td>
+                                    @endif
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
@@ -196,10 +200,12 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                     </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
-                                    </td>
+                                    @if (auth()->user()->role !== 'sysadmin')
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                        </td>
+                                    @endif
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />

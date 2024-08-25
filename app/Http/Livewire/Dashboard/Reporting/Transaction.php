@@ -34,7 +34,8 @@ class Transaction extends Component
 
     public $totalBiaya = 0;
 
-    protected $listeners = ['updateIsEdit' => 'handleUpdateIsEdit'];
+    protected $listeners = ['updateIsEdit' => 'handleUpdateIsEdit', 'refreshComponent' => '$refresh'];
+
 
     public function handleUpdateIsEdit($isEdit)
     {

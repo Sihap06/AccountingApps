@@ -16,6 +16,8 @@ class Income extends Component
     public $selectedYear;
     public $selectedMonth;
 
+    protected $listeners = ['refreshComponent' => '$refresh'];
+
     public function mount()
     {
         $this->selectedYear = Carbon::now()->format('Y');

@@ -50,7 +50,7 @@
                         </thead>
                         <tbody>
                             @foreach ($data as $index => $item)
-                                <tr wire:key='{{ $index }}' wire:loading.remove
+                                <tr wire:key='{{ $index . time() }}' wire:loading.remove
                                     wire:target='gotoPage, previousPage, nextPage, searchTerm'>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
