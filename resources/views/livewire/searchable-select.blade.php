@@ -3,7 +3,7 @@
     <input type="hidden" wire:model='{{ $name }}' id='{{ $name }}'>
     <div @click="open = !open"
         class="relative cursor-pointer bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-        <span class="text-sm">{{ $selected ? $selectedName : 'Pilih Opsi' }}</span>
+        <span class="text-sm">{{ $selected ? $selectedName : 'Pilih ' . $label }}</span>
         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
             <svg wire:loading.remove class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="none"
                 stroke="currentColor">

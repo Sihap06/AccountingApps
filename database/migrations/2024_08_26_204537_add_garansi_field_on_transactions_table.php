@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddStatusToTransactionTable extends Migration
+class AddGaransiFieldOnTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class AddStatusToTransactionTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->enum('status', ['proses', 'cancel', 'done', 'complaint'])->default('done');
+            $table->integer('warranty')->nullable();
+            $table->enum('warranty_type', ['daily', 'weekly', 'monthly'])->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ class AddStatusToTransactionTable extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('status');
+            $table->dropColumn('warranty');
+            $table->dropColumn('warranty_type');
         });
     }
 }

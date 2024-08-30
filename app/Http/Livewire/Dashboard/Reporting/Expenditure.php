@@ -44,6 +44,7 @@ class Expenditure extends Component
         $currencyString = preg_replace("/[^0-9]/", "", $this->total);
         $convertedCurrency = (int)$currencyString;
         $validateData['total'] = $convertedCurrency;
+        $validateData['created_by'] = auth()->user()->id;
 
         ModelsExpenditure::create($validateData);
 
@@ -156,6 +157,11 @@ class Expenditure extends Component
     {
         $query = ModelsExpenditure::whereMonth('tanggal', $this->selectedMonth)
             ->whereYear('tanggal', $this->selectedYear);
+
+        if (auth()->user()->role != 'master_admin') {
+            $query = $query->where('created_by', auth()->user()->id);
+        }
+
         $data = $query->get();
         $this->totalAmount = $data->sum('total');
 

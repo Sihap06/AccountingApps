@@ -13,6 +13,14 @@ class SearchableSelect extends Component
     public $name = '';
     public $label = '';
 
+    protected $listeners = ['resetSelect'];
+
+    public function resetSelect()
+    {
+        $this->selected = null;
+        $this->selectedName = '';
+    }
+
     public function mount($list, $selectedOption = null, $name, $label)
     {
         $this->options = $list;

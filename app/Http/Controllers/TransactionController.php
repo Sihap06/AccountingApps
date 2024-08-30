@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -66,6 +67,8 @@ class TransactionController extends Controller
                 $data->order_transaction = $value['order_transaction'];
                 $data->customer_id = $customer_id;
                 $data->status = 'proses';
+                $data->warranty = (int)$value['warranty'];
+                $data->warranty_type = $value['warranty_type'];
                 $data->save();
 
                 $transaction_id = $data->id;
@@ -79,6 +82,8 @@ class TransactionController extends Controller
                 $transactionItems->modal = $perhitungan['modal'];
                 $transactionItems->fee_teknisi  = $perhitungan['fee_teknisi'];
                 $transactionItems->untung = $perhitungan['untung'];
+                $transactionItems->warranty = (int)$value['warranty'];
+                $transactionItems->warranty_type = $value['warranty_type'];
                 $transactionItems->save();
             }
         }
@@ -184,5 +189,12 @@ class TransactionController extends Controller
                 'untung' => $biaya - $modal
             ];
         }
+    }
+
+    public function receipt()
+    {
+        $customPaper = array(0, 0, 567.00, 283.80);
+        $pdf = Pdf::loadView('pdf.receipt')->setPaper('A4', 'landscape');
+        return $pdf->stream('receipt.pdf');
     }
 }

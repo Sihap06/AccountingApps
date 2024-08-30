@@ -114,7 +114,6 @@ class TransactionCancel extends Component
         $this->openModal();
     }
 
-
     public function render()
     {
         $data = Transaction::join('customers', 'transactions.customer_id', '=', 'customers.id')
@@ -123,7 +122,7 @@ class TransactionCancel extends Component
             ->where(function ($sub_query) {
                 $sub_query->where('order_transaction', 'like', '%' . $this->searchTerm . '%')
                     ->orWhere('customers.name', 'like', '%' . $this->searchTerm . '%');
-            })->paginate(10);
+            })->get();
 
         return view('livewire.dashboard.transaction-cancel', compact('data'));
     }

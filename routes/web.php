@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Dashboard\Customers;
 use App\Http\Livewire\Dashboard\Dashboard;
@@ -32,6 +33,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('dashboard.index');
     });
+
+    Route::get('receipt', [TransactionController::class, 'receipt']);
+
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
         Route::get('point-of-sales', TabOnPos::class)->name('point-of-sales');

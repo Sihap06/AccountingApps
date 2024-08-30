@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddStatusToTransactionTable extends Migration
+class AddCreatedByFieldOnExpendituresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddStatusToTransactionTable extends Migration
      */
     public function up()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->enum('status', ['proses', 'cancel', 'done', 'complaint'])->default('done');
+        Schema::table('expenditures', function (Blueprint $table) {
+            $table->integer('created_by')->default(2);
         });
     }
 
@@ -25,8 +25,8 @@ class AddStatusToTransactionTable extends Migration
      */
     public function down()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('expenditures', function (Blueprint $table) {
+            $table->dropColumn('created_by');
         });
     }
 }

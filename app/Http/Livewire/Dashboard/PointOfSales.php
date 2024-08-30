@@ -10,6 +10,7 @@ use App\Models\Technician;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class PointOfSales extends Component
@@ -19,6 +20,8 @@ class PointOfSales extends Component
     public $product_id = '';
     public $technical_id = '';
     public $order_transaction = '';
+    public $warranty = '';
+    public $warranty_type = 'daily';
 
     public $inventory;
     public $technician;
@@ -38,9 +41,21 @@ class PointOfSales extends Component
         'product_id' => '',
         'technical_id' => '',
         'order_transaction' => '',
+        'warranty' => '',
+        'warranty_type' => ''
     ];
 
-    protected $listeners = ['refreshComponent' => '$refresh'];
+    protected $messages = [
+        'biaya.required' => 'This field is required',
+        'service.required' => 'This field is required',
+    ];
+
+    protected $listeners = ['refreshComponent' => '$refresh', 'setSelected'];
+
+    public function setSelected($value, $name)
+    {
+        $this->$name = $value;
+    }
 
     public function resetFieldCustomer()
     {
@@ -96,11 +111,9 @@ class PointOfSales extends Component
 
     public function mount()
     {
-        $response = app(ProductController::class)->listProductAll();
-
-        $this->inventory = $response->getData(true)['data'];
-        $this->technician = Technician::all();
-        $this->customers = Customer::all();
+        $this->inventory = Product::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
+        $this->technician = Technician::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
+        $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->get()->toArray();
         $this->order_transaction = Transaction::generateOrderId();
     }
 
@@ -116,8 +129,9 @@ class PointOfSales extends Component
         $this->service = '';
         $this->product_id = '';
         $this->technical_id = '';
+        $this->warranty = '';
 
-        $this->dispatchBrowserEvent('setSelectedValue', ['teknisi' => '', 'sparepart' => '']);
+        $this->dispatchBrowserEvent('refreshSelect');
     }
 
     public function resetAll()
@@ -129,7 +143,7 @@ class PointOfSales extends Component
         $this->customer_id = null;
         $this->serviceItems = [];
 
-        $this->dispatchBrowserEvent('setSelectedValue', ['teknisi' => '', 'sparepart' => '', 'customer_id' => '']);
+        $this->dispatchBrowserEvent('refreshSelect');
     }
 
     public function findProductById($id)
@@ -150,6 +164,8 @@ class PointOfSales extends Component
 
         $product_name = '';
         $technical_name = '';
+        $warranty = '';
+        $warranty_type = null;
 
         if ($this->product_id !== '') {
             $product_name = $this->findProductById($this->product_id)->name;
@@ -157,6 +173,12 @@ class PointOfSales extends Component
 
         if ($this->technical_id !== '') {
             $technical_name = $this->findTechnicianById($this->technical_id)->name;
+            $product_name = '';
+        }
+
+        if ($this->warranty != 0 || $this->warranty != '') {
+            $warranty = $this->warranty;
+            $warranty_type = $this->warranty_type;
         }
 
         $this->serviceItems[] = [
@@ -166,7 +188,9 @@ class PointOfSales extends Component
             'product_name' => $product_name,
             'technical_id' => $this->technical_id,
             'technical_name' => $technical_name,
-            'order_transaction' => $this->order_transaction
+            'order_transaction' => $this->order_transaction,
+            'warranty' => $warranty,
+            'warranty_type' => $warranty_type,
         ];
 
         $this->resetValue();

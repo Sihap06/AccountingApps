@@ -240,8 +240,7 @@ class Transaction extends Component
     public function complaint($id)
     {
         $data = ModelsTransaction::findOrFail($id);
-        $data->status = 'proses';
-        $data->payment_method = null;
+        $data->status = 'complaint';
         $data->save();
 
         $this->dispatchBrowserEvent('swal', [

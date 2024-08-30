@@ -443,4 +443,12 @@
         </div>
     @endif
 
+    <script>
+        // Listen for Livewire events
+        window.addEventListener('refreshSelect', event => {
+            // Trigger a re-render of the specified child component
+            Livewire.emit('resetSelect');
+        });
+    </script>
+
 </div>

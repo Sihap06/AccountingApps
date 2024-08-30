@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Service Receipt</title>
+        <style>
+            @page {
+                size: 8.5in 11in; /* Adjust this to match your continuous paper size */
+                margin: 0.5in; /* Adjust margins to your needs */
+            }
+            body {
+                font-family: Courier, monospace; /* Monospaced font for dot matrix */
+                font-size: 12px; /* Adjust for readability */
+                line-height: 1.4; /* Adequate line spacing */
+                margin: 0;
+                padding: 0;
+            }
+            .container {
+                width: 100%;
+                margin: 0 auto;
+            }
+            .header,
+            .footer {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .header h1 {
+                font-size: 16px;
+                font-weight: bold;
+                margin: 0;
+            }
+            .details {
+                margin-bottom: 20px;
+            }
+            .details div {
+                margin-bottom: 5px;
+            }
+            .footer {
+                text-align: right;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>iService Jember</h1>
+                <p>Jl. Karimata No. 58B</p>
+                <p>08 Aug 2023</p>
+            </div>
+
+            <div class="details">
+                <div><strong>Device:</strong> iPhone 11 (White)</div>
+                <div><strong>Service:</strong> Replace Battery</div>
+                <div><strong>Cost:</strong> Rp 500.000</div>
+                <div><strong>Warranty:</strong> 3 Months</div>
+            </div>
+
+            <div class="footer">
+                <p>Thank you for choosing our service!</p>
+            </div>
+        </div>
+    </body>
+</html>

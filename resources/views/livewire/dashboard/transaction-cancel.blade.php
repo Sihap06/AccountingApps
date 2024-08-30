@@ -1,7 +1,7 @@
 <div
     class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border custom-height w-full">
     <div class="flex flex-row md:flex-row justify-between p-6 pb-0 ">
-        <h6 class="dark:text-white">Transactions Cancel Table</h6>
+        <h6 class="dark:text-white">Transactions Cancel</h6>
         <div class="flex w-full md:w-3/12 items-center">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
@@ -47,7 +47,7 @@
                                 class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                 <span
                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                    {{ ($data->currentPage() - 1) * $data->perPage() + $index + 1 }}
+                                    {{ $index + 1 }}
                                 </span>
                             </td>
                             <td
@@ -133,9 +133,6 @@
 
                 </tbody>
             </table>
-        </div>
-        <div class="px-6 py-3">
-            {{ $data->links() }}
         </div>
     </div>
 
@@ -322,11 +319,11 @@
         }
 
         .custom-height {
-            height: calc(100vh - 155px);
+            min-height: calc(100vh - 155px);
         }
 
         .table-height {
-            height: calc(100vh - 320px);
+            min-height: calc(100vh - 320px);
         }
     </style>
 @endpush
