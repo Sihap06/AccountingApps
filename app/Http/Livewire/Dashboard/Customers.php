@@ -86,6 +86,8 @@ class Customers extends Component
         ]);
 
         $this->resetField();
+        $this->data = Customer::orderby('name', 'ASC')
+            ->get();
     }
 
     public function edit($id)
@@ -116,6 +118,9 @@ class Customers extends Component
             'text' => 'Customer successfully updated.',
             'icon' => 'success'
         ]);
+
+        $this->data = Customer::orderby('name', 'ASC')
+            ->get();
     }
 
     public function updatedSearchTerm()
@@ -153,6 +158,8 @@ class Customers extends Component
             'text' => 'Customer successfully deleted.',
             'icon' => 'success'
         ]);
+        $this->data = Customer::orderby('name', 'ASC')
+            ->get();
     }
 
     public function detailTransaction($id)
