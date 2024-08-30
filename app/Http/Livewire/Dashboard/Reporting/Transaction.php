@@ -71,7 +71,7 @@ class Transaction extends Component
             $join->on('transactions.id', '=', 'transaction_items.transaction_id')
                 ->whereNull('transaction_items.deleted_at');
         })
-            ->join('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
             ->select(
                 'transactions.created_at',
                 'customers.name as customer_name',

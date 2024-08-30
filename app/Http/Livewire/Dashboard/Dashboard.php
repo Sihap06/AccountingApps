@@ -53,7 +53,7 @@ class Dashboard extends Component
                 $join->on('transactions.id', '=', 'transaction_items.transaction_id')
                     ->whereNull('transaction_items.deleted_at'); // Only join valid transaction items
             })
-            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->select(
                 'transactions.id',
                 'transactions.status',
