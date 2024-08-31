@@ -167,7 +167,11 @@ class PointOfSales extends Component
         $warranty = '';
         $warranty_type = null;
 
-        if ($this->product_id !== '') {
+        if ($this->product_id === '') {
+            $this->product_id = null;
+        }
+
+        if ($this->product_id !== null) {
             $product_name = $this->findProductById($this->product_id)->name;
         }
 

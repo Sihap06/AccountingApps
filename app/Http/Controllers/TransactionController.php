@@ -21,6 +21,7 @@ class TransactionController extends Controller
             $currencyString = preg_replace("/[^0-9]/", "", $value['biaya']);
 
             $value['biaya'] = $currencyString;
+            $value['modal'] = 0;
 
             if ($value['product_id'] === '') {
                 $value['product_id'] = null;

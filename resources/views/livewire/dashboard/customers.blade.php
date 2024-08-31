@@ -54,7 +54,7 @@
                                                        <label for="name"
                                                            class="block text-sm font-medium text-gray-700">Name</label>
                                                        <div class="mt-1 relative rounded-md">
-                                                           <input type="text" wire:model="name" id="name"
+                                                           <input type="text" wire:model.lazy="name" id="name"
                                                                class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                                        </div>
                                                        @error('name')
@@ -66,7 +66,8 @@
                                                            class="block text-sm font-medium text-gray-700">No
                                                            Telefon</label>
                                                        <div class="mt-1 relative rounded-md">
-                                                           <input type="text" wire:model="no_telp" id="no_telp"
+                                                           <input type="text" wire:model.lazy="no_telp"
+                                                               id="no_telp"
                                                                class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                                        </div>
                                                        @error('no_telp')
@@ -78,7 +79,7 @@
                                                            class="block text-sm font-medium text-gray-700">Address
                                                            (optional)</label>
                                                        <div class="mt-1 relative rounded-md">
-                                                           <input type="text" wire:model="alamat" id="alamat"
+                                                           <input type="text" wire:model.lazy="alamat" id="alamat"
                                                                class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                                        </div>
                                                        @error('alamat')
