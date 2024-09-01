@@ -21,7 +21,7 @@ class Customers extends Component
     public $no_telp;
     public $alamat;
     public $transactionItems = [];
-    public $data = [];
+    protected $data;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -37,8 +37,6 @@ class Customers extends Component
 
     public function openModal()
     {
-        $this->resetErrorBag();
-        $this->resetValidation();
         $this->isOpen = true;
     }
 
@@ -86,8 +84,7 @@ class Customers extends Component
         ]);
 
         $this->resetField();
-        $this->data = Customer::orderby('name', 'ASC')
-            ->get();
+        $this->resetPage();
     }
 
     public function edit($id)
@@ -135,15 +132,15 @@ class Customers extends Component
         $this->dispatchBrowserEvent('refresh');
     }
 
-    public function mount()
-    {
-        $this->data = Customer::orderby('name', 'ASC')
-            ->get();
-    }
-
     public function render()
     {
-        return view('livewire.dashboard.customers')
+        $data = Customer::where(function ($sub_query) {
+            $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
+                ->orWhere('no_telp', 'like', '%' . $this->searchTerm . '%');
+        })
+            ->orderby('created_at', 'DESC')
+            ->paginate(10);
+        return view('livewire.dashboard.customers', compact('data'))
             ->layout('components.layouts.dashboard');
     }
 
