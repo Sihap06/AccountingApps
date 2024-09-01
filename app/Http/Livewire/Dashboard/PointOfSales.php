@@ -90,6 +90,14 @@ class PointOfSales extends Component
             'no_telp.required' => 'This field is required.',
         ]);
 
+        $checkIfExistCustomer = Customer::where('no_telp', $this->no_telp)->first();
+        if ($checkIfExistCustomer) {
+            return $this->dispatchBrowserEvent('swal', [
+                'title' => 'customer has registered',
+                'icon' => 'error'
+            ]);
+        }
+
         Customer::create([
             'name' => $this->name,
             'no_telp' => $this->no_telp,
@@ -105,7 +113,7 @@ class PointOfSales extends Component
         ]);
 
         $this->resetFieldCustomer();
-        $customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->get()->toArray();
+        $customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->orderBy('created_at', 'DESC')->get()->toArray();
         $this->emit('updateList', 'customer_id', $customers);
     }
 
