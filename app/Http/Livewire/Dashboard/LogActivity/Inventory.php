@@ -9,7 +9,7 @@ class Inventory extends Component
 {
     public function render()
     {
-        $data = LogActivityProduct::all();
+        $data = LogActivityProduct::orderby('created_at', 'DESC')->get();
         return view('livewire.dashboard.log-activity.inventory', compact('data'));
     }
 }

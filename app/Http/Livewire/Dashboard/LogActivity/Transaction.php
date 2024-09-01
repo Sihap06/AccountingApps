@@ -9,7 +9,7 @@ class Transaction extends Component
 {
     public function render()
     {
-        $data = LogActivityTransaction::all();
+        $data = LogActivityTransaction::orderby('created_at', 'DESC')->get();
         return view('livewire.dashboard.log-activity.transaction', compact('data'));
     }
 }

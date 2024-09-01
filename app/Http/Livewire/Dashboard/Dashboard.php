@@ -27,7 +27,7 @@ class Dashboard extends Component
         $todayIncome = $transaction[0]['biaya'];
 
         $expenditur = Expenditure::select(DB::raw("SUM(total) as total"))
-            ->whereDate('created_at', $now)
+            ->whereDate('tanggal', $now)
             ->get();
 
         $todayExpenditure = $expenditur[0]['total'];

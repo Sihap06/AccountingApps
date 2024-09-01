@@ -9,7 +9,7 @@ class Expenditure extends Component
 {
     public function render()
     {
-        $data = LogActivityExpenditure::all();
+        $data = LogActivityExpenditure::orderby('created_at', 'DESC')->get();
         return view('livewire.dashboard.log-activity.expenditure', compact('data'));
     }
 }
