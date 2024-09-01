@@ -97,7 +97,6 @@ class PointOfSales extends Component
         ]);
 
         $this->closeModal();
-        $customers = Customer::all();
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Customer Create',
@@ -106,7 +105,8 @@ class PointOfSales extends Component
         ]);
 
         $this->resetFieldCustomer();
-        $this->emit('updateCustomer', $customers);
+        $customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->get()->toArray();
+        $this->emit('updateList', 'customer_id', $customers);
     }
 
     public function mount()
@@ -131,7 +131,7 @@ class PointOfSales extends Component
         $this->technical_id = '';
         $this->warranty = '';
 
-        $this->dispatchBrowserEvent('refreshSelect');
+        $this->dispatchBrowserEvent('refreshSelect', ['product_id', 'technical_id']);
     }
 
     public function resetAll()

@@ -13,12 +13,27 @@ class SearchableSelect extends Component
     public $name = '';
     public $label = '';
 
-    protected $listeners = ['resetSelect'];
+    protected $listeners = ['resetSelect' => 'resetSelect', 'updateList'];
 
-    public function resetSelect()
+    public function updateList($name, $list)
     {
-        $this->selected = null;
-        $this->selectedName = '';
+        if ($this->name === $name) {
+            $this->options = $list;
+        }
+    }
+
+    public function resetSelect($componentNames = [])
+    {
+        // Jika hanya satu nama yang dikirimkan sebagai string, konversi menjadi array
+        if (is_string($componentNames)) {
+            $componentNames = [$componentNames];
+        }
+
+        // Reset hanya jika nama komponen ada dalam array
+        if (in_array($this->name, $componentNames)) {
+            $this->selected = null;
+            $this->selectedName = '';
+        }
     }
 
     public function mount($list, $selectedOption = null, $name, $label)

@@ -144,7 +144,7 @@
                     <div>
                         <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
                             <label for="service" class="text-sm">Service</label>
-                            <input type="text" wire:model='service' id="service"
+                            <input type="text" wire:model.lazy='service' id="service"
                                 class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                             @error('service')
                                 <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -152,7 +152,7 @@
                         </div>
                         <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
                             <label for="biaya" class="text-sm">Biaya</label>
-                            <input type="text" wire:model='biaya' id="biaya" x-data="{
+                            <input type="text" wire:model.lazy='biaya' id="biaya" x-data="{
                                 formatNumber: function(event) {
                                     const input = event.target;
                                     const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
@@ -180,7 +180,7 @@
                         <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
                             <label for="warranty" class="text-sm">Garansi</label>
                             <div class="flex flex-row gap-2">
-                                <input type="text" wire:model='warranty' id="warranty" x-data="{
+                                <input type="text" wire:model.lazy='warranty' id="warranty" x-data="{
                                     formatNumber: function(event) {
                                         const input = event.target;
                                         const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
@@ -189,7 +189,7 @@
                                 }"
                                     x-on:input="formatNumber($event)"
                                     class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
-                                <select wire:model="warranty_type"
+                                <select wire:model.lazy="warranty_type"
                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                                     <option value="daily">Hari</option>
                                     <option value="weekly">Minggu</option>
@@ -232,7 +232,7 @@
                                 <div class="mt-4">
                                     <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
                                     <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model="name" id="name"
+                                        <input type="text" wire:model.lazy="name" id="name"
                                             class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                     </div>
                                     @error('name')
@@ -243,7 +243,7 @@
                                     <label for="no_telp" class="block text-sm font-medium text-gray-700">No
                                         Telefon</label>
                                     <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model="no_telp" id="no_telp"
+                                        <input type="text" wire:model.lazy="no_telp" id="no_telp"
                                             class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                     </div>
                                     @error('no_telp')
@@ -254,7 +254,7 @@
                                     <label for="alamat" class="block text-sm font-medium text-gray-700">Address
                                         (optional)</label>
                                     <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model="alamat" id="alamat"
+                                        <input type="text" wire:model.lazy="alamat" id="alamat"
                                             class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
                                     </div>
                                     @error('alamat')
@@ -298,7 +298,7 @@
         // Listen for Livewire events
         window.addEventListener('refreshSelect', event => {
             // Trigger a re-render of the specified child component
-            Livewire.emit('resetSelect');
+            Livewire.emit('resetSelect', event.detail);
         });
     </script>
 </div>
