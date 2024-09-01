@@ -54,7 +54,8 @@
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                             @if ($item->activity === 'store')
-                                                Menambahkan pengeluaran berupa {{ $item->new_jenis }}
+                                                Menambahkan pengeluaran berupa {{ $item->new_jenis }} sebesar
+                                                {{ number_format($item->new_total) }}
                                             @else
                                                 <ul>
                                                     @if ($item->old_jenis !== null && $item->new_jenis !== null)
