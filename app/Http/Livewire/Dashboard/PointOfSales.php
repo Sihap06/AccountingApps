@@ -113,7 +113,7 @@ class PointOfSales extends Component
     {
         $this->inventory = Product::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
         $this->technician = Technician::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
-        $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->get()->toArray();
+        $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->orderBy('created_at', 'DESC')->get()->toArray();
         $this->order_transaction = Transaction::generateOrderId();
     }
 

@@ -116,20 +116,7 @@ class Customers extends Component
             'icon' => 'success'
         ]);
 
-        $this->data = Customer::orderby('name', 'ASC')
-            ->get();
-    }
-
-    public function updatedSearchTerm()
-    {
-        $this->data = Customer::where(function ($sub_query) {
-            $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
-                ->orWhere('no_telp', 'like', '%' . $this->searchTerm . '%');
-        })
-            ->orderby('name', 'ASC')
-            ->get();
-
-        $this->dispatchBrowserEvent('refresh');
+        $this->resetPage();
     }
 
     public function render()
@@ -155,8 +142,8 @@ class Customers extends Component
             'text' => 'Customer successfully deleted.',
             'icon' => 'success'
         ]);
-        $this->data = Customer::orderby('name', 'ASC')
-            ->get();
+
+        $this->resetPage();
     }
 
     public function detailTransaction($id)
