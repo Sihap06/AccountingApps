@@ -180,13 +180,13 @@
                                 <form wire:submit.prevent="{{ $action === 'add' ? 'store' : 'update' }}">
                                     <!--E-mail input-->
                                     <div class="relative mb-8">
-                                        <x-ui.input-default wire:model.lazy="name" label="Name" />
+                                        <x-ui.input-default wire:model="name" label="Name" />
                                         @error('name')
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
                                     <div class="relative mb-8">
-                                        <x-ui.input-default wire:model.lazy="harga" id="harga" label="Price"
+                                        <x-ui.input-default wire:model="harga" id="harga" label="Price"
                                             x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
@@ -199,15 +199,14 @@
                                         @enderror
                                     </div>
                                     <div class="relative mb-8">
-                                        <x-ui.input-default disabled wire:model.lazy="stok" id="stok"
-                                            label="Stock" x-data="{
+                                        <x-ui.input-default disabled wire:model="stok" id="stok" label="Stock"
+                                            x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
                                                     const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
                                                     input.value = new Intl.NumberFormat('en-US').format(value);
                                                 }
-                                            }"
-                                            x-on:input="formatNumber($event)" />
+                                            }" x-on:input="formatNumber($event)" />
                                         @error('stok')
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror

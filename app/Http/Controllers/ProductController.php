@@ -24,18 +24,18 @@ class ProductController extends Controller
                 'data' => $validator->errors()
             ], 400);
         }
-        
+
         $existsData = Product::where('name', $request->get('name'))->first();
-        if($existsData){
+        if ($existsData) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'product already exists',
             ], 400);
-        }else{
+        } else {
             $data = new Product();
             $data->name = $request->get('name');
             $data->harga = $request->get('harga');
-            $data->stok = $request->get('stok');
+            $data->stok = (int)$request->get('stok');
             $data->kode = time();
             $data->save();
             return response()->json([
