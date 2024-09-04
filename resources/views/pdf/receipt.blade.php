@@ -7,185 +7,193 @@
     <title>Nota Servis iPhone</title>
     <style>
         @page {
-            size: 8.27in 3.90in;
+            size: 24cm 13.5cm;
+            margin: 0;
         }
 
         body {
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
+            margin: 16px;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .invoice-container {
-            padding: 20px;
-            margin: 0 auto;
-            border: 1px dashed #000;
-            box-sizing: border-box;
+            color: #000;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header img {
-            max-width: 80px;
-            margin-bottom: 10px;
-        }
-
-        .header h1 {
-            font-size: 18px;
-            margin: 5px 0;
-        }
-
-        .header p {
-            font-size: 12px;
-            margin: 2px 0;
-        }
-
-        .info-section,
-        .data-handphone,
-        .kerusakan-section,
-        .biaya-section,
-        .signature-section {
-            margin-bottom: 10px;
-        }
-
-        .info-section div,
-        .data-handphone div,
-        .kerusakan-section div,
-        .biaya-section div {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-
-        .info-section div p,
-        .data-handphone div p,
-        .kerusakan-section div p,
-        .biaya-section div p {
-            margin: 2px 0;
-        }
-
-        .checkboxes {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-
-        .checkboxes div {
-            display: flex;
             align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 4px;
+            margin-bottom: 16px;
+            width: 100%
         }
 
-        .checkboxes label {
-            margin-left: 5px;
+        .header-left img {
+            width: 200px;
         }
 
-        .ketentuan-section {
-            font-size: 10px;
-            border-top: 1px solid #000;
-            padding-top: 5px;
+        .header-left p {
+            margin: 4px 0;
+            font-size: 14px
         }
 
-        .signature-section {
+        .header-right {
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .header-right p {
+            margin: 4px 0;
+        }
+
+        .content {
             display: flex;
             justify-content: space-between;
-            margin-top: 30px;
+            margin-bottom: 16px;
         }
 
-        .signature-section div {
-            width: 45%;
-            text-align: center;
+        .content-left,
+        .content-right {
+            width: 48%;
         }
 
-        .signature-section p {
-            margin: 40px 0 0;
-            border-top: 1px solid #000;
+        .content-left p,
+        .content-right p {
+            margin: 4px 0;
+        }
+
+        .content-left table,
+        .content-right table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .content-left table td,
+        .content-right table td {
+            padding: 4px;
+            border: 1px solid #000;
+        }
+
+        .terms {
+            border-top: 2px solid #000;
+            padding-top: 8px;
             font-size: 12px;
+        }
+
+        .terms p {
+            margin: 4px 0;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+        }
+
+        .footer div {
+            text-align: center;
+            width: 48%;
         }
     </style>
 </head>
 
 <body>
-    <div class="invoice-container">
-        <div class="header">
-            <img src="logo.png" alt="Logo Perusahaan"> <!-- Ganti dengan URL logo Anda -->
-            <h1>iService Jember</h1>
-            <p>@iservicejember</p>
-            <p>089639911151</p>
-            <p>Jl. Karimata No. 58B</p>
-        </div>
-
-        <div class="info-section">
-            <div>
-                <p><strong>Tanggal:</strong> 8 Aug 2023</p>
-                <p><strong>Nota No:</strong> A048</p>
-            </div>
-            <div>
-                <p><strong>Nama:</strong> John Doe</p>
-                <p><strong>No. HP:</strong> 0812-3456-7890</p>
-            </div>
-        </div>
-
-        <div class="data-handphone">
-            <p><strong>Data Handphone:</strong></p>
-            <div>
-                <p><strong>Merek:</strong> iPhone 11</p>
-                <p><strong>Warna:</strong> Putih</p>
-            </div>
-            <div class="checkboxes">
-                <div>
-                    <input type="checkbox" id="sim" name="sim" checked>
-                    <label for="sim">SIM Tray</label>
+    <table class="header">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <div class="header-left">
+                                <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo">
+                            </div>
+                        </td>
+                        <td style="padding-left: 16px; vertical-align: bottom">
+                            <div class="header-left">
+                                <p>@ i.service.jember</p>
+                                <p>089638911151</p>
+                                <p>Jl. Karimata No. 58B</p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td style="vertical-align: bottom">
+                <div class="header-right">
+                    <p style="font-size: 16px; margin-bottom: 16px">NOTA NO: <strong>A048</strong></p>
+                    <p>TANGGAL: 8 Des 2023</p>
+                    <p>NAMA: [Nama Pelanggan]</p>
+                    <p>NO. HANDPHONE: [No. Handphone]</p>
+                    <p style="margin-top: 16px; font-size: 16px">GARANSI: <strong>10 BULAN</strong></p>
                 </div>
-                <div>
-                    <input type="checkbox" id="battery" name="battery">
-                    <label for="battery">Battery</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="back" name="back" checked>
-                    <label for="back">Back Casing</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="tray" name="tray">
-                    <label for="tray">Tray</label>
-                </div>
-            </div>
-        </div>
+            </td>
+        </tr>
 
-        <div class="kerusakan-section">
-            <p><strong>Kerusakan:</strong></p>
-            <div>
-                <p>Replace Baterai iPhone 11</p>
-            </div>
-        </div>
 
-        <div class="biaya-section">
-            <p><strong>Biaya Servis:</strong></p>
-            <div>
-                <p>Rp 500.000</p>
-            </div>
-        </div>
+    </table>
 
-        <div class="ketentuan-section">
-            <p><strong>Ketentuan:</strong></p>
-            <ul>
-                <li>Setiap pengambilan harus disertai nota ini.</li>
-                <li>Kami tidak bertanggung jawab atas kerusakan pada unit jika ada perbaikan oleh pihak ketiga.</li>
-            </ul>
+    <div class="content">
+        <div class="content-left">
+            <table>
+                <tr>
+                    <td>KELENGKAPAN</td>
+                    <td>
+                        <p>SIM CARD <input type="checkbox"></p>
+                        <p>BATTERY <input type="checkbox" checked></p>
+                        <p>MEMORY <input type="checkbox"></p>
+                        <p>BACK CASING <input type="checkbox" checked></p>
+                        <p>TRAY <input type="checkbox"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>DATA HANDPHONE</td>
+                    <td>
+                        <p>MERK: iPhone 11</p>
+                        <p>TYPE: Putih</p>
+                        <p>NO. IMEI: [IMEI]</p>
+                    </td>
+                </tr>
+            </table>
         </div>
+        <div class="content-right">
+            <table>
+                <tr>
+                    <td>SERVICE</td>
+                    <td><input type="checkbox"> SERVICE</td>
+                </tr>
+                <tr>
+                    <td>GARANSI</td>
+                    <td><input type="checkbox" checked> GARANSI (3 Bulan)</td>
+                </tr>
+                <tr>
+                    <td>KERUSAKAN</td>
+                    <td>Replace baterai iPhone 11</td>
+                </tr>
+                <tr>
+                    <td>BIAYA SERVICE</td>
+                    <td>Rp. 500.000</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-        <div class="signature-section">
-            <div>
-                <p>Pemilik Handphone</p>
-            </div>
-            <div>
-                <p>Teknisi</p>
-            </div>
+    <div class="terms">
+        <p>Ketentuan:</p>
+        <p>- Setiap pengambilan harus disertai nota ini.</p>
+        <p>- Nota ini berlaku selama 1 (satu) bulan sesuai tanggal nota.</p>
+        <p>- Kehilangan atas kerusakan pada barang yang diservice setelah lewat 1 (satu) bulan bukan tanggung jawab
+            kami.</p>
+        <p>- Garansi barang yang diservice hanya berlaku 1 (satu) kali dengan kerusakan yang sama.</p>
+        <p>- Garansi tidak berlaku untuk Service LCD, Nota Hilang, Human Error.</p>
+    </div>
+
+    <div class="footer">
+        <div>
+            <p>PEMILIK HANDPHONE</p>
+            <p>[Tanda Tangan]</p>
+        </div>
+        <div>
+            <p>TEKNISI</p>
+            <p>[Tanda Tangan]</p>
         </div>
     </div>
 </body>

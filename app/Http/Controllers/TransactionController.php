@@ -194,7 +194,6 @@ class TransactionController extends Controller
 
     public function receipt()
     {
-        $customPaper = array(0, 0, 567.00, 283.80);
         $pdf = Pdf::loadView('pdf.receipt')->setPaper('A4', 'landscape');
         return $pdf->stream('receipt.pdf');
     }
