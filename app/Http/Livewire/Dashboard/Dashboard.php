@@ -20,11 +20,33 @@ class Dashboard extends Component
     public function render()
     {
         $now = Carbon::now()->format('Y-m-d');
-        $transaction = Transaction::select(DB::raw("SUM(biaya) as biaya"), DB::raw("COUNT(id) as transaction"))
+        $transaction = Transaction::select(DB::raw("SUM(untung) as biaya"), DB::raw("COUNT(id) as transaction"))
             ->whereDate('created_at', $now)->get();
 
-        $todayTransaction = $transaction[0]['transaction'];
-        $todayIncome = $transaction[0]['biaya'];
+        $data = Transaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->select(
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+            )
+            ->where('transactions.status', 'done')
+            ->whereNull('transactions.deleted_at')
+            ->whereDate('transactions.created_at', $now)
+            ->groupBy(
+                'transactions.created_at',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method'
+            );
+
+        // Mengambil hasil query
+        $data = $data->get();
+
+        $todayTransaction = $data->count();
+        $todayIncome = $data->sum('total_biaya');
 
         $expenditur = Expenditure::select(DB::raw("SUM(total) as total"))
             ->whereDate('tanggal', $now)
