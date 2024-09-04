@@ -61,6 +61,10 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Service
+                                </th>
+                                <th
+                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Biaya
                                 </th>
                                 @if (auth()->user()->role !== 'sysadmin')
@@ -103,6 +107,28 @@
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                             {{ $item->customer_name }}
                                         </span>
+                                    </td>
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        @if ($item->service_name !== null)
+                                            <div class="relative group">
+                                                <span
+                                                    class="text-xs cursor-pointer font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                    {{ $item->service }} ...
+                                                </span>
+
+                                                <div
+                                                    class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded px-3 py-2">
+                                                    {{ $item->service_name }}
+                                                </div>
+                                            </div>
+                                        @else
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item->service }}
+                                            </span>
+                                        @endif
+
                                     </td>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">

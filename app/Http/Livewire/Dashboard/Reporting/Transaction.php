@@ -77,6 +77,8 @@ class Transaction extends Component
                 'customers.name as customer_name',
                 'transactions.id',
                 'transactions.order_transaction',
+                'transactions.service',
+                DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
                 DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
                 DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
                 DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
@@ -113,6 +115,8 @@ class Transaction extends Component
 
         // Mengambil hasil query
         $data = $data->get();
+
+        // dd($data);
 
         $this->totalBiaya = $data->sum('total_biaya');
 
