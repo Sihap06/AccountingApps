@@ -99,9 +99,12 @@ class UpdateTransaction extends Component
 
     private function getPerhitungan($technical_id, $biaya, $modal)
     {
-        if ($technical_id != null && $technical_id != '') {
-            $countModal = $biaya * 40 / 100;
-            $countUntung = $biaya * 60 / 100;
+        if ($technical_id != null) {
+            $tecnician = Technician::findOrFail($technical_id);
+            $percentModal = $tecnician->percent_fee;
+            $percentUntung = 100 - $percentModal;
+            $countModal = $biaya * $percentModal / 100;
+            $countUntung = $biaya * $percentUntung / 100;
             return [
                 'fee_teknisi' => $countModal,
                 'modal' => $countModal,
@@ -450,7 +453,7 @@ class UpdateTransaction extends Component
         $transaction = Transaction::findOrFail($this->transactionId);
 
 
-        if ($transaction->customer_id != $validateData['customer_id'] || $transaction->payment_method != $validateData['payment_method'] || Carbon::parse($transaction->created_at)->format('d/m/Y') != $order_date) {
+        if ($transaction->customer_id != $validateData['customer_id'] || $transaction->payment_method != $validateData['payment_method'] || Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
             $log = new LogActivityTransaction();
             $log->user = auth()->user()->name;
             $log->order_transaction = $transaction->order_transaction;
@@ -466,7 +469,7 @@ class UpdateTransaction extends Component
                 $log->new_payment_method = $validateData['payment_method'];
             }
 
-            if (Carbon::parse($transaction->created_at)->format('d/m/Y') != $order_date) {
+            if (Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
                 $log->old_tanggal = Carbon::parse($transaction->created_at)->format('Y-m-d');
                 $log->new_tanggal = $order_date;
             }
