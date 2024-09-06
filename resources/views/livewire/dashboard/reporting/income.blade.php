@@ -137,6 +137,10 @@
                                     Service
                                 </th>
                                 <th
+                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Order Transaction
+                                </th>
+                                <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Total
                                 </th>
@@ -161,6 +165,13 @@
                                         </span>
                                     </td>
                                     <td
+                                        class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                            {{ $item['order_transaction'] }}
+                                        </span>
+                                    </td>
+                                    <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
@@ -173,6 +184,10 @@
                             @for ($i = 0; $i <= 5; $i++)
                                 <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
                                     wire:target='selectedMonth, selectedYear, selectTechnician'>
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                    </td>
                                     <td
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
