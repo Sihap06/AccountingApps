@@ -30,7 +30,7 @@ class TransactionCancel extends Component
     {
         $transactions = DB::table('transactions')
             ->leftJoin('transaction_items', 'transactions.id', '=', 'transaction_items.transaction_id')
-            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
 
             ->select(
                 'transactions.id as transaction_id',

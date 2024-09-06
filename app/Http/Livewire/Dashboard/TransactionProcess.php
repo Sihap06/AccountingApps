@@ -37,7 +37,7 @@ class TransactionProcess extends Component
                 $join->on('transactions.id', '=', 'transaction_items.transaction_id')
                     ->whereNull('transaction_items.deleted_at');
             })
-            ->join('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->select(
                 'transactions.id as transaction_id',
                 'transactions.biaya as transaction_biaya',
