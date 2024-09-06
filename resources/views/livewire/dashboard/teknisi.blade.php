@@ -104,7 +104,7 @@
                                                     </div>
                                                 </div>
                                             </button>
-                                            <button type="button"
+                                            {{-- <button type="button"
                                                 wire:click="$emit('triggerDelete',{{ $item->id }})"
                                                 class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                 <i class="fas fa-trash-alt" wire:loading.remove
@@ -117,7 +117,7 @@
                                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
-                                            </button>
+                                            </button> --}}
                                         </td>
                                     </tr>
                                 @endforeach

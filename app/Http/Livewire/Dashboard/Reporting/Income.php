@@ -54,6 +54,8 @@ class Income extends Component
                 'tanggal' => $group->first()['created_at'],
                 'total' => $group->sum('untung')
             ];
+        })->sortBy(function ($item) {
+            return Carbon::parse($item['tanggal']); // Sort by 'tanggal'
         });
 
         $totalIncome = $collection->sum('untung');
@@ -108,6 +110,10 @@ class Income extends Component
 
             $totalFeeTeknisi = array_sum(array_column($dataFeeTechnician, 'fee_teknisi'));
         }
+
+        usort($dataFeeTechnician, function ($a, $b) {
+            return strtotime($a['created_at']) <=> strtotime($b['created_at']);
+        });
 
         return [
             'dataFeeTechnician' => $dataFeeTechnician,
