@@ -116,7 +116,7 @@ class TransactionComplaint extends Component
 
     public function render()
     {
-        $data = Transaction::join('customers', 'transactions.customer_id', '=', 'customers.id')
+        $data = Transaction::leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
             ->select('transactions.*', 'customers.name as customer_name')
             ->where('transactions.status', 'complaint')
             ->where(function ($sub_query) {
