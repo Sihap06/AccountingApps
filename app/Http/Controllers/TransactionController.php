@@ -7,6 +7,7 @@ use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -194,7 +195,7 @@ class TransactionController extends Controller
 
     public function receipt()
     {
-        $pdf = Pdf::loadView('pdf.receipt')->setPaper('A4', 'landscape');
+        $pdf = Pdf::loadView('pdf.receipt', ['date' => Carbon::now()->format('d M Y')])->setPaper([595.28, 420.945], 'landscape');
         return $pdf->stream('receipt.pdf');
     }
 }

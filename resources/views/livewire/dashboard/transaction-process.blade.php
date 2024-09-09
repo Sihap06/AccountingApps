@@ -2,6 +2,7 @@
     class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border custom-height w-full">
     <div class="flex flex-row md:flex-row justify-between p-6 pb-0 ">
         <h6 class="dark:text-white">Transactions Process</h6>
+        <a data-target="print" style="display: none" href="{{ asset('storage/nota/receipt.pdf') }}" target="_blank"></a>
         <div class="flex w-full md:w-3/12 items-center">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
@@ -375,8 +376,18 @@
 
                 </div>
             </div>
+
         </div>
     @endif
+
+    <script>
+        window.addEventListener('printEvent', event => {
+            const pdfUrl = '{{ asset('storage/nota/receipt.pdf') }}';
+
+            // Open the PDF in a new window/tab for printing
+            window.open(pdfUrl, '_blank');
+        })
+    </script>
 </div>
 
 @push('style')

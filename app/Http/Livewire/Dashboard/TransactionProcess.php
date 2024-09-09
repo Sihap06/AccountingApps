@@ -162,7 +162,7 @@ class TransactionProcess extends Component
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Transaction Cancel',
             'text' => '',
-            'icon' => 'danger'
+            'icon' => 'error'
         ]);
     }
 
