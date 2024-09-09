@@ -90,7 +90,13 @@
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                         @if ($item['warranty'] != '')
                                                             {{ $item['warranty'] }}
-                                                            {{ $item['warranty_type'] === 'weekly' ? 'Minggu' : 'Bulan' }}
+                                                            @if ($item['warranty_type'] == 'daily')
+                                                                Hari
+                                                            @elseif ($item['warranty_type'] == 'weekly')
+                                                                Minggu
+                                                            @else
+                                                                Bulan
+                                                            @endif
                                                         @else
                                                             -
                                                         @endif
