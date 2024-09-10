@@ -117,6 +117,12 @@
                                                             class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
                                                     </li>
                                                 @endif
+                                                @if ($item->old_teknisi !== null && $item->new_teknisi === null)
+                                                    <li>
+                                                        Menghapus teknisi <span
+                                                            class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
+                                                    </li>
+                                                @endif
                                                 @if ($item->old_sparepart !== null && $item->new_sparepart !== null)
                                                     <li>
                                                         Mengubah sparepart dari <span

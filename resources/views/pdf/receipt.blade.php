@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: "Courier", monospace;
+            font-family: "Consolas", "Lucida Console", monospace;
             margin: 8px;
             font-size: 12px;
             padding: 0;
@@ -75,17 +75,6 @@
             padding: 8px
         }
 
-        .data-handphone td:first-child {
-            width: 1px;
-            /* Make the first column width minimal */
-            white-space: nowrap;
-            /* Prevent the first column from wrapping */
-        }
-
-        .data-handphone td:last-child {
-            padding-left: 5px;
-            /* Minimal space between the two columns */
-        }
 
         .content-left p,
         .content-right p {
@@ -99,7 +88,7 @@
         } */
 
         .terms {
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .terms p {
@@ -173,7 +162,28 @@
         }
 
         .items td {
-            padding: 8px
+            padding: 4px
+        }
+
+        .handphone td {
+            padding: 4px
+        }
+
+        .amount {
+            margin-left: 100px
+        }
+
+        .amount td {
+            padding: 4px
+        }
+
+        .signature {
+            width: 100%;
+            margin-top: 63px;
+        }
+
+        .signature p {
+            margin: 4px 0;
         }
     </style>
 </head>
@@ -221,7 +231,7 @@
                 <td>1</td>
                 <td>Replace LCD Iphone 11</td>
                 <td>Rp 1.000.000</td>
-                <td>1 Bulan</td>
+                <td>-</td>
             </tr>
             <tr>
                 <td>1</td>
@@ -233,16 +243,16 @@
                 <td>1</td>
                 <td>Replace LCD Iphone 11</td>
                 <td>Rp 1.000.000</td>
-                <td>1 Bulan</td>
+                <td>-</td>
             </tr>
         </tbody>
     </table>
 
     <table style="width: 100%; font-size: 14px">
         <tr style="vertical-align: top">
-            <td width="70%">
-                <p style="text-decoration: underline; margin-bottom: 4px">Data Handphone</p>
-                <table class="">
+            <td width="60%">
+                <p style="text-decoration: underline; margin-bottom: 4px; margin-top: 4px">Data Handphone</p>
+                <table class="handphone">
                     <tr>
                         <td>MERK</td>
                         <td>:</td>
@@ -259,10 +269,46 @@
                         <td>..................</td>
                     </tr>
                 </table>
+                <div class="terms">
+                    <p>Ketentuan:</p>
+                    <ul>
+                        <li>Pengambilan atau claim garansi WAJIB disertakan nota fisik dan tidak ada REFUND dana</li>
+                        <li>Garansi tidak berlaku jika segel rusak atau human error dan hanya berlaku 1x pergantian part
+                        </li>
+                        <li>Garansi baterai berlaku jika BH turun derastis dan drop (mlembung tidak termasuk)</li>
+                        <li>Kerusakan atau Kehilangan dalam waktu 3 bulan di luar tanggung jawab kami</li>
+                    </ul>
+                </div>
             </td>
-            <td width="30%">
-                <p>Total Rp 4.900.000</p>
-                <p>Payment: BRI</p>
+            <td width="40%">
+                <table class="amount">
+                    <tr>
+                        <td>Total</td>
+                        <td>:</td>
+                        <td>Rp 4.900.000</td>
+                    </tr>
+                    <tr>
+                        <td>Payment</td>
+                        <td>:</td>
+                        <td>BRI</td>
+                </table>
+
+                <table class="signature">
+                    <tr style="height: 100%;">
+                        <td style="vertical-align: bottom;">
+                            <div style="text-align: center">
+                                <p>PEMILIK</p>
+                                <p style="margin-top: 50px">..............</p>
+                            </div>
+                        </td>
+                        <td style="vertical-align: bottom;">
+                            <div style="text-align: center">
+                                <p>TEKNISI</p>
+                                <p style="margin-top: 50px">..............</p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>
