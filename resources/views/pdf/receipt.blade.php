@@ -12,11 +12,12 @@
         }
 
         body {
-            font-family: "Consolas", "Lucida Console", monospace;
-            margin: 8px;
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            margin: 12px;
             font-size: 12px;
             padding: 0;
             color: #000;
+            text-transform: uppercase
         }
 
         .header {
@@ -34,61 +35,21 @@
 
         .header-left p {
             margin: 4px 0;
-            font-size: 14px
+            font-size: 12px
         }
 
         .header-right {
             text-align: right;
-            font-size: 14px;
+            font-size: 12px;
         }
 
         .header-right p {
             margin: 4px 0;
         }
 
-        .content {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .content-left {
-            width: 40%;
-            display: inline-block;
-        }
-
-        .content-left-container {
-            border: 1px solid black;
-            border-radius: 10px;
-            padding: 8px
-        }
-
-        .content-right {
-            width: 57%;
-            display: inline-block;
-            margin-left: 16px
-        }
-
-        .content-right-container {
-            border: 1px solid black;
-            border-radius: 10px;
-            padding: 8px
-        }
-
-
-        .content-left p,
-        .content-right p {
-            margin: 4px 0;
-        }
-
-        /* .content-left table td,
-        .content-right table td {
-            padding: 4px;
-            border: 1px solid #000;
-        } */
-
         .terms {
-            font-size: 11px;
+            font-size: 8px;
+            margin-top: 24px
         }
 
         .terms p {
@@ -100,65 +61,13 @@
             padding-left: 10px;
         }
 
-        .kerusakan {
-            width: 100%;
-            height: 220px;
-            border-collapse: collapse;
-            border: 1px solid black;
-        }
-
-        .kerusakan th,
-        .kerusakan td {
-            border: 1px solid black;
-            text-align: left;
-            padding: 8px;
-            height: 15px;
-            vertical-align: middle;
-        }
-
-        /* Apply rounded corners to the first and last cell of the first row */
-        .kerusakan thead th:first-child {
-            border-top-left-radius: 10px;
-        }
-
-        .kerusakan thead th:last-child {
-            border-top-right-radius: 10px;
-        }
-
-        /* Apply rounded corners to the first and last cell of the last row */
-        .kerusakan tbody tr:last-child td:first-child {
-            border-bottom-left-radius: 10px;
-        }
-
-        .kerusakan tbody tr:last-child td:last-child {
-            border-bottom-right-radius: 10px;
-        }
-
-        .kerusakan p {
-            margin: 0;
-        }
-
-
-
-
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 16px;
-        }
-
-        .footer div {
-            text-align: center;
-            width: 48%;
-        }
 
         .items {
             width: 100%;
-            font-size: 14px;
-            border-bottom: 1px solid #000;
+            font-size: 12px;
+            border-bottom: 0.5px solid #000;
             padding-bottom: 16px;
-            height: 100px
+            height: 120px
         }
 
         .items td {
@@ -179,7 +88,7 @@
 
         .signature {
             width: 100%;
-            margin-top: 63px;
+            margin-top: 50px;
         }
 
         .signature p {
@@ -194,16 +103,16 @@
             <td>
                 <div class="header-left">
                     <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo">
-                    <p style="margin-top: 8px">Jl. Karimata No. 58B - 089638911151</p>
+                    <p style="margin-top: 8px">Jl. Karimata No. 58B <span style="margin-left: 10px">089638911151</span>
+                    </p>
                 </div>
             </td>
             <td style="vertical-align: bottom">
                 <div class="header-right">
-                    <p style="font-size: 16px; margin-bottom: 16px">NOTA NO: <strong>A048</strong></p>
-                    <p>TANGGAL: {{ $date }}</p>
-                    <p>NAMA: [Nama Pelanggan]</p>
-                    <p>NO. HANDPHONE: [No. Handphone]</p>
-                    <p style="margin-top: 16px; font-size: 16px">GARANSI: <strong>10 BULAN</strong></p>
+                    <p style="font-size: 14px; margin-bottom: 14px">Nota No: <strong>A048</strong></p>
+                    <p>Tanggal: {{ $date }}</p>
+                    <p>Nama: {{ $detailItem['customer_name'] }}</p>
+                    <p>No. Handphone: {{ $detailItem['no_telp'] }}</p>
                 </div>
             </td>
         </tr>
@@ -223,50 +132,67 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>Replace LCD Iphone 11</td>
-                <td>Rp 1.000.000</td>
-                <td>1 Bulan</td>
+                <td>{{ $detailItem['service'] }}</td>
+                <td>Rp {{ number_format($detailItem['biaya']) }}</td>
+                <td>
+                    @if ($detailItem['warranty'] != null)
+                        {{ $detailItem['warranty'] }}
+                        @if ($detailItem['warranty_type'] == 'daily')
+                            Hari
+                        @elseif ($detailItem['warranty_type'] == 'weekly')
+                            Minggu
+                        @else
+                            Bulan
+                        @endif
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>Replace LCD Iphone 11</td>
-                <td>Rp 1.000.000</td>
-                <td>-</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Replace LCD Iphone 11</td>
-                <td>Rp 1.000.000</td>
-                <td>1 Bulan</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Replace LCD Iphone 11</td>
-                <td>Rp 1.000.000</td>
-                <td>-</td>
-            </tr>
+            @foreach ($detailItem['items'] as $index => $item)
+                <tr>
+                    <td>{{ $index + 2 }}</td>
+                    <td>{{ $item['service'] }}</td>
+                    <td>Rp {{ number_format($item['biaya']) }}</td>
+                    <td>
+                        @if ($item['warranty'] != null)
+                            {{ $item['warranty'] }}
+                            @if ($item['warranty_type'] == 'daily')
+                                Hari
+                            @elseif ($item['warranty_type'] == 'weekly')
+                                Minggu
+                            @else
+                                Bulan
+                            @endif
+                        @else
+                            -
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
         </tbody>
     </table>
 
-    <table style="width: 100%; font-size: 14px">
+    <table style="width: 100%; font-size: 12px">
         <tr style="vertical-align: top">
             <td width="60%">
-                <p style="text-decoration: underline; margin-bottom: 4px; margin-top: 4px">Data Handphone</p>
+                <p style="text-decoration: underline; margin-bottom: 4px; margin-top: 4px"><strong>Data
+                        Handphone</strong></p>
                 <table class="handphone">
                     <tr>
-                        <td>MERK</td>
+                        <td>Merk</td>
                         <td>:</td>
-                        <td>..................</td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td>TYPE</td>
+                        <td>Type</td>
                         <td>:</td>
-                        <td>..................</td>
+                        <td></td>
                     </tr>
                     <tr>
-                        <td>NO. IMEI</td>
+                        <td>No. Imei</td>
                         <td>:</td>
-                        <td>..................</td>
+                        <td></td>
                     </tr>
                 </table>
                 <div class="terms">
@@ -283,28 +209,28 @@
             <td width="40%">
                 <table class="amount">
                     <tr>
-                        <td>Total</td>
+                        <td><strong>Total</strong></td>
                         <td>:</td>
-                        <td>Rp 4.900.000</td>
+                        <td>Rp {{ number_format($detailItem['total']) }}</td>
                     </tr>
                     <tr>
-                        <td>Payment</td>
+                        <td><strong>Payment</strong></td>
                         <td>:</td>
-                        <td>BRI</td>
+                        <td>{{ $payment_method }}</td>
                 </table>
 
                 <table class="signature">
                     <tr style="height: 100%;">
                         <td style="vertical-align: bottom;">
                             <div style="text-align: center">
-                                <p>PEMILIK</p>
-                                <p style="margin-top: 50px">..............</p>
+                                <p>Pemilik</p>
+                                <p style="margin-top: 50px">........................</p>
                             </div>
                         </td>
                         <td style="vertical-align: bottom;">
                             <div style="text-align: center">
-                                <p>TEKNISI</p>
-                                <p style="margin-top: 50px">..............</p>
+                                <p>Teknisi</p>
+                                <p style="margin-top: 50px">........................</p>
                             </div>
                         </td>
                     </tr>

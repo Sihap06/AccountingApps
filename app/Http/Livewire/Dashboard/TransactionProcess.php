@@ -3,9 +3,11 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -58,6 +60,7 @@ class TransactionProcess extends Component
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
                 'customers.name as customer_name',
+                'customers.no_telp as customer_no_telp',
                 'transaction_items.id as item_id',
                 'transaction_items.biaya as item_biaya',
                 'transaction_items.created_at as item_created_at',
@@ -86,7 +89,9 @@ class TransactionProcess extends Component
                 'created_at' => $transaction->transaction_created_at,
                 'order_transaction' => $transaction->transaction_order_transaction,
                 'status' => $transaction->transaction_status,
+                'payment_method' => $transaction->transaction_payment_method,
                 'customer_name' => $transaction->customer_name,
+                'no_telp' => $transaction->customer_no_telp,
                 'biaya' => $transaction->transaction_biaya,
                 'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,
@@ -135,13 +140,22 @@ class TransactionProcess extends Component
             'payment_method.required' => 'This field is required'
         ]);
 
-        $data = Transaction::findOrFail($this->transaction_id);
-        $data->status = 'done';
-        $data->payment_method = $this->payment_method;
-        $data->created_at = Carbon::now();
-        $data->save();
+        // $data = Transaction::findOrFail($this->transaction_id);
+        // $data->status = 'done';
+        // $data->payment_method = $this->payment_method;
+        // $data->created_at = Carbon::now();
+        // $data->save();
 
         // $this->closeModal();
+
+        $pdf = Pdf::loadView('pdf.receipt', ['detailItem' => $this->detailItem, 'date' => Carbon::now()->format('d/m/Y'), 'payment_method' => $this->payment_method])->setPaper([595.28, 420.945], 'landscape');
+        $pdfPath = 'public/nota/receipt.pdf';
+        Storage::put($pdfPath, $pdf->output());
+
+        // Dapatkan URL publik dari file PDF yang disimpan
+        $pdfUrl = Storage::url($pdfPath);
+
+        $this->dispatchBrowserEvent('printEvent', ['pdfUrl' => $pdfUrl]);
 
         $this->reset();
 

@@ -262,11 +262,11 @@
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            @if ($item['warranty'] != null)
-                                                {{ $item['warranty'] }}
-                                                @if ($item['warranty_type'] == 'daily')
+                                            @if ($detailItem['warranty'] != null)
+                                                {{ $detailItem['warranty'] }}
+                                                @if ($detailItem['warranty_type'] == 'daily')
                                                     Hari
-                                                @elseif ($item['warranty_type'] == 'weekly')
+                                                @elseif ($detailItem['warranty_type'] == 'weekly')
                                                     Minggu
                                                 @else
                                                     Bulan
@@ -314,11 +314,16 @@
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                 @if ($item['warranty'] != null)
                                                     {{ $item['warranty'] }}
-                                                    {{ $item['warranty_type'] === 'weekly' ? 'Minggu' : 'Bulan' }}
+                                                    @if ($item['warranty_type'] == 'daily')
+                                                        Hari
+                                                    @elseif ($item['warranty_type'] == 'weekly')
+                                                        Minggu
+                                                    @else
+                                                        Bulan
+                                                    @endif
                                                 @else
                                                     -
                                                 @endif
-
                                             </span>
                                         </td>
                                     </tr>
@@ -388,9 +393,8 @@
 
     <script>
         window.addEventListener('printEvent', event => {
-            const pdfUrl = '{{ asset('storage/nota/receipt.pdf') }}';
+            const pdfUrl = event.detail.pdfUrl
 
-            // Open the PDF in a new window/tab for printing
             window.open(pdfUrl, '_blank');
         })
     </script>
