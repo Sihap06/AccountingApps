@@ -140,13 +140,13 @@ class TransactionProcess extends Component
             'payment_method.required' => 'This field is required'
         ]);
 
-        // $data = Transaction::findOrFail($this->transaction_id);
-        // $data->status = 'done';
-        // $data->payment_method = $this->payment_method;
-        // $data->created_at = Carbon::now();
-        // $data->save();
+        $data = Transaction::findOrFail($this->transaction_id);
+        $data->status = 'done';
+        $data->payment_method = $this->payment_method;
+        $data->created_at = Carbon::now();
+        $data->save();
 
-        // $this->closeModal();
+        $this->closeModal();
 
         $pdf = Pdf::loadView('pdf.receipt', ['detailItem' => $this->detailItem, 'date' => Carbon::now()->format('d/m/Y'), 'payment_method' => $this->payment_method])->setPaper([595.28, 420.945], 'landscape');
         $pdfPath = 'public/nota/receipt.pdf';
