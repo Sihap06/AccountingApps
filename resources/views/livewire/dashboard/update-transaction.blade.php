@@ -358,7 +358,7 @@
                         <div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <label for="service" class="text-sm">Service</label>
-                                <input type="text" wire:model='service' id="service"
+                                <input type="text" wire:model.lazy='service' id="service"
                                     class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                 @error('service')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -366,7 +366,7 @@
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <label for="biaya" class="text-sm">Biaya</label>
-                                <input type="text" wire:model='biaya' id="biaya" x-data="{
+                                <input type="text" wire:model.lazy='biaya' id="biaya" x-data="{
                                     formatNumber: function(event) {
                                         const input = event.target;
                                         const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
@@ -460,7 +460,7 @@
                         <div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <label for="editService" class="text-sm">Service</label>
-                                <input type="text" wire:model='editService' id="editService"
+                                <input type="text" wire:model.lazy='editService' id="editService"
                                     class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                 @error('editService')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -468,14 +468,14 @@
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 <label for="editBiaya" class="text-sm">Biaya</label>
-                                <input type="text" wire:model='editBiaya' id="editBiaya" x-data="{
-                                    formatNumber: function(event) {
-                                        const input = event.target;
-                                        const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-                                        input.value = new Intl.NumberFormat('en-US').format(value);
-                                    }
-                                }"
-                                    x-on:input="formatNumber($event)"
+                                <input type="text" wire:model.lazy='editBiaya' id="editBiaya"
+                                    x-data="{
+                                        formatNumber: function(event) {
+                                            const input = event.target;
+                                            const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+                                            input.value = new Intl.NumberFormat('en-US').format(value);
+                                        }
+                                    }" x-on:input="formatNumber($event)"
                                     class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                 @error('editBiaya')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>

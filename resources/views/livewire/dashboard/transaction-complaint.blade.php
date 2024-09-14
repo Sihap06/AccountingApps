@@ -149,10 +149,23 @@
 
 
                     <div class="flex justify-between mt-4">
-                        <div class="flex gap-x-3">
-                            <p class="mb-0 text-neutral-900 leading-6 text-sm">Customer</p>
-                            <p class="mb-0 text-neutral-900 leading-6 text-sm">:</p>
-                            <p class="mb-0 text-neutral-900 leading-6 text-sm">{{ $detailItem['customer_name'] }}</p>
+                        <div class="flex gap-x-2">
+                            <div>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">Customer</p>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">No Handphone</p>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">:</p>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">:</p>
+                            </div>
+                            <div>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">{{ $detailItem['customer_name'] }}
+                                </p>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">{{ $detailItem['no_telp'] }}</p>
+                            </div>
+
+
+
                         </div>
 
                         <div>

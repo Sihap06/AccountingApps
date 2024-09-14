@@ -254,9 +254,14 @@
                </div>
            </div>
 
+
        </div>
        <div class="mt-8">
-           @livewire('dashboard.transaction-process')
+           <div class="flex flex-col gap-4">
+               @livewire('dashboard.transaction-process')
+               @livewire('dashboard.transaction-complaint')
+
+           </div>
        </div>
 
 
