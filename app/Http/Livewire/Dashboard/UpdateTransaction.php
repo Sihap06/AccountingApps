@@ -21,6 +21,8 @@ class UpdateTransaction extends Component
     public $paymentMethod;
     public $orderDate;
     public $orderTransaction;
+    public $warranty = '';
+    public $warranty_type = 'daily';
 
     public $isOpen = false;
 
@@ -126,6 +128,8 @@ class UpdateTransaction extends Component
             'biaya' => 'required',
             'technical' => '',
             'product' => '',
+            'warranty' => '',
+            'warranty_type' => ''
         ], [
             'biaya.required' => 'This field is required',
             'service.required' => 'This field is required',
@@ -137,6 +141,14 @@ class UpdateTransaction extends Component
 
         if ($this->product === '') {
             $this->product = null;
+        }
+
+        $warranty = '';
+        $warranty_type = null;
+
+        if ($this->warranty != 0 || $this->warranty != '') {
+            $warranty = $this->warranty;
+            $warranty_type = $this->warranty_type;
         }
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->biaya);
@@ -177,6 +189,8 @@ class UpdateTransaction extends Component
         $newTransactionItem->modal = $perhitungan['modal'];
         $newTransactionItem->fee_teknisi  = $perhitungan['fee_teknisi'];
         $newTransactionItem->untung = $perhitungan['untung'];
+        $newTransactionItem->warranty = $warranty;
+        $newTransactionItem->warranty_type = $warranty_type;
 
         $newTransactionItem->save();
 
@@ -208,6 +222,8 @@ class UpdateTransaction extends Component
         $this->editBiaya = $data->biaya;
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
+        $this->warranty = $data->warranty;
+        $this->warranty_type = $data->warranty_type;
 
         $this->editId = $id;
 
@@ -222,6 +238,8 @@ class UpdateTransaction extends Component
         $this->editBiaya = $data->biaya;
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
+        $this->warranty = $data->warranty;
+        $this->warranty_type = $data->warranty_type;
 
         $this->editId = $id;
 
@@ -240,6 +258,14 @@ class UpdateTransaction extends Component
             'editBiaya.required' => 'This field is required',
             'editService.required' => 'This field is required',
         ]);
+
+        $warranty = '';
+        $warranty_type = null;
+
+        if ($this->warranty != 0 || $this->warranty != '') {
+            $warranty = $this->warranty;
+            $warranty_type = $this->warranty_type;
+        }
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
@@ -319,6 +345,8 @@ class UpdateTransaction extends Component
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
         $transaction->untung = $perhitungan['untung'];
+        $transaction->warranty = $warranty;
+        $transaction->warranty_type = $warranty_type;
 
         $transaction->save();
 
@@ -342,6 +370,14 @@ class UpdateTransaction extends Component
             'editBiaya.required' => 'This field is required',
             'editService.required' => 'This field is required',
         ]);
+
+        $warranty = '';
+        $warranty_type = null;
+
+        if ($this->warranty != 0 || $this->warranty != '') {
+            $warranty = $this->warranty;
+            $warranty_type = $this->warranty_type;
+        }
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
@@ -421,6 +457,8 @@ class UpdateTransaction extends Component
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
         $transaction->untung = $perhitungan['untung'];
+        $transaction->warranty = $warranty;
+        $transaction->warranty_type = $warranty_type;
         $transaction->save();
 
         $this->dispatchBrowserEvent('swal', [

@@ -109,7 +109,8 @@
             </td>
             <td style="vertical-align: bottom">
                 <div class="header-right">
-                    <p style="font-size: 14px; margin-bottom: 14px">Nota No: <strong>A048</strong></p>
+                    <p style="font-size: 14px; margin-bottom: 14px">Nota No:
+                        <strong>{{ $detailItem['order_transaction'] }}</strong></p>
                     <p>Tanggal: {{ $date }}</p>
                     <p>Nama: {{ $detailItem['customer_name'] }}</p>
                     <p>No. Handphone: {{ $detailItem['no_telp'] }}</p>

@@ -82,6 +82,9 @@
                                                 Sparepart</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                                Garansi</th>
+                                            <th
+                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             </th>
                                         </tr>
                                     </thead>
@@ -116,6 +119,25 @@
                                                 <span
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                     {{ $transaction['product_id'] !== null ? \App\Models\Product::findOrFail($transaction['product_id'])->name : '-' }}
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                <span
+                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                    @if ($transaction['warranty'] != '')
+                                                        {{ $transaction['warranty'] }}
+                                                        @if ($transaction['warranty_type'] == 'daily')
+                                                            Hari
+                                                        @elseif ($transaction['warranty_type'] == 'weekly')
+                                                            Minggu
+                                                        @else
+                                                            Bulan
+                                                        @endif
+                                                    @else
+                                                        -
+                                                    @endif
+
                                                 </span>
                                             </td>
                                             <td
@@ -169,6 +191,25 @@
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                         {{ $item['product_id'] !== null ? \App\Models\Product::findOrFail($item['product_id'])->name : '-' }}
+                                                    </span>
+                                                </td>
+                                                <td
+                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                                    <span
+                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                        @if ($item['warranty'] != '')
+                                                            {{ $item['warranty'] }}
+                                                            @if ($item['warranty_type'] == 'daily')
+                                                                Hari
+                                                            @elseif ($item['warranty_type'] == 'weekly')
+                                                                Minggu
+                                                            @else
+                                                                Bulan
+                                                            @endif
+                                                        @else
+                                                            -
+                                                        @endif
+
                                                     </span>
                                                 </td>
                                                 <td
@@ -351,6 +392,29 @@
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                                <label for="warranty" class="text-sm">Garansi</label>
+                                <div class="flex flex-row gap-2">
+                                    <input type="text" wire:model.lazy='warranty' id="warranty"
+                                        x-data="{
+                                            formatNumber: function(event) {
+                                                const input = event.target;
+                                                const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+                                                input.value = new Intl.NumberFormat('en-US').format(value);
+                                            }
+                                        }" x-on:input="formatNumber($event)"
+                                        class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
+                                    <select wire:model.lazy="warranty_type"
+                                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                        <option value="daily">Hari</option>
+                                        <option value="weekly">Minggu</option>
+                                        <option value="monthly">Bulan</option>
+                                    </select>
+                                </div>
+                                @error('warranty')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
                         <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
                             <x-ui.button type="submit" title="Add Service" color="primary" wireLoading
@@ -427,6 +491,29 @@
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 @livewire('searchable-select', ['list' => $inventory, 'selectedOption' => $editProduct, 'name' => 'editProduct', 'label' => 'Sparepart'])
                                 @error('editProduct')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                                <label for="warranty" class="text-sm">Garansi</label>
+                                <div class="flex flex-row gap-2">
+                                    <input type="text" wire:model.lazy='warranty' id="warranty"
+                                        x-data="{
+                                            formatNumber: function(event) {
+                                                const input = event.target;
+                                                const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+                                                input.value = new Intl.NumberFormat('en-US').format(value);
+                                            }
+                                        }" x-on:input="formatNumber($event)"
+                                        class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
+                                    <select wire:model.lazy="warranty_type"
+                                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                        <option value="daily">Hari</option>
+                                        <option value="weekly">Minggu</option>
+                                        <option value="monthly">Bulan</option>
+                                    </select>
+                                </div>
+                                @error('warranty')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
                             </div>
