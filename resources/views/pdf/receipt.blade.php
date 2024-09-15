@@ -17,7 +17,7 @@
             font-size: 12px;
             padding: 0;
             /* color: #000; */
-            text-transform: uppercase
+            /* text-transform: uppercase */
         }
 
         .header {
