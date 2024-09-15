@@ -12,7 +12,7 @@
         }
 
         body {
-            /* font-family: 'Arial', 'Helvetica', sans-serif; */
+            font-family: 'Arial', 'Helvetica', sans-serif;
             margin: 12px;
             font-size: 12px;
             padding: 0;
