@@ -12,11 +12,11 @@
         }
 
         body {
-            font-family: 'Arial', 'Helvetica', sans-serif;
+            /* font-family: 'Arial', 'Helvetica', sans-serif; */
             margin: 12px;
             font-size: 12px;
             padding: 0;
-            color: #000;
+            /* color: #000; */
             text-transform: uppercase
         }
 
@@ -110,7 +110,8 @@
             <td style="vertical-align: bottom">
                 <div class="header-right">
                     <p style="font-size: 14px; margin-bottom: 14px">Nota No:
-                        <strong>{{ $detailItem['order_transaction'] }}</strong></p>
+                        <strong>{{ $detailItem['order_transaction'] }}</strong>
+                    </p>
                     <p>Tanggal: {{ $date }}</p>
                     <p>Nama: {{ $detailItem['customer_name'] }}</p>
                     <p>No. Handphone: {{ $detailItem['no_telp'] }}</p>
