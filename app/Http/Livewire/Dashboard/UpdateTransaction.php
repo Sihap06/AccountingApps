@@ -16,7 +16,6 @@ use Livewire\Component;
 class UpdateTransaction extends Component
 {
     public $transactionId;
-    public $serviceItems = [];
     public $customer_id;
     public $paymentMethod;
     public $orderDate;
@@ -259,14 +258,6 @@ class UpdateTransaction extends Component
             'editService.required' => 'This field is required',
         ]);
 
-        $warranty = '';
-        $warranty_type = null;
-
-        if ($this->warranty != 0 || $this->warranty != '') {
-            $warranty = $this->warranty;
-            $warranty_type = $this->warranty_type;
-        }
-
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
         $validateData['technical_id'] = $this->editTechnical;
@@ -345,8 +336,8 @@ class UpdateTransaction extends Component
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
         $transaction->untung = $perhitungan['untung'];
-        $transaction->warranty = $warranty;
-        $transaction->warranty_type = $warranty_type;
+        $transaction->warranty = $this->warranty;
+        $transaction->warranty_type = $this->warranty_type;
 
         $transaction->save();
 
@@ -370,14 +361,6 @@ class UpdateTransaction extends Component
             'editBiaya.required' => 'This field is required',
             'editService.required' => 'This field is required',
         ]);
-
-        $warranty = '';
-        $warranty_type = null;
-
-        if ($this->warranty != 0 || $this->warranty != '') {
-            $warranty = $this->warranty;
-            $warranty_type = $this->warranty_type;
-        }
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
@@ -457,8 +440,8 @@ class UpdateTransaction extends Component
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
         $transaction->untung = $perhitungan['untung'];
-        $transaction->warranty = $warranty;
-        $transaction->warranty_type = $warranty_type;
+        $transaction->warranty = $this->warranty;
+        $transaction->warranty_type = $this->warranty_type;
         $transaction->save();
 
         $this->dispatchBrowserEvent('swal', [

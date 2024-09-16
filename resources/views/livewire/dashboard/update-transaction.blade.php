@@ -249,60 +249,6 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-                                        @foreach ($serviceItems as $index => $item)
-                                            <tr wire:key='{{ $index }}' wire:loading.remove
-                                                wire:target='gotoPage, previousPage, nextPage, searchTerm'>
-
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ $item['service'] }}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ number_format($item['biaya']) }}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ $item['technical_name'] !== '' ? $item['technical_name'] : '-' }}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ $item['product_name'] !== '' ? $item['product_name'] : '-' }}
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <div>
-                                                        <button type="button"
-                                                            wire:click="removeServiceItem({{ $index }})"
-                                                            class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                            <i class="fas fa-trash-alt" wire:loading.remove
-                                                                wire:target='removeServiceItem({{ $index }})'></i>
-
-                                                            <div wire:loading
-                                                                wire:target='removeServiceItem({{ $index }})'>
-                                                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                                                    role="status">
-                                                                    <span
-                                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
