@@ -353,6 +353,8 @@ class Transaction extends Component
         $pdfPath = 'public/nota/receipt.pdf';
         Storage::put($pdfPath, $pdf->output());
 
+        exec('pdftotext public/nota/receipt.pdf public/nota/receipt.txt');
+
         // Dapatkan URL publik dari file PDF yang disimpan
         $pdfUrl = Storage::url($pdfPath);
 
