@@ -22,9 +22,9 @@ class PrintReceiptController extends Controller
             // For USB or parallel port (Linux)
             $connector = new FilePrintConnector("USB001");
 
-            dd($connector);
 
             $printer = new Printer($connector);
+            dd($printer);
 
             // Printing a basic text
             $printer->text("Hello World!\n");
