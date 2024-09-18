@@ -12,9 +12,9 @@
         }
 
         body {
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            margin: 12px;
-            font-size: 12px;
+            font-family: "Courier New", Courier, monospace;
+            /* margin: 12px;
+            font-size: 12px; */
             padding: 0;
             /* color: #000; */
             /* text-transform: uppercase */
