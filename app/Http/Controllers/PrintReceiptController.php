@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
@@ -13,13 +14,13 @@ class PrintReceiptController extends Controller
     {
         try {
             // For Windows printer setup
-            $connector = new WindowsPrintConnector("EPSON_LX_310"); // Name of the printer
+            // $connector = new WindowsPrintConnector("EPSON_LX_310"); // Name of the printer
 
             // For network printer setup
             // $connector = new NetworkPrintConnector("192.168.0.123", 9100);
 
             // For USB or parallel port (Linux)
-            // $connector = new FilePrintConnector("/dev/usb/lp0");
+            $connector = new FilePrintConnector("/dev/usb/USB001");
 
             $printer = new Printer($connector);
 
