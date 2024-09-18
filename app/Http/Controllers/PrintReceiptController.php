@@ -13,7 +13,7 @@ class PrintReceiptController extends Controller
     {
         try {
             // For Windows printer setup
-            $connector = new WindowsPrintConnector("EPSON LX-310"); // Name of the printer
+            $connector = new WindowsPrintConnector("EPSON_LX_310"); // Name of the printer
 
             // For network printer setup
             // $connector = new NetworkPrintConnector("192.168.0.123", 9100);
