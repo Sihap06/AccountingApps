@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PrintReceiptController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Livewire\Auth\Login;
 use App\Http\Livewire\Dashboard\Customers;
@@ -34,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard.index');
     });
 
-    Route::get('receipt', [TransactionController::class, 'receipt']);
+    Route::get('receipt', [PrintReceiptController::class, 'printReceipt']);
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
