@@ -20,7 +20,7 @@ class PrintReceiptController extends Controller
             // $connector = new NetworkPrintConnector("192.168.0.123", 9100);
 
             // For USB or parallel port (Linux)
-            $connector = new FilePrintConnector("/dev/usb/USB001");
+            $connector = new FilePrintConnector("/dev/usb/lp0");
 
             $printer = new Printer($connector);
 
