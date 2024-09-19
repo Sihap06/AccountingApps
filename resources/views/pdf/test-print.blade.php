@@ -10,7 +10,6 @@
             body {
                 font-family: "Courier New", Courier, monospace;
                 padding: 0;
-                font-size: 12px
             }
 
             @page {
@@ -48,12 +47,10 @@
 
         .header-left p {
             margin: 4px 0;
-            font-size: 12px
         }
 
         .header-right {
             text-align: right;
-            font-size: 12px;
         }
 
         .header-right p {
