@@ -10,6 +10,7 @@
             body {
                 font-family: "Courier New", Courier, monospace;
                 padding: 0;
+                font-size: 12px
             }
 
             @page {
