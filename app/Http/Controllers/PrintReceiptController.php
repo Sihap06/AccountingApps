@@ -13,7 +13,7 @@ class PrintReceiptController extends Controller
         ];
 
         // Send the print data to the local Express server
-        $response = Http::post('http://localhost:3000/print', $printData);
+        $response = Http::post('http://http://127.0.0.1/:3000/print', $printData);
 
         if ($response->successful()) {
             return response()->json(['message' => 'Print data sent successfully']);
