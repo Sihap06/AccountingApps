@@ -21,4 +21,8 @@ class PrintReceiptController extends Controller
 
         return response()->json(['message' => 'Failed to send print data'], 500);
     }
+    public function test()
+    {
+        return view('pdf.test-print');
+    }
 }

@@ -37,6 +37,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('receipt', [PrintReceiptController::class, 'printReceipt']);
 
+    Route::get('test', [PrintReceiptController::class, 'test']);
+
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
         Route::get('point-of-sales', TabOnPos::class)->name('point-of-sales');
