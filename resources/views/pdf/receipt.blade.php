@@ -12,13 +12,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: monospace;
             margin-top: 28px;
             margin-left: 12px;
             margin-right: 12px;
             font-size: 12px;
             padding: 0;
-            line-height: 12px;
+            /* line-height: 12px; */
             text-transform: uppercase
         }
 
@@ -50,8 +50,9 @@
         }
 
         .terms {
-            font-size: 8px;
-            margin-top: 24px
+            font-size: 10px;
+            margin-top: 24px;
+            /* line-height: 16px */
         }
 
         .terms p {
