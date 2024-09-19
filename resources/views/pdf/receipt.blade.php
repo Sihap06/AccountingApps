@@ -13,11 +13,11 @@
 
         body {
             font-family: "Courier New", Courier, monospace;
-            /* margin: 12px;
-            font-size: 12px; */
+            margin: 12px;
+            font-size: 12px;
             padding: 0;
-            /* color: #000; */
-            /* text-transform: uppercase */
+            line-height: 16px;
+            text-transform: uppercase
         }
 
         .header {
@@ -226,13 +226,13 @@
                         <td style="vertical-align: bottom;">
                             <div style="text-align: center">
                                 <p>Pemilik</p>
-                                <p style="margin-top: 50px">........................</p>
+                                <p style="margin-top: 50px">.................</p>
                             </div>
                         </td>
                         <td style="vertical-align: bottom;">
                             <div style="text-align: center">
                                 <p>Teknisi</p>
-                                <p style="margin-top: 50px">........................</p>
+                                <p style="margin-top: 50px">.................</p>
                             </div>
                         </td>
                     </tr>
