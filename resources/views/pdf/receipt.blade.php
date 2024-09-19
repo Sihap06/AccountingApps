@@ -12,11 +12,13 @@
         }
 
         body {
-            font-family: "Courier New", Courier, monospace;
-            margin: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 28px;
+            margin-left: 12px;
+            margin-right: 12px;
             font-size: 12px;
             padding: 0;
-            line-height: 16px;
+            line-height: 12px;
             text-transform: uppercase
         }
 
