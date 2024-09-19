@@ -20,7 +20,7 @@ class PrintReceiptController extends Controller
             // $connector = new NetworkPrintConnector("192.168.0.123", 9100);
 
             // For USB or parallel port (Linux)
-            $connector = new FilePrintConnector("smb://192.168.1.1/EPSON_LX_310");
+            $connector = new FilePrintConnector("ipp://192.168.1.10/ipp/EPSON_LX_310");
 
             $printer = new Printer($connector);
 
