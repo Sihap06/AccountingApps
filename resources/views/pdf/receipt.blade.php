@@ -7,7 +7,7 @@
     <title>Nota Servis iPhone</title>
     <style>
         @page {
-            size: 24cm 13.5cm;
+            size: 21cm 14cm;
             margin: 0;
         }
 
