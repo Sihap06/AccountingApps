@@ -13,7 +13,7 @@ class PrintReceiptController extends Controller
         ];
 
         // Send the print data to the local Express server
-        $response = Http::post('http://localhost:3000/generate-word', $printData);
+        $response = Http::post('http://0.0.0.0:3000/generate-word', $printData);
 
         dd($response);
 
