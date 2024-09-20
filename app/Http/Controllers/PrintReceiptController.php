@@ -9,11 +9,13 @@ class PrintReceiptController extends Controller
     public function printReceipt()
     {
         $printData = [
-            'content' => 'This is the content to print'
+            'order_transaction' => 'INV0001'
         ];
 
         // Send the print data to the local Express server
-        $response = Http::post('http://192.168.1.9:3000', $printData);
+        $response = Http::post('http://localhost:3000/generate-word', $printData);
+
+        dd($response);
 
         if ($response->successful()) {
             return response()->json(['message' => 'Print data sent successfully']);

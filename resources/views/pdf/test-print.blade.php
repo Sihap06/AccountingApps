@@ -8,7 +8,7 @@
     <style>
         @media print {
             body {
-                font-family: "Courier New", Courier, monospace;
+                font-family: monospace;
                 padding: 0;
             }
 
@@ -108,29 +108,13 @@
 </head>
 
 <body>
-    <table class="header">
-        <tr>
-            <td>
-                <div class="header-left">
-                    {{-- <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo"> --}}
-                    <p style="margin-top: 8px">Jl. Karimata No. 58B <span style="margin-left: 10px">089638911151</span>
-                    </p>
-                </div>
-            </td>
-            <td style="vertical-align: bottom">
-                <div class="header-right">
-                    <p style="font-size: 14px; margin-bottom: 14px">Nota No:
-                        <strong>INV00001</strong>
-                    </p>
-                    <p>Tanggal: 20/09/2024</p>
-                    <p>Nama: CIMO</p>
-                    <p>No. Handphone: 0912091029012</p>
-                </div>
-            </td>
-        </tr>
-
-
-    </table>
+    <ul style="font-size: 8px">
+        <li>Pengambilan atau claim garansi WAJIB disertakan nota fisik dan tidak ada REFUND dana</li>
+        <li>Garansi tidak berlaku jika segel rusak atau human error dan hanya berlaku 1x pergantian part
+        </li>
+        <li>Garansi baterai berlaku jika BH turun derastis dan drop (mlembung tidak termasuk)</li>
+        <li>Kerusakan atau Kehilangan dalam waktu 3 bulan di luar tanggung jawab kami</li>
+    </ul>
 
 </body>
 

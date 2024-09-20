@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('receipt', [PrintReceiptController::class, 'printReceipt']);
 
-    Route::get('test', [PrintReceiptController::class, 'test']);
+    Route::get('test', [PrintReceiptController::class, 'generateReceipt']);
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', Dashboard::class)->name('index');
