@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\QueuePrint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -102,13 +101,5 @@ class QueuePrintController extends Controller
         $data = $results->values()->toArray()[0];
 
         return response()->json($data);
-    }
-
-    public function updateStatuQueue($id)
-    {
-        $data = QueuePrint::findOrFail($id);
-        $data->status = 'done';
-        $data->save;
-        return response()->json(['message' => 'success']);
     }
 }
