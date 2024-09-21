@@ -2,13 +2,8 @@
 
 namespace App\Http\Livewire\Dashboard;
 
-use App\Models\QueuePrint;
 use App\Models\Transaction;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -148,11 +143,6 @@ class TransactionProcess extends Component
         // $data->save();
 
         $this->closeModal();
-
-        $queue_print = new QueuePrint();
-        $queue_print->order_id = $this->transaction_id;
-        $queue_print->status = 'proses';
-        $queue_print->save();
 
         $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id]);
 
