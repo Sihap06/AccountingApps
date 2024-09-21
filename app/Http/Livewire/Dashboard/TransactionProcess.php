@@ -154,7 +154,7 @@ class TransactionProcess extends Component
         $queue_print->status = 'proses';
         $queue_print->save();
 
-        $this->dispatchBrowserEvent('printEvent', ['queue_id' => $queue_print->id]);
+        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id]);
 
         $this->reset();
 
