@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class QueuePrintController extends Controller
 {
-    public function getQueue()
+    public function getQueue($id)
     {
-        $data = QueuePrint::where('status', 'proses')->take(1)->get();
+        $data = QueuePrint::findOrFail($id);
         return response()->json($data);
     }
 
