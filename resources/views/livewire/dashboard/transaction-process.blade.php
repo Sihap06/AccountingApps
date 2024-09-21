@@ -406,9 +406,12 @@
 
     <script>
         window.addEventListener('printEvent', event => {
-            const pdfUrl = event.detail.pdfUrl
+            const transaction_id = event.detail.transaction_id
 
-            window.open(pdfUrl, '_blank');
+            fetch('http://localhost:3000/print/' + transaction_id)
+                .then(response => response.json()) // Assuming the response is JSON
+                .then(data => console.log(data)) // Handle the response
+                .catch(error => console.error('Error:', error));
         })
     </script>
 </div>

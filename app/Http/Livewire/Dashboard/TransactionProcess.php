@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Models\QueuePrint;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -140,22 +141,20 @@ class TransactionProcess extends Component
             'payment_method.required' => 'This field is required'
         ]);
 
-        $data = Transaction::findOrFail($this->transaction_id);
-        $data->status = 'done';
-        $data->payment_method = $this->payment_method;
-        $data->created_at = Carbon::now();
-        $data->save();
+        // $data = Transaction::findOrFail($this->transaction_id);
+        // $data->status = 'done';
+        // $data->payment_method = $this->payment_method;
+        // $data->created_at = Carbon::now();
+        // $data->save();
 
         $this->closeModal();
 
-        $pdf = Pdf::loadView('pdf.receipt', ['detailItem' => $this->detailItem, 'date' => Carbon::now()->format('d/m/Y'), 'payment_method' => $this->payment_method])->setPaper([595.28, 420.945], 'landscape');
-        $pdfPath = 'public/nota/receipt.pdf';
-        Storage::put($pdfPath, $pdf->output());
+        $queue_print = new QueuePrint();
+        $queue_print->order_id = $this->transaction_id;
+        $queue_print->status = 'proses';
+        $queue_print->save();
 
-        // Dapatkan URL publik dari file PDF yang disimpan
-        $pdfUrl = Storage::url($pdfPath);
-
-        $this->dispatchBrowserEvent('printEvent', ['pdfUrl' => $pdfUrl]);
+        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id]);
 
         $this->reset();
 
