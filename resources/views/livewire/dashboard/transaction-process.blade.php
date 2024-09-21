@@ -406,9 +406,9 @@
 
     <script>
         window.addEventListener('printEvent', event => {
-            const transaction_id = event.detail.transaction_id
+            const queue_id = event.detail.queue_id
 
-            window.open('http://localhost:3000/print/' + transaction_id, '_blank');
+            window.open('http://localhost:3000/print/' + queue_id, '_blank');
 
         })
     </script>
