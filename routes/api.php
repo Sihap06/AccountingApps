@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\QueuePrintController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,3 +31,5 @@ Route::get('/product/all', [ProductController::class, 'listProductAll']);
 Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 Route::get('/product/detail/{id}', [ProductController::class, 'detailProduct']);
 
+Route::get('get-queue-print', [QueuePrintController::class, 'getQueue']);
+Route::get('update-queue-print/{id}', [QueuePrintController::class, 'updateStatuQueue']);

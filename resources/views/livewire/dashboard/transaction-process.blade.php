@@ -408,10 +408,8 @@
         window.addEventListener('printEvent', event => {
             const transaction_id = event.detail.transaction_id
 
-            fetch('http://156.67.221.203:8081/proxy/print/' + transaction_id)
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error('Error:', error));
+            window.open('http://localhost:3000/print' + transaction_id, '_blank');
+
         })
     </script>
 </div>
