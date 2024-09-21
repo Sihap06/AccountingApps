@@ -17,6 +17,7 @@ use App\Http\Livewire\Dashboard\TabOnInventory;
 use App\Http\Livewire\Dashboard\TabOnLogActivity;
 use App\Http\Livewire\Dashboard\TabOnPos;
 use App\Http\Livewire\Dashboard\Teknisi;
+use Illuminate\Support\Facades\Http;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,12 @@ use App\Http\Livewire\Dashboard\Teknisi;
 Route::middleware(['auth'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('dashboard.index');
+    });
+
+    Route::get('/proxy/print/{transaction_id}', function ($transaction_id) {
+        $url = "http://localhost:3000/print/" . $transaction_id;
+        $response = Http::get($url);
+        return $response->body();
     });
 
     Route::get('receipt', [PrintReceiptController::class, 'printReceipt']);
