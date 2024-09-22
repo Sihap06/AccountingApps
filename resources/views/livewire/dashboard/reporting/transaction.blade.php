@@ -264,9 +264,11 @@
 
     <script>
         window.addEventListener('printEvent', event => {
-            const pdfUrl = event.detail.pdfUrl
+            const transaction_id = event.detail.transaction_id
+            const payment_method = event.detail.payment_method
 
-            window.open(pdfUrl, '_blank');
+            window.open('http://localhost:3000/print/' + transaction_id, '_blank');
+
         })
     </script>
 </div>
