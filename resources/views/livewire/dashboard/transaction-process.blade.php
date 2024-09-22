@@ -407,8 +407,9 @@
     <script>
         window.addEventListener('printEvent', event => {
             const transaction_id = event.detail.transaction_id
+            const payment_method = event.detail.payment_method
 
-            window.open('http://localhost:3000/print/' + transaction_id, '_blank');
+            window.open('http://localhost:3000/print/' + transaction_id + '/' + payment_method, '_blank');
 
         })
     </script>

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -136,15 +137,15 @@ class TransactionProcess extends Component
             'payment_method.required' => 'This field is required'
         ]);
 
-        // $data = Transaction::findOrFail($this->transaction_id);
-        // $data->status = 'done';
-        // $data->payment_method = $this->payment_method;
-        // $data->created_at = Carbon::now();
-        // $data->save();
+        $data = Transaction::findOrFail($this->transaction_id);
+        $data->status = 'done';
+        $data->payment_method = $this->payment_method;
+        $data->created_at = Carbon::now();
+        $data->save();
 
         $this->closeModal();
 
-        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id]);
+        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id, 'payment_method' => $this->payment_method]);
 
         $this->reset();
 
