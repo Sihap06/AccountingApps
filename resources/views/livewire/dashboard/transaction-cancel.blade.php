@@ -2,10 +2,53 @@
     class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border custom-height w-full">
     <div class="flex flex-row md:flex-row justify-between p-6 pb-0 ">
         <h6 class="dark:text-white">Transactions Cancel</h6>
-        <div class="flex w-full md:w-3/12 items-center">
+        <div class="w-full md:w-3/12 items-center">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                 placeholder="Masukkan order id" />
+            <div class="flex gap-x-2 mt-2">
+                <div class="w-full">
+                    <div class="flex items-center">
+                        <select wire:model="month"
+                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                            <option value="" selected>Pilih Bulan</option>
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    @if ($errors->has('month'))
+                        <span class="text-red-500 text-xs">{{ $errors->first('month') }}</span>
+                    @endif
+                </div>
+
+                <div class="w-full">
+                    <div class="flex items-center">
+                        <select wire:model="year"
+                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                            <option value="" selected>Pilih Tahun</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                        </select>
+                    </div>
+                    @if ($errors->has('year'))
+                        <span class="text-red-500 text-xs">{{ $errors->first('year') }}</span>
+                    @endif
+                </div>
+            </div>
         </div>
     </div>
     <div class="flex-auto p-6 h-full">
@@ -28,6 +71,10 @@
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                             Order ID
+                        </th>
+                        <th
+                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                            Service
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -70,6 +117,28 @@
                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                     {{ $item->order_transaction }}
                                 </span>
+                            </td>
+                            <td
+                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                @if ($item->service_name !== null)
+                                    <div class="relative group">
+                                        <span
+                                            class="text-xs cursor-pointer font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                            {{ $item->service }} ...
+                                        </span>
+
+                                        <div
+                                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded px-3 py-2">
+                                            {{ $item->service_name }}
+                                        </div>
+                                    </div>
+                                @else
+                                    <span
+                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                        {{ $item->service }}
+                                    </span>
+                                @endif
+
                             </td>
                             <td
                                 class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -155,10 +224,10 @@
                         <button wire:loading.remove='closeModal' type="button" wire:click='closeModal'>
                             <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                                <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
 

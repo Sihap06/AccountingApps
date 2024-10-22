@@ -39,7 +39,7 @@
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}
+                                            {{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i:s') }}
                                         </span>
                                     </td>
                                     <td

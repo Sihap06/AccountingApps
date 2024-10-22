@@ -258,8 +258,8 @@
        </div>
        <div class="mt-8">
            <div class="flex flex-col gap-4">
-               @livewire('dashboard.transaction-process')
-               @livewire('dashboard.transaction-complaint')
+               @livewire('dashboard.transaction-process', ['is_dashboard' => true])
+               @livewire('dashboard.transaction-complaint', ['is_dashboard' => true])
 
            </div>
        </div>

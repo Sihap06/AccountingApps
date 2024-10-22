@@ -16,8 +16,14 @@ class TransactionProcess extends Component
     public $isOpen = false;
     public $payment_method;
     public $transaction_id;
+    public $is_dashboard;
 
     protected $listeners = ['refreshComponent' => '$refresh'];
+
+    public function mount($is_dashboard = false)
+    {
+        $this->is_dashboard = $is_dashboard;
+    }
 
     public function openModal()
     {
@@ -172,13 +178,41 @@ class TransactionProcess extends Component
 
     public function render()
     {
-        $data = Transaction::leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->select('transactions.*', 'customers.name as customer_name')
+        $data = Transaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->select(
+                'transactions.created_at',
+                'customers.name as customer_name',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.service',
+                DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
+                DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
+                DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Modal untuk item lainnya dari transaction_items
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
+                'transactions.payment_method',
+                'transactions.status'
+            )
             ->where('transactions.status', 'proses')
+            ->whereNull('transactions.deleted_at')
             ->where(function ($sub_query) {
                 $sub_query->where('order_transaction', 'like', '%' . $this->searchTerm . '%')
                     ->orWhere('customers.name', 'like', '%' . $this->searchTerm . '%');
-            })->get();
+            })
+            ->groupBy(
+                'transactions.created_at',
+                'customers.name',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method'
+            )->get();
 
         $paymentMethods = [
             'bca',

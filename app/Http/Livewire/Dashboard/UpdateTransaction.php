@@ -498,8 +498,6 @@ class UpdateTransaction extends Component
             $log->save();
         }
 
-
-
         $transaction->customer_id = $this->customer_id;
         $transaction->payment_method = $validateData['payment_method'];
         $transaction->created_at = $order_date . ' ' . $time;

@@ -1,5 +1,5 @@
 <div
-    class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border custom-height w-full">
+    class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border {{ $is_dashboard !== true ? 'custom-height' : '' }} w-full">
     <div class="flex flex-row md:flex-row justify-between p-6 pb-0 ">
         <h6 class="dark:text-white">Transactions Process</h6>
         <a data-target="print" style="display: none" href="{{ asset('storage/nota/receipt.pdf') }}" target="_blank"></a>
@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="flex-auto p-6 h-full">
-        <div class="p-0 overflow-y-auto table-height">
+        <div class="p-0 overflow-y-auto {{ $is_dashboard === true ? 'table-height-dashborad' : 'table-height' }}">
             <table class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
                 <thead class="align-bottom">
                     <tr>
@@ -29,6 +29,10 @@
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                             Order ID
+                        </th>
+                        <th
+                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                            Service
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -71,6 +75,28 @@
                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                     {{ $item->order_transaction }}
                                 </span>
+                            </td>
+                            <td
+                                class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                @if ($item->service_name !== null)
+                                    <div class="relative group">
+                                        <span
+                                            class="text-xs cursor-pointer font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                            {{ $item->service }} ...
+                                        </span>
+
+                                        <div
+                                            class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded px-3 py-2">
+                                            {{ $item->service_name }}
+                                        </div>
+                                    </div>
+                                @else
+                                    <span
+                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                        {{ $item->service }}
+                                    </span>
+                                @endif
+
                             </td>
                             <td
                                 class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -443,6 +469,10 @@
 
         .table-height {
             height: calc(100vh - 320px);
+        }
+
+        .table-height-dashborad {
+            height: calc(100vh - 400px);
         }
     </style>
 @endpush
