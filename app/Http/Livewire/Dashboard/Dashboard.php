@@ -80,7 +80,7 @@ class Dashboard extends Component
                 'transactions.id',
                 'transactions.status',
             )
-            // ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
             ->whereNull('transactions.deleted_at')
             ->groupBy(
                 'transactions.id',

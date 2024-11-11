@@ -302,7 +302,7 @@ class UpdateTransaction extends Component
         $transaction->biaya = $validateData['biaya'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
-        $validateData['modal'] = 0;
+        $validateData['modal'] = $transaction->modal;
 
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
