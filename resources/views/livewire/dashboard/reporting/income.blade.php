@@ -37,19 +37,21 @@
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Income</h6>
                     <div class="text-slate-900 font-bold text-right">
-                        <span>Rp {{ number_format($totalIncome) }}</span>
+                        <span>Rp {{ number_format($totalIncome, 0, ',', '.') }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Expenditure</h6>
                     <div class="text-slate-900 font-bold text-right">
-                        <span>Rp {{ number_format($totalExpenditure) }}</span>
+                        <span>Rp {{ number_format($totalExpenditure, 0, ',', '.') }}</span>
                     </div>
                 </div>
                 <div class="flex flex-col md:flex-row justify-between px-3 pb-2">
                     <h6 class="dark:text-white">Netto</h6>
                     <div class="text-slate-900 font-bold text-right">
-                        <span>Rp {{ number_format($totalNetto) }}</span>
+                        <span>
+                            Rp {{ number_format($totalNetto, 0, ',', '.') }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -85,7 +87,7 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp {{ number_format($item['total']) }}
+                                            Rp {{ number_format($item['total'], 0, ',', '.') }}
                                         </span>
                                     </td>
                                 </tr>
@@ -116,7 +118,7 @@
                 <div class="flex flex-col md:flex-row justify-between p-6 pb-0">
                     <h6 class="dark:text-white">Fee Technician Table</h6>
                     <div class="w-3/12 text-slate-900 font-bold text-right">
-                        <span>Rp {{ number_format($totalFeeTeknisi) }}</span>
+                        <span>Rp {{ number_format($totalFeeTeknisi, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
@@ -175,7 +177,7 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp {{ number_format($item['fee_teknisi']) }}
+                                            Rp {{ number_format($item['fee_teknisi'], 0, ',', '.') }}
                                         </span>
                                     </td>
                                 </tr>

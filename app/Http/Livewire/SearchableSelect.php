@@ -66,7 +66,8 @@ class SearchableSelect extends Component
         return view('livewire.searchable-select', [
             'filteredOptions' => collect($this->options)->filter(function ($option) {
                 return str_contains(strtolower($option['label']), strtolower($this->search));
-            })->all()
+            })->take(10)
+                ->all()
         ]);
     }
 }

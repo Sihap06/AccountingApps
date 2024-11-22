@@ -351,6 +351,7 @@
                 })
             });
 
+
             updateSelectOptions(newOptions);
 
         });
