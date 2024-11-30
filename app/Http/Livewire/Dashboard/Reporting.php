@@ -16,10 +16,12 @@ class Reporting extends Component
         $this->dispatchBrowserEvent('refresh-child-component');
     }
 
-    public function mount($id = null, $type)
+    public function mount($id = null, $type = null)
     {
         $this->selectedId = $id;
-        $this->tabActive = $type;
+        if ($type !== null) {
+            $this->tabActive = $type;
+        }
     }
 
     public function render()
