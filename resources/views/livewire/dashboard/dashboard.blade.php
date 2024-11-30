@@ -20,14 +20,14 @@
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
-                               <div>
+                               <a href="{{ url('dashboard/reporting/transaction') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Transaction</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        {{ number_format($todayTransaction) }}
                                    </h5>
-                               </div>
+                               </a>
                            </div>
                            <div class="px-3 text-right basis-1/3">
                                <div
@@ -47,14 +47,14 @@
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
-                               <div>
+                               <a href="{{ url('dashboard/reporting/income') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Omset</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayIncome) }}
                                    </h5>
-                               </div>
+                               </a>
                            </div>
                            <div class="px-3 text-right basis-1/3">
                                <div
@@ -74,14 +74,14 @@
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
-                               <div>
+                               <a href="{{ url('dashboard/reporting/expenditure') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Today's Expenditure</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayExpenditure) }}
                                    </h5>
-                               </div>
+                               </a>
                            </div>
                            <div class="px-3 text-right basis-1/3">
                                <div
@@ -160,10 +160,11 @@
                                        </div>
                                    </div>
                                    <div class="flex">
-                                       <button
+                                       <a href="{{ url('dashboard/detail-transaction', $item->id) }}"
                                            class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white"><i
                                                class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
-                                               aria-hidden="true"></i></button>
+                                               aria-hidden="true"></i>
+                                       </a>
                                    </div>
                                </li>
                            @endforeach

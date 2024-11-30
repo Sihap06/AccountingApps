@@ -55,8 +55,13 @@ class Transaction extends Component
         'order_date' => 'required'
     ];
 
-    public function mount()
+    public function mount($id = null)
     {
+        if ($id !== null) {
+            $this->isEdit = true;
+            $this->selectedId = $id;
+        }
+
         if (count($this->inventory) == 0 && count($this->technician) == 0) {
             $response = app(ProductController::class)->listProductAll();
 

@@ -7,12 +7,19 @@ use Livewire\Component;
 class Reporting extends Component
 {
     public $tabActive = 'transaction';
+    public $selectedId = null;
 
     public function changeActiveTab($tab)
     {
         $this->tabActive = $tab;
 
         $this->dispatchBrowserEvent('refresh-child-component');
+    }
+
+    public function mount($id = null, $type)
+    {
+        $this->selectedId = $id;
+        $this->tabActive = $type;
     }
 
     public function render()

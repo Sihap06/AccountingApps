@@ -58,7 +58,7 @@
     <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
         @if ($tabActive === 'transaction')
             <div class="w-full">
-                @livewire('dashboard.reporting.transaction', key('transaction'))
+                @livewire('dashboard.reporting.transaction', key('transaction'), ['id' => $selectedId])
             </div>
         @elseif ($tabActive === 'expenditure')
             <div class=" w-full">
