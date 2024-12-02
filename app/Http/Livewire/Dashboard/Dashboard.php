@@ -17,6 +17,41 @@ class Dashboard extends Component
         $this->selectedYear = Carbon::now()->format('Y');
     }
 
+    public function transactionChart()
+    {
+        $transactionChart =
+            DB::table('transactions as t1')
+            ->selectRaw("
+                GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees, 
+                GROUP_CONCAT(month SEPARATOR ', ') as month
+            ")
+            ->fromSub(function ($query) {
+                $query->from('transactions as t')
+                    ->leftJoin('transaction_items as ti', function ($join) {
+                        $join->on('t.id', '=', 'ti.transaction_id')
+                            ->whereNull('ti.deleted_at');
+                    })
+                    ->selectRaw("
+                SUM(t.biaya) + IFNULL(SUM(ti.biaya), 0) as total_fee, 
+                MONTHNAME(t.created_at) as month, 
+                MONTH(t.created_at) as number_of_month
+            ")
+                    ->whereYear('t.created_at', $this->selectedYear)
+                    ->whereNull('t.deleted_at')
+                    ->groupBy(
+                        'number_of_month',
+                        DB::raw('MONTHNAME(t.created_at)')
+                    )
+                    ->orderBy('number_of_month', 'asc');
+            }, 't1')
+            ->get();
+
+        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
+        $labelChart = explode(',', $transactionChart[0]->month);
+
+        return [$dataChart, $labelChart];
+    }
+
     public function render()
     {
         $now = Carbon::now()->format('Y-m-d');
@@ -54,19 +89,10 @@ class Dashboard extends Component
 
         $todayExpenditure = $expenditur[0]['total'];
 
-        $transactionChart =
-            DB::table('transactions as t1')
-            ->selectRaw("GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees, GROUP_CONCAT(month SEPARATOR ', ') as month")
-            ->fromSub(function ($query) {
-                $query->from('transactions')
-                    ->selectRaw("SUM(biaya) as total_fee, MONTHNAME(created_at) as month")
-                    ->whereYear('created_at', $this->selectedYear)
-                    ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'));
-            }, 't1')
-            ->get();
+        $transactionChart = $this->transactionChart();
 
-        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
-        $labelChart = explode(',', $transactionChart[0]->month);
+        $dataChart = $transactionChart[0];
+        $labelChart = $transactionChart[1];
 
         $dataTransaction = Transaction::take(6)->latest()->get();
 
@@ -104,19 +130,10 @@ class Dashboard extends Component
 
     public function updateChart()
     {
-        $transactionChart =
-            DB::table('transactions as t1')
-            ->selectRaw("GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees, GROUP_CONCAT(month SEPARATOR ', ') as month")
-            ->fromSub(function ($query) {
-                $query->from('transactions')
-                    ->selectRaw("SUM(biaya) as total_fee, MONTHNAME(created_at) as month")
-                    ->whereYear('created_at', $this->selectedYear)
-                    ->groupBy(DB::raw('MONTH(created_at)'), DB::raw('MONTHNAME(created_at)'));
-            }, 't1')
-            ->get();
+        $transactionChart = $this->transactionChart();
 
-        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
-        $labelChart = explode(',', $transactionChart[0]->month);
+        $dataChart = $transactionChart[0];
+        $labelChart = $transactionChart[1];
 
         $this->emit('chartUpdate', $dataChart, $labelChart);
     }

@@ -272,103 +272,108 @@
        <script src="{{ asset('assets/js/plugins/chartjs.min.js') }}"></script>
 
        <script>
-           const data = @json($dataChart);
-           const label = @json($labelChart);
+           let transactionChart; // Declare chart instance globally
 
-           const context = document.getElementById("transaction-chart").getContext("2d");
+           document.addEventListener('DOMContentLoaded', () => {
+               const data = @json($dataChart);
+               const label = @json($labelChart);
 
-           const gradient = context.createLinearGradient(0, 230, 0, 50);
+               const createChart = (labels, dataset) => {
+                   const context = document.getElementById("transaction-chart").getContext("2d");
 
-           gradient.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
-           gradient.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
-           gradient.addColorStop(0, 'rgba(94, 114, 228, 0)');
-           new Chart(context, {
-               type: "line",
-               data: {
-                   labels: label,
-                   datasets: [{
-                       label: "Transactions",
-                       tension: 0.4,
-                       borderWidth: 0,
-                       pointRadius: 0,
-                       borderColor: "#5e72e4",
-                       backgroundColor: gradient,
-                       borderWidth: 3,
-                       fill: true,
-                       data: data,
-                       maxBarThickness: 6
+                   const gradient = context.createLinearGradient(0, 230, 0, 50);
+                   gradient.addColorStop(1, 'rgba(94, 114, 228, 0.2)');
+                   gradient.addColorStop(0.2, 'rgba(94, 114, 228, 0.0)');
+                   gradient.addColorStop(0, 'rgba(94, 114, 228, 0)');
 
-                   }],
-               },
-               options: {
-                   responsive: true,
-                   maintainAspectRatio: false,
-                   plugins: {
-                       legend: {
-                           display: false,
-                       }
-                   },
-                   interaction: {
-                       intersect: false,
-                       mode: 'index',
-                   },
-                   scales: {
-                       y: {
-                           grid: {
-                               drawBorder: false,
-                               display: true,
-                               drawOnChartArea: true,
-                               drawTicks: false,
-                               borderDash: [5, 5]
-                           },
-                           ticks: {
-                               display: true,
-                               padding: 10,
-                               color: '#fbfbfb',
-                               font: {
-                                   size: 11,
-                                   family: "Open Sans",
-                                   style: 'normal',
-                                   lineHeight: 2
-                               },
-                           }
+                   return new Chart(context, {
+                       type: "line",
+                       data: {
+                           labels: labels,
+                           datasets: [{
+                               label: "Transactions",
+                               tension: 0.4,
+                               borderWidth: 0,
+                               pointRadius: 0,
+                               borderColor: "#5e72e4",
+                               backgroundColor: gradient,
+                               borderWidth: 3,
+                               fill: true,
+                               data: dataset,
+                               maxBarThickness: 6
+                           }],
                        },
-                       x: {
-                           grid: {
-                               drawBorder: false,
-                               display: false,
-                               drawOnChartArea: false,
-                               drawTicks: false,
-                               borderDash: [5, 5]
+                       options: {
+                           responsive: true,
+                           maintainAspectRatio: false,
+                           plugins: {
+                               legend: {
+                                   display: false,
+                               }
                            },
-                           ticks: {
-                               display: true,
-                               color: '#ccc',
-                               padding: 20,
-                               font: {
-                                   size: 11,
-                                   family: "Open Sans",
-                                   style: 'normal',
-                                   lineHeight: 2
+                           interaction: {
+                               intersect: false,
+                               mode: 'index',
+                           },
+                           scales: {
+                               y: {
+                                   grid: {
+                                       drawBorder: false,
+                                       display: true,
+                                       drawOnChartArea: true,
+                                       drawTicks: false,
+                                       borderDash: [5, 5]
+                                   },
+                                   ticks: {
+                                       display: true,
+                                       padding: 10,
+                                       color: '#fbfbfb',
+                                       font: {
+                                           size: 11,
+                                           family: "Open Sans",
+                                           style: 'normal',
+                                           lineHeight: 2
+                                       },
+                                   }
                                },
-                           }
+                               x: {
+                                   grid: {
+                                       drawBorder: false,
+                                       display: false,
+                                       drawOnChartArea: false,
+                                       drawTicks: false,
+                                       borderDash: [5, 5]
+                                   },
+                                   ticks: {
+                                       display: true,
+                                       color: '#ccc',
+                                       padding: 20,
+                                       font: {
+                                           size: 11,
+                                           family: "Open Sans",
+                                           style: 'normal',
+                                           lineHeight: 2
+                                       },
+                                   }
+                               },
+                           },
                        },
-                   },
-               },
-           });
-       </script>
+                   });
+               };
 
-       <script>
-           window.livewire.on('chartUpdate', (dataChart, labelChart) => {
-               const chart = Chart.getChart("transaction-chart");
+               // Initialize the chart
+               transactionChart = createChart(label, data);
 
-               chart.data.datasets.forEach((dataset, key) => {
-                   dataset.data = dataChart;
+               // Listen for Livewire updates
+               window.livewire.on('chartUpdate', (dataChart, labelChart) => {
+                   if (transactionChart) {
+                       // Destroy the old chart instance
+                       transactionChart.destroy();
+                   }
+
+                   // Recreate the chart with updated data
+                   transactionChart = createChart(labelChart, dataChart);
                });
-
-               chart.data.labels = labelChart;
-
-               chart.update();
            });
        </script>
    @endpush
