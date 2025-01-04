@@ -100,15 +100,16 @@
        <div class="flex flex-grow mt-8 -mx-3">
            <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
                <div
-                   class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
+                   class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div
                        class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
                        <h6 class="capitalize dark:text-white">Transactions Chart</h6>
                        <div class="flex gap-x-3 w-full md:w-3/12 items-center">
                            <select wire:model="selectedYear"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                               <option value="2023">2023</option>
-                               <option value="2024">2024</option>
+                               @foreach ($years as $year)
+                                   <option value="{{ $year }}">{{ $year }}</option>
+                               @endforeach
                            </select>
 
                            <button wire:click='updateChart()'
@@ -126,9 +127,9 @@
                            </div>
                        </div>
                    </div>
-                   <div class="flex-auto p-4" wire:loading.remove wire:target='updateChart'>
+                   <div wire:loading.remove wire:target='updateChart'>
                        <div>
-                           <canvas id="transaction-chart" height="400"></canvas>
+                           <canvas id="transaction-chart" height="400" width="400"></canvas>
                        </div>
                    </div>
                </div>

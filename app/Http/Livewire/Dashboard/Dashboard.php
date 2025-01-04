@@ -54,6 +54,9 @@ class Dashboard extends Component
 
     public function render()
     {
+        $startYear = 2023;
+        $currentYear = Carbon::now()->year;
+        $years = range($startYear, $currentYear);
         $now = Carbon::now()->format('Y-m-d');
         $transaction = Transaction::select(DB::raw("SUM(untung) as biaya"), DB::raw("COUNT(id) as transaction"))
             ->whereDate('created_at', $now)->get();
@@ -124,7 +127,7 @@ class Dashboard extends Component
             ->get();
 
 
-        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction', 'transactionsMonthly'))
+        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction', 'transactionsMonthly', 'years'))
             ->layout('components.layouts.dashboard');
     }
 
