@@ -22,7 +22,7 @@
     {{-- <script src="https://unpkg.com/@popperjs/core@2"></script> --}}
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
     <script src="{{ asset('js/app.js') }}" async></script>
 
