@@ -260,9 +260,4 @@ class Transaction extends Component
             'icon' => 'success'
         ]);
     }
-
-    public function handlePrintNota($id)
-    {
-        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $id]);
-    }
 }

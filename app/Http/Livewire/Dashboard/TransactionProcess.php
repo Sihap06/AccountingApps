@@ -17,6 +17,7 @@ class TransactionProcess extends Component
     public $payment_method;
     public $transaction_id;
     public $is_dashboard;
+    public $cetak_nota;
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -138,9 +139,11 @@ class TransactionProcess extends Component
     public function handleDoneTransaction()
     {
         $this->validate([
-            'payment_method' => 'required'
+            'payment_method' => 'required',
+            'cetak_nota' => 'required'
         ], [
-            'payment_method.required' => 'This field is required'
+            'payment_method.required' => 'This field is required',
+            'cetak_nota.required' => 'This field is required'
         ]);
 
         $data = Transaction::findOrFail($this->transaction_id);
@@ -151,7 +154,7 @@ class TransactionProcess extends Component
 
         $this->closeModal();
 
-        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id, 'payment_method' => $this->payment_method]);
+        $this->dispatchBrowserEvent('printEvent', ['transaction_id' => $this->transaction_id, 'payment_method' => $this->payment_method, 'cetak_nota' => $this->cetak_nota]);
 
         $this->reset();
 

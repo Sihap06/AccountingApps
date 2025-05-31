@@ -43,7 +43,7 @@ Route::middleware(['auth'])->group(function () {
         return $response->body();
     });
 
-    Route::get('receipt', [PrintReceiptController::class, 'printReceipt']);
+    Route::get('receipt/{id}/{payment_method}', [PrintReceiptController::class, 'printReceipt']);
 
     Route::get('test', [PrintReceiptController::class, 'generateReceipt']);
 

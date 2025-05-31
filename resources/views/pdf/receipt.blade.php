@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nota Servis iPhone</title>
+    <title>Nota | I Service Jember</title>
     <style>
         @page {
             size: 21cm 14cm;
@@ -113,11 +113,11 @@
             <td style="vertical-align: bottom">
                 <div class="header-right">
                     <p style="font-size: 14px; margin-bottom: 14px">Nota No:
-                        <strong>{{ $detailItem['order_transaction'] }}</strong>
+                        <strong>{{ $data['order_transaction'] }}</strong>
                     </p>
                     <p>Tanggal: {{ $date }}</p>
-                    <p>Nama: {{ $detailItem['customer_name'] }}</p>
-                    <p>No. Handphone: {{ $detailItem['no_telp'] }}</p>
+                    <p>Nama: {{ $data['customer_name'] }}</p>
+                    <p>No. Handphone: {{ $data['no_telp'] }}</p>
                 </div>
             </td>
         </tr>
@@ -137,14 +137,14 @@
         <tbody>
             <tr>
                 <td>1</td>
-                <td>{{ $detailItem['service'] }}</td>
-                <td>Rp {{ number_format($detailItem['biaya']) }}</td>
+                <td>{{ $data['service'] }}</td>
+                <td>Rp {{ number_format($data['biaya']) }}</td>
                 <td>
-                    @if ($detailItem['warranty'] != null)
-                        {{ $detailItem['warranty'] }}
-                        @if ($detailItem['warranty_type'] == 'daily')
+                    @if ($data['warranty'] != null)
+                        {{ $data['warranty'] }}
+                        @if ($data['warranty_type'] == 'daily')
                             Hari
-                        @elseif ($detailItem['warranty_type'] == 'weekly')
+                        @elseif ($data['warranty_type'] == 'weekly')
                             Minggu
                         @else
                             Bulan
@@ -154,7 +154,7 @@
                     @endif
                 </td>
             </tr>
-            @foreach ($detailItem['items'] as $index => $item)
+            @foreach ($data['items'] as $index => $item)
                 <tr>
                     <td>{{ $index + 2 }}</td>
                     <td>{{ $item['service'] }}</td>
@@ -216,7 +216,7 @@
                     <tr>
                         <td><strong>Total</strong></td>
                         <td>:</td>
-                        <td>Rp {{ number_format($detailItem['total']) }}</td>
+                        <td>Rp {{ number_format($data['total']) }}</td>
                     </tr>
                     <tr>
                         <td><strong>Payment</strong></td>

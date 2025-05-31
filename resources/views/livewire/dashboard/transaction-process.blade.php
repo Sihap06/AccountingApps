@@ -376,7 +376,7 @@
                             <span class="text-neutral-900 leading-6 text-sm">Metode Pembayaran</span>
                             <div class="relative inline-block w-full">
                                 <select wire:model='payment_method'
-                                    class="block w-full px-4 py-2 pr-8 leading-tight text-gray-700 bg-white border border-gray-300 rounded appearance-none hover:border-gray-500 focus:outline-none focus:shadow-outline uppercase">
+                                    class="block w-full px-4 py-2 pr-8 text-sm leading-tight text-gray-700 bg-white border border-gray-300 rounded appearance-none hover:border-gray-500 focus:outline-none focus:shadow-outline uppercase">
                                     <option value=""></option>
                                     @foreach ($paymentMethods as $item)
                                         <option value="{{ $item }}"
@@ -393,6 +393,27 @@
                                 </div>
                             </div>
                             @error('payment_method')
+                                <div class="text-red-500 text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="my-4 w-full max-w-full shrink-0 md:flex-0">
+                            <span class="text-neutral-900 leading-6 text-sm">Cetak Nota</span>
+                            <div class="relative inline-block w-full">
+                                <select wire:model='cetak_nota'
+                                    class="block w-full text-sm px-4 py-2 pr-8 leading-tight text-gray-700 bg-white border border-gray-300 rounded appearance-none hover:border-gray-500 focus:outline-none focus:shadow-outline uppercase">
+                                    <option value="word" class="text-sm">MS Word</option>
+                                    <option value="pdf" class="text-sm">PDF</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                    <svg class="w-4 h-4 fill-current text-gray-500" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20">
+                                        <path
+                                            d="M5.293 7.707a1 1 0 010-1.414L9.586 2 5.293 7.707a1 1 0 010-1.414l5 5a1 1 0 001.414 0l5-5a1 1 0 010-1.414l-5 5a1 1 0 01-1.414 0l-5-5z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            @error('cetak_nota')
                                 <div class="text-red-500 text-sm">{{ $message }}</div>
                             @enderror
                         </div>
@@ -434,8 +455,14 @@
         window.addEventListener('printEvent', event => {
             const transaction_id = event.detail.transaction_id
             const payment_method = event.detail.payment_method
+            const cetak_nota = event.detail.cetak_nota
 
-            window.open('http://localhost:3000/print/' + transaction_id + '/' + payment_method, '_blank');
+            if (cetak_nota === 'word') {
+                window.open('http://localhost:3000/print/' + transaction_id + '/' + payment_method, '_blank');
+            } else {
+                window.open(`/receipt/${transaction_id}/${payment_method}`, '_blank');
+            }
+
 
         })
     </script>
