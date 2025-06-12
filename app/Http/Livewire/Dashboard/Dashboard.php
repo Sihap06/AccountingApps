@@ -19,35 +19,45 @@ class Dashboard extends Component
 
     public function transactionChart()
     {
-        $transactionChart =
-            DB::table('transactions as t1')
+        $transactionChart = DB::table('t1')
             ->selectRaw("
-                GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees, 
-                GROUP_CONCAT(month SEPARATOR ', ') as month
-            ")
+            GROUP_CONCAT(total_fee SEPARATOR ', ') as monthly_fees,
+            GROUP_CONCAT(month SEPARATOR ', ') as month
+        ")
             ->fromSub(function ($query) {
                 $query->from('transactions as t')
-                    ->leftJoin('transaction_items as ti', function ($join) {
-                        $join->on('t.id', '=', 'ti.transaction_id')
-                            ->whereNull('ti.deleted_at');
-                    })
+                    ->leftJoinSub(
+                        DB::table('transaction_items')
+                            ->selectRaw('transaction_id, SUM(biaya) as total_item_fee')
+                            ->whereNull('deleted_at')
+                            ->groupBy('transaction_id'),
+                        'ti',
+                        'ti.transaction_id',
+                        't.id'
+                    )
                     ->selectRaw("
-                SUM(t.biaya) + IFNULL(SUM(ti.biaya), 0) as total_fee, 
-                MONTHNAME(t.created_at) as month, 
-                MONTH(t.created_at) as number_of_month
-            ")
+                    MONTHNAME(t.created_at) as month,
+                    MONTH(t.created_at) as number_of_month,
+                    (SUM(t.biaya) + IFNULL(SUM(ti.total_item_fee), 0)) as total_fee
+                ")
                     ->whereYear('t.created_at', $this->selectedYear)
                     ->whereNull('t.deleted_at')
+                    ->where('t.status', 'done')
                     ->groupBy(
-                        'number_of_month',
+                        DB::raw('MONTH(t.created_at)'),
                         DB::raw('MONTHNAME(t.created_at)')
                     )
-                    ->orderBy('number_of_month', 'asc');
+                    ->orderBy(DB::raw('MONTH(t.created_at)'));
             }, 't1')
             ->get();
 
-        $dataChart = explode(',', $transactionChart[0]->monthly_fees);
-        $labelChart = explode(',', $transactionChart[0]->month);
+        $dataChart = [];
+        $labelChart = [];
+
+        if (!$transactionChart->isEmpty()) {
+            $dataChart = array_map('floatval', explode(',', $transactionChart[0]->monthly_fees));
+            $labelChart = explode(',', $transactionChart[0]->month);
+        }
 
         return [$dataChart, $labelChart];
     }
