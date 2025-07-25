@@ -206,6 +206,161 @@
                                 <div class="text-red-500 text-sm">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                            <label for="phone_brand" class="text-sm">Brand HP</label>
+                            <select wire:model.lazy="phone_brand" id="phone_brand"
+                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                <option value="">Pilih Brand</option>
+                                <option value="iPhone">iPhone</option>
+                                <option value="Android">Android</option>
+                                <option value="Internal">Internal</option>
+                            </select>
+                            @error('phone_brand')
+                                <div class="text-red-500 text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                            <label for="phone_type" class="text-sm">Tipe HP</label>
+                            <select wire:model.lazy="phone_type" id="phone_type"
+                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                <option value="">Pilih Tipe</option>
+                                @if($phone_brand == 'iPhone')
+                                    <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                                    <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                                    <option value="iPhone 15 Plus">iPhone 15 Plus</option>
+                                    <option value="iPhone 15">iPhone 15</option>
+                                    <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                                    <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                                    <option value="iPhone 14 Plus">iPhone 14 Plus</option>
+                                    <option value="iPhone 14">iPhone 14</option>
+                                    <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                                    <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                                    <option value="iPhone 13">iPhone 13</option>
+                                    <option value="iPhone 13 Mini">iPhone 13 Mini</option>
+                                    <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
+                                    <option value="iPhone 12 Pro">iPhone 12 Pro</option>
+                                    <option value="iPhone 12">iPhone 12</option>
+                                    <option value="iPhone 12 Mini">iPhone 12 Mini</option>
+                                    <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
+                                    <option value="iPhone 11 Pro">iPhone 11 Pro</option>
+                                    <option value="iPhone 11">iPhone 11</option>
+                                    <option value="iPhone SE 3">iPhone SE 3</option>
+                                    <option value="iPhone SE 2">iPhone SE 2</option>
+                                    <option value="iPhone XS Max">iPhone XS Max</option>
+                                    <option value="iPhone XS">iPhone XS</option>
+                                    <option value="iPhone XR">iPhone XR</option>
+                                    <option value="iPhone X">iPhone X</option>
+                                    <option value="iPhone 8 Plus">iPhone 8 Plus</option>
+                                    <option value="iPhone 8">iPhone 8</option>
+                                    <option value="iPhone 7 Plus">iPhone 7 Plus</option>
+                                    <option value="iPhone 7">iPhone 7</option>
+                                    <option value="iPhone 6s Plus">iPhone 6s Plus</option>
+                                    <option value="iPhone 6s">iPhone 6s</option>
+                                    <option value="iPhone 6 Plus">iPhone 6 Plus</option>
+                                    <option value="iPhone 6">iPhone 6</option>
+                                @elseif($phone_brand == 'Android')
+                                    <option value="Samsung Galaxy S24 Ultra">Samsung Galaxy S24 Ultra</option>
+                                    <option value="Samsung Galaxy S24+">Samsung Galaxy S24+</option>
+                                    <option value="Samsung Galaxy S24">Samsung Galaxy S24</option>
+                                    <option value="Samsung Galaxy S23 Ultra">Samsung Galaxy S23 Ultra</option>
+                                    <option value="Samsung Galaxy S23+">Samsung Galaxy S23+</option>
+                                    <option value="Samsung Galaxy S23">Samsung Galaxy S23</option>
+                                    <option value="Samsung Galaxy A54">Samsung Galaxy A54</option>
+                                    <option value="Samsung Galaxy A34">Samsung Galaxy A34</option>
+                                    <option value="Samsung Galaxy A14">Samsung Galaxy A14</option>
+                                    <option value="Xiaomi 14 Pro">Xiaomi 14 Pro</option>
+                                    <option value="Xiaomi 14">Xiaomi 14</option>
+                                    <option value="Xiaomi 13 Pro">Xiaomi 13 Pro</option>
+                                    <option value="Xiaomi 13">Xiaomi 13</option>
+                                    <option value="Xiaomi Redmi Note 13 Pro">Xiaomi Redmi Note 13 Pro</option>
+                                    <option value="Xiaomi Redmi Note 13">Xiaomi Redmi Note 13</option>
+                                    <option value="Xiaomi Redmi Note 12 Pro">Xiaomi Redmi Note 12 Pro</option>
+                                    <option value="Xiaomi Redmi Note 12">Xiaomi Redmi Note 12</option>
+                                    <option value="Oppo Find X7 Pro">Oppo Find X7 Pro</option>
+                                    <option value="Oppo Find X7">Oppo Find X7</option>
+                                    <option value="Oppo Reno 11 Pro">Oppo Reno 11 Pro</option>
+                                    <option value="Oppo Reno 11">Oppo Reno 11</option>
+                                    <option value="Oppo A98">Oppo A98</option>
+                                    <option value="Oppo A78">Oppo A78</option>
+                                    <option value="Vivo X100 Pro">Vivo X100 Pro</option>
+                                    <option value="Vivo X100">Vivo X100</option>
+                                    <option value="Vivo V29 Pro">Vivo V29 Pro</option>
+                                    <option value="Vivo V29">Vivo V29</option>
+                                    <option value="Vivo Y36">Vivo Y36</option>
+                                    <option value="Vivo Y27">Vivo Y27</option>
+                                    <option value="Realme 12 Pro+">Realme 12 Pro+</option>
+                                    <option value="Realme 12 Pro">Realme 12 Pro</option>
+                                    <option value="Realme 12">Realme 12</option>
+                                    <option value="Realme 11 Pro+">Realme 11 Pro+</option>
+                                    <option value="Realme 11 Pro">Realme 11 Pro</option>
+                                    <option value="Realme 11">Realme 11</option>
+                                    <option value="Infinix Note 30 Pro">Infinix Note 30 Pro</option>
+                                    <option value="Infinix Note 30">Infinix Note 30</option>
+                                    <option value="Infinix Smart 8">Infinix Smart 8</option>
+                                    <option value="Poco X6 Pro">Poco X6 Pro</option>
+                                    <option value="Poco X6">Poco X6</option>
+                                    <option value="Poco F5 Pro">Poco F5 Pro</option>
+                                    <option value="Poco F5">Poco F5</option>
+                                @elseif($phone_brand == 'Internal')
+                                    <option value="Staff Phone 1">Staff Phone 1</option>
+                                    <option value="Staff Phone 2">Staff Phone 2</option>
+                                    <option value="Test Device 1">Test Device 1</option>
+                                    <option value="Test Device 2">Test Device 2</option>
+                                    <option value="Demo Unit">Demo Unit</option>
+                                @endif
+                            </select>
+                            @error('phone_type')
+                                <div class="text-red-500 text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                            <label for="phone_color" class="text-sm">Warna HP</label>
+                            <select wire:model.lazy="phone_color" id="phone_color"
+                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                <option value="">Pilih Warna</option>
+                                <option value="Black">Black</option>
+                                <option value="White">White</option>
+                                <option value="Silver">Silver</option>
+                                <option value="Gold">Gold</option>
+                                <option value="Rose Gold">Rose Gold</option>
+                                <option value="Blue">Blue</option>
+                                <option value="Navy Blue">Navy Blue</option>
+                                <option value="Midnight">Midnight</option>
+                                <option value="Green">Green</option>
+                                <option value="Red">Red</option>
+                                <option value="Pink">Pink</option>
+                                <option value="Purple">Purple</option>
+                                <option value="Yellow">Yellow</option>
+                                <option value="Orange">Orange</option>
+                                <option value="Gray">Gray</option>
+                                <option value="Space Gray">Space Gray</option>
+                                <option value="Graphite">Graphite</option>
+                                <option value="Pacific Blue">Pacific Blue</option>
+                                <option value="Sierra Blue">Sierra Blue</option>
+                                <option value="Alpine Green">Alpine Green</option>
+                                <option value="Starlight">Starlight</option>
+                                <option value="Midnight Blue">Midnight Blue</option>
+                                <option value="Coral">Coral</option>
+                                <option value="Lavender">Lavender</option>
+                                <option value="Cream">Cream</option>
+                                <option value="Mint">Mint</option>
+                                <option value="Brown">Brown</option>
+                                <option value="Bronze">Bronze</option>
+                                <option value="Titanium">Titanium</option>
+                            </select>
+                            @error('phone_color')
+                                <div class="text-red-500 text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
+                            <label for="phone_imei" class="text-sm">IMEI</label>
+                            <input type="text" wire:model.lazy='phone_imei' id="phone_imei"
+                                class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500"
+                                placeholder="Masukkan IMEI">
+                            @error('phone_imei')
+                                <div class="text-red-500 text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                     <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
                         <x-ui.button type="submit" title="Add Service" color="primary" wireLoading

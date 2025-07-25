@@ -7,6 +7,9 @@ use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\CustomersExport;
+use Carbon\Carbon;
 
 class Customers extends Component
 {
@@ -21,6 +24,8 @@ class Customers extends Component
     public $no_telp;
     public $alamat;
     public $transactionItems = [];
+    public $startDate;
+    public $endDate;
     protected $data;
 
     protected $rules = [
@@ -240,5 +245,39 @@ class Customers extends Component
     {
         $this->isOpenDetailTransaction = false;
         $this->transactionItems = [];
+    }
+
+    public function exportExcel()
+    {
+        // Set default dates if not provided
+        $startDate = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : null;
+        $endDate = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : null;
+
+        $query = Customer::query();
+
+        // Apply date filter if provided
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->where('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->where('created_at', '<=', $endDate);
+        }
+
+        // Get customer data - only name and phone
+        $customers = $query->select('name', 'no_telp', 'created_at')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        $export = new CustomersExport($customers, $startDate, $endDate);
+        
+        $filename = 'customers';
+        if ($startDate && $endDate) {
+            $filename .= '-' . $startDate->format('Y-m-d') . '-to-' . $endDate->format('Y-m-d');
+        } else {
+            $filename .= '-' . Carbon::now()->format('Y-m-d');
+        }
+        
+        return Excel::download($export, $filename . '.xlsx');
     }
 }

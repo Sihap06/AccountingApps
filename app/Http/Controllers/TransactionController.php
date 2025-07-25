@@ -6,11 +6,11 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\LogActivityProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -52,12 +52,33 @@ class TransactionController extends Controller
                         'message' => 'out of stock!',
                     ], 400);
                 }
+
+                // Store old stock value for logging
+                $oldStock = $product->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $product->bypassVerification = true;
+
+                // Update stock
                 $product->stok = $product->stok - 1;
                 $product->save();
+
+                // Create activity log for stock change during transaction
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'update';
+                $log->product = $product->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $product->stok;
+                $log->save();
             }
 
             if ($key === 0) {
                 $data = new Transaction();
+                
+                // Set bypass flag to skip verification for transaction creation
+                $data->bypassVerification = true;
+                
                 $data->product_id = $value['product_id'];
                 $data->technical_id = $value['technical_id'];
                 $data->service = $value['service'];

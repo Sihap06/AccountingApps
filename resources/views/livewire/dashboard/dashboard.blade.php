@@ -104,7 +104,7 @@
                    <div
                        class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
                        <h6 class="capitalize dark:text-white">Transactions Chart</h6>
-                       <div class="flex gap-x-3 w-full md:w-3/12 items-center">
+                       <div class="flex gap-x-3 w-full md:w-5/12 items-center">
                            <select wire:model="selectedYear"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                                @foreach ($years as $year)
@@ -115,6 +115,18 @@
                            <button wire:click='updateChart()'
                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                Update
+                           </button>
+                           
+                           <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                               class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                               <span wire:loading.remove wire:target="exportExcel">
+                                   <i class="fas fa-file-excel mr-1"></i>
+                                   Export
+                               </span>
+                               <span wire:loading wire:target="exportExcel">
+                                   <i class="fas fa-spinner fa-spin mr-1"></i>
+                                   Exporting...
+                               </span>
                            </button>
                        </div>
                    </div>

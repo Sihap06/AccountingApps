@@ -22,6 +22,12 @@ class PointOfSales extends Component
     public $order_transaction = '';
     public $warranty = '';
     public $warranty_type = 'daily';
+    
+    // Phone data fields
+    public $phone_brand = '';
+    public $phone_type = '';
+    public $phone_color = '';
+    public $phone_imei = '';
 
     public $inventory;
     public $technician;
@@ -42,7 +48,11 @@ class PointOfSales extends Component
         'technical_id' => '',
         'order_transaction' => '',
         'warranty' => '',
-        'warranty_type' => ''
+        'warranty_type' => '',
+        'phone_brand' => '',
+        'phone_type' => '',
+        'phone_color' => '',
+        'phone_imei' => ''
     ];
 
     protected $messages = [
@@ -138,6 +148,10 @@ class PointOfSales extends Component
         $this->product_id = '';
         $this->technical_id = '';
         $this->warranty = '';
+        $this->phone_brand = '';
+        $this->phone_type = '';
+        $this->phone_color = '';
+        $this->phone_imei = '';
 
         $this->dispatchBrowserEvent('refreshSelect', ['product_id', 'technical_id']);
     }
@@ -203,6 +217,10 @@ class PointOfSales extends Component
             'order_transaction' => $this->order_transaction,
             'warranty' => $warranty,
             'warranty_type' => $warranty_type,
+            'phone_brand' => $this->phone_brand,
+            'phone_type' => $this->phone_type,
+            'phone_color' => $this->phone_color,
+            'phone_imei' => $this->phone_imei,
         ];
 
         $this->resetValue();

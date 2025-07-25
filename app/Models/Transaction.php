@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Traits\RequiresVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RequiresVerification;
 
     protected $guarded = [];
+    
+    // Flag to bypass verification for transaction creation
+    public $bypassVerification = false;
 
     public function products()
     {

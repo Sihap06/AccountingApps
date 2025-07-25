@@ -12,4 +12,9 @@ class Customer extends Model
     use SoftDeletes;
 
     protected $guarded = [];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'customer_id');
+    }
 }

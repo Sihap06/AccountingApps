@@ -484,4 +484,60 @@
         });
     </script>
 
+    {{-- Reason Modal --}}
+    @if ($showReasonModal)
+        <div class="fixed z-10 inset-0 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                    <div>
+                        <div class="mt-3 sm:mt-5">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Alasan {{ $pendingAction === 'removeItem' ? 'Penghapusan' : 'Perubahan' }}
+                            </h3>
+                            <div class="flex-auto px-0 pt-0 pb-2">
+                                <form wire:submit.prevent="submitReason">
+                                    <div class="relative mb-8 mt-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                                            Masukkan alasan {{ $pendingAction === 'removeItem' ? 'penghapusan' : 'perubahan' }} <span class="text-red-500">*</span>
+                                        </label>
+                                        <textarea wire:model="reason" rows="4"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                            placeholder="Jelaskan mengapa {{ $pendingAction === 'removeItem' ? 'penghapusan' : 'perubahan' }} ini diperlukan..."></textarea>
+                                        @error('reason')
+                                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="flex gap-x-2">
+                                        <button type="button" wire:click='closeReasonModal'
+                                            class="flex w-full justify-center gap-x-2 items-center rounded bg-gray-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-gray-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                                            <div wire:loading wire:target='closeReasonModal'>
+                                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                    role="status">
+                                                    <span
+                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                </div>
+                                            </div>
+                                            Batal
+                                        </button>
+
+                                        <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                                            formAction="submitReason" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
 </div>

@@ -6,6 +6,9 @@ use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TransactionComplaintExport;
+use Carbon\Carbon;
 
 class TransactionComplaint extends Component
 {
@@ -176,5 +179,55 @@ class TransactionComplaint extends Component
             'text' => '',
             'icon' => 'success'
         ]);
+    }
+
+    public function exportExcel()
+    {
+        $data = Transaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('technicians', 'transactions.technical_id', '=', 'technicians.id')
+            ->select(
+                'transactions.id',
+                'transactions.created_at',
+                'customers.name as customer_name',
+                'customers.no_telp as customer_phone',
+                'transactions.order_transaction',
+                'transactions.service',
+                DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
+                DB::raw('transactions.biaya as first_item_biaya'),
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'),
+                DB::raw('transactions.modal as first_item_modal'),
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'),
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name as technician_name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )
+            ->where('transactions.status', 'complaint')
+            ->whereNull('transactions.deleted_at')
+            ->groupBy(
+                'transactions.created_at',
+                'customers.name',
+                'customers.no_telp',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.service',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )->get();
+
+        $export = new TransactionComplaintExport($data);
+        
+        return Excel::download($export, 'transaction-complaint-' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 }

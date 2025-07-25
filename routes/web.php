@@ -18,6 +18,9 @@ use App\Http\Livewire\Dashboard\TabOnInventory;
 use App\Http\Livewire\Dashboard\TabOnLogActivity;
 use App\Http\Livewire\Dashboard\TabOnPos;
 use App\Http\Livewire\Dashboard\Teknisi;
+use App\Http\Livewire\Dashboard\Verification;
+use App\Http\Livewire\Dashboard\UserManagement;
+use App\Http\Livewire\Dashboard\PaymentMethods;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -70,6 +73,21 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('log_activity')->name('log_activity.')->group(function () {
             Route::get('/', TabOnLogActivity::class)->name('index');
+        });
+
+        // Verification routes (master_admin only)
+        Route::prefix('verification')->name('verification.')->group(function () {
+            Route::get('/', Verification::class)->name('index');
+        });
+
+        // User Management routes (master_admin only)
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', UserManagement::class)->name('index');
+        });
+
+        // Payment Methods routes
+        Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
+            Route::get('/', PaymentMethods::class)->name('index');
         });
     });
 });

@@ -6,13 +6,33 @@
     <div class="h-auto">
         <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times dark:text-white text-slate-400 xl:hidden"
             sidenav-close></i>
-        {{-- <a class="block text-center px-8 py-6 m-0 text-xl font-semibold whitespace-nowrap dark:text-white text-slate-700"
-            href="#" target="_blank">
-            <span class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">Accounting Apps</span>
-        </a> --}}
+
+        <!-- Logo -->
         <div class="relative px-8 py-6 m-0 flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border"
             sidenav-card="">
             <img class="w-full mx-auto" src="{{ asset('assets/img/logo.png') }}" alt="logo">
+        </div>
+
+        <!-- User Info -->
+        <div class="px-8 pb-4">
+            <div class="flex flex-col items-center">
+
+                <p class="mb-4 text-xs leading-normal text-slate-700 dark:text-white/80">
+                    <span
+                        class="px-2 py-1 text-xs rounded-full bg-gradient-to-tl from-gray-600 to-gray-400 text-neutral-900 dark:text-white">
+                        {{ auth()->user()->role === 'master_admin' ? 'Admin Utama' : 'Operator' }}
+                    </span>
+                </p>
+            </div>
+
+            <!-- Logout Button -->
+            <form action="{{ url('logout') }}" method="POST">
+                @csrf
+                <button type="submit"
+                    class="relative inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-red-600 border-0 rounded-lg shadow-md select-none hover:bg-red-700 hover:shadow-xs hover:-translate-y-px">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                </button>
+            </form>
         </div>
     </div>
 
@@ -86,6 +106,38 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Customers</span>
                 </a>
             </li>
+            @if (auth()->user()->role === 'master_admin')
+                <li class="mt-0.5 w-full">
+                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.payment-methods.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                        href="{{ route('dashboard.payment-methods.index') }}">
+                        <div
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="relative top-0 text-sm leading-normal text-green-500 ni ni-money-coins"></i>
+                        </div>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Metode Pembayaran</span>
+                    </a>
+                </li>
+                <li class="mt-0.5 w-full">
+                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.verification.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                        href="{{ route('dashboard.verification.index') }}">
+                        <div
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="relative top-0 text-sm leading-normal text-purple-500 ni ni-check-bold"></i>
+                        </div>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Verifikasi</span>
+                    </a>
+                </li>
+                <li class="mt-0.5 w-full">
+                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.users.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                        href="{{ route('dashboard.users.index') }}">
+                        <div
+                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                            <i class="relative top-0 text-sm leading-normal text-indigo-500 ni ni-single-02"></i>
+                        </div>
+                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">User Management</span>
+                    </a>
+                </li>
+            @endif
             @if (auth()->user()->role !== 'sysadmin')
                 <li class="mt-0.5 w-full">
                     <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.log_activity.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
@@ -100,16 +152,6 @@
             @endif
 
         </ul>
-    </div>
-
-    <div class="absolute bottom-0 pb-4 px-8 w-full">
-
-        <form action="{{ url('logout') }}" method="POST">
-            @csrf
-            <button type="submit"
-                class="relative inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-slate-800 border-0 rounded-lg shadow-md select-none bg-150 bg-x-25 hover:shadow-xs hover:-translate-y-px"
-                target="_blank">Logout</button>
-        </form>
     </div>
 
 </aside>

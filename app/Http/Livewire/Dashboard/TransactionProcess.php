@@ -7,6 +7,9 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TransactionProcessExport;
+use App\Models\PaymentMethod;
 
 class TransactionProcess extends Component
 {
@@ -17,7 +20,7 @@ class TransactionProcess extends Component
     public $payment_method;
     public $transaction_id;
     public $is_dashboard;
-    public $cetak_nota;
+    public $cetak_nota = 'word';
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -147,6 +150,7 @@ class TransactionProcess extends Component
         ]);
 
         $data = Transaction::findOrFail($this->transaction_id);
+        $data->bypassVerification = true;
         $data->status = 'done';
         $data->payment_method = $this->payment_method;
         $data->created_at = Carbon::now();
@@ -168,6 +172,7 @@ class TransactionProcess extends Component
     public function handleCancelTransaction($id)
     {
         $data = Transaction::findOrFail($id);
+        $data->bypassVerification = true;
         $data->status = 'cancel';
         $data->save();
         $this->closeModal();
@@ -177,6 +182,56 @@ class TransactionProcess extends Component
             'text' => '',
             'icon' => 'error'
         ]);
+    }
+
+    public function exportExcel()
+    {
+        $data = Transaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('technicians', 'transactions.technical_id', '=', 'technicians.id')
+            ->select(
+                'transactions.id',
+                'transactions.created_at',
+                'customers.name as customer_name',
+                'customers.no_telp as customer_phone',
+                'transactions.order_transaction',
+                'transactions.service',
+                DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
+                DB::raw('transactions.biaya as first_item_biaya'),
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'),
+                DB::raw('transactions.modal as first_item_modal'),
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'),
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name as technician_name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )
+            ->where('transactions.status', 'proses')
+            ->whereNull('transactions.deleted_at')
+            ->groupBy(
+                'transactions.created_at',
+                'customers.name',
+                'customers.no_telp',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.service',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )->get();
+
+        $export = new TransactionProcessExport($data);
+
+        return Excel::download($export, 'transaction-process-' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 
     public function render()
@@ -217,15 +272,7 @@ class TransactionProcess extends Component
                 'transactions.payment_method'
             )->get();
 
-        $paymentMethods = [
-            'bca',
-            'mandiri',
-            'transfer',
-            'debit',
-            'qris',
-            'cash',
-            'kartu kredit'
-        ];
+        $paymentMethods = PaymentMethod::select('code', 'name')->get()->toArray();
 
         return view('livewire.dashboard.transaction-process', compact('data', 'paymentMethods'))->layout('components.layouts.dashboard');
     }

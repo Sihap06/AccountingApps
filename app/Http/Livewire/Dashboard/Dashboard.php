@@ -2,11 +2,13 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Exports\TransactionChartExport;
 use App\Models\Expenditure;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Dashboard extends Component
 {
@@ -149,5 +151,47 @@ class Dashboard extends Component
         $labelChart = $transactionChart[1];
 
         $this->emit('chartUpdate', $dataChart, $labelChart);
+    }
+
+    public function exportExcel()
+    {
+        $transactionChart = $this->transactionChart();
+        $dataChart = $transactionChart[0];
+        $labelChart = $transactionChart[1];
+
+        $transactionData = DB::table('transactions as t')
+            ->leftJoinSub(
+                DB::table('transaction_items')
+                    ->selectRaw('transaction_id, SUM(biaya) as total_item_fee')
+                    ->whereNull('deleted_at')
+                    ->groupBy('transaction_id'),
+                'ti',
+                'ti.transaction_id',
+                't.id'
+            )
+            ->selectRaw("
+                t.id,
+                t.order_transaction,
+                t.service,
+                t.customer_id,
+                t.biaya,
+                t.status,
+                t.payment_method,
+                t.created_at,
+                MONTHNAME(t.created_at) as month,
+                MONTH(t.created_at) as month_number,
+                (t.biaya + IFNULL(ti.total_item_fee, 0)) as total_fee
+            ")
+            ->whereYear('t.created_at', $this->selectedYear)
+            ->whereNull('t.deleted_at')
+            ->where('t.status', 'done')
+            ->orderBy('t.created_at')
+            ->get();
+
+        $export = new TransactionChartExport($transactionData, $dataChart, $labelChart, $this->selectedYear);
+
+        $this->updateChart();
+
+        return Excel::download($export, 'transaction-chart-' . $this->selectedYear . '.xlsx');
     }
 }

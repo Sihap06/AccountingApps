@@ -16,7 +16,7 @@
                    <div
                        class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                        <button wire:click='create'
-                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center">
+                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center mb-2 md:mb-0">
                            <div wire:loading wire:target='create'>
                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                    role="status">
@@ -26,10 +26,33 @@
                            </div>
                            New Customer
                        </button>
-                       <div class="flex w-full md:w-4/12 items-center gap-x-3">
+                       <div class="flex flex-col md:flex-row w-full md:w-8/12 items-end gap-3">
+                           <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                               <div class="flex flex-col">
+                                   <label class="text-xs text-gray-600 mb-1">Start Date</label>
+                                   <input type="date" wire:model="startDate"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                               </div>
+                               <div class="flex flex-col">
+                                   <label class="text-xs text-gray-600 mb-1">End Date</label>
+                                   <input type="date" wire:model="endDate"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                               </div>
+                           </div>
                            <input type="text" wire:model.debounce.500ms="searchTerm"
-                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                               placeholder="Masukkan nama atau no telefon " />
+                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full md:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                               placeholder="Search name/phone" />
+                           <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                               class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
+                               <span wire:loading.remove wire:target="exportExcel">
+                                   <i class="fas fa-file-excel mr-1"></i>
+                                   Export
+                               </span>
+                               <span wire:loading wire:target="exportExcel">
+                                   <i class="fas fa-spinner fa-spin mr-1"></i>
+                                   Exporting...
+                               </span>
+                           </button>
                        </div>
                    </div>
 
