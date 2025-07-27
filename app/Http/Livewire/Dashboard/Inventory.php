@@ -16,6 +16,7 @@ class Inventory extends Component
     public $isOpen;
     public $name;
     public $harga;
+    public $harga_jual;
     public $stok;
     public $productId;
     public $reason = '';
@@ -33,12 +34,14 @@ class Inventory extends Component
     protected $rules = [
         'name' => 'required',
         'harga' => 'required',
+        'harga_jual' => 'required',
         'stok' => 'required'
     ];
 
     protected $messages = [
         'name.required' => 'Nama produk harus diisi',
         'harga.required' => 'Harga produk harus diisi',
+        'harga_jual.required' => 'Harga jual produk harus diisi',
         'stok.required' => 'Stok produk harus diisi'
     ];
 
@@ -56,7 +59,7 @@ class Inventory extends Component
 
     public function resetField()
     {
-        $this->reset(['name', 'harga', 'stok', 'productId', 'action', 'isOpen']);
+        $this->reset(['name', 'harga', 'harga_jual', 'stok', 'productId', 'action', 'isOpen']);
     }
 
     public function closeModal()
@@ -73,8 +76,10 @@ class Inventory extends Component
     {
         $validateData = $this->validate();
         $currencyString = preg_replace("/[^0-9]/", "", $this->harga);
+        $currencyStringJual = preg_replace("/[^0-9]/", "", $this->harga_jual);
 
         $validateData["harga"] = (int)$currencyString;
+        $validateData["harga_jual"] = (int)$currencyStringJual;
         $validateData["stok"] = (int)$this->stok;
         $validateData["kode"] = time(); // Generate kode using timestamp
 
@@ -138,6 +143,7 @@ class Inventory extends Component
         $this->productId = $id;
         $this->name = $product->name;
         $this->harga = $product->harga;
+        $this->harga_jual = $product->harga_jual;
         $this->stok = $product->stok;
 
         $this->action = 'edit';
@@ -148,8 +154,10 @@ class Inventory extends Component
     {
         $validateData = $this->validate();
         $currencyString = preg_replace("/[^0-9]/", "", $this->harga);
+        $currencyStringJual = preg_replace("/[^0-9]/", "", $this->harga_jual);
 
         $validateData["harga"] = (int)$currencyString;
+        $validateData["harga_jual"] = (int)$currencyStringJual;
         $validateData["stok"] = (int)$this->stok;
 
         $product = Product::findOrFail($this->productId);
@@ -167,7 +175,7 @@ class Inventory extends Component
             return; // Return early to prevent resetField() from being called
         } else {
             // Master admin can update directly
-            if ($this->name !== $product->name || $this->harga !== $product->harga || $this->stok !== $product->stok) {
+            if ($this->name !== $product->name || $this->harga !== $product->harga || $this->harga_jual !== $product->harga_jual || $this->stok !== $product->stok) {
                 $log = new LogActivityProduct();
                 $log->user = Auth::user()->name;
                 $log->activity = 'update';

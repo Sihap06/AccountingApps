@@ -16,6 +16,7 @@ use Livewire\Component;
 class PointOfSales extends Component
 {
     public $biaya = '';
+    public $potongan = '';
     public $service = '';
     public $product_id = '';
     public $technical_id = '';
@@ -24,10 +25,11 @@ class PointOfSales extends Component
     public $warranty_type = 'daily';
     
     // Phone data fields
-    public $phone_brand = '';
+    public $phone_brand = 'iPhone';
     public $phone_type = '';
     public $phone_color = '';
     public $phone_imei = '';
+    public $phone_internal = '';
 
     public $inventory;
     public $technician;
@@ -43,6 +45,7 @@ class PointOfSales extends Component
 
     protected $rules = [
         'biaya' => 'required',
+        'potongan' => '',
         'service' => 'required',
         'product_id' => '',
         'technical_id' => '',
@@ -52,7 +55,8 @@ class PointOfSales extends Component
         'phone_brand' => '',
         'phone_type' => '',
         'phone_color' => '',
-        'phone_imei' => ''
+        'phone_imei' => '',
+        'phone_internal' => ''
     ];
 
     protected $messages = [
@@ -62,9 +66,27 @@ class PointOfSales extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh', 'setSelected'];
 
+    public function updatedPhoneBrand($value)
+    {
+        // Reset phone_type when phone_brand changes
+        $this->phone_type = '';
+    }
+
     public function setSelected($value, $name)
     {
         $this->$name = $value;
+        
+        // If product is selected, set biaya to harga_jual
+        if ($name === 'product_id' && $value) {
+            $product = Product::find($value);
+            if ($product) {
+                // Use harga_jual if available, otherwise fall back to harga
+                $price = $product->harga_jual ?? $product->harga;
+                if ($price) {
+                    $this->biaya = number_format($price, 0, ',', '.');
+                }
+            }
+        }
     }
 
     public function resetFieldCustomer()
@@ -133,6 +155,7 @@ class PointOfSales extends Component
         $this->technician = Technician::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
         $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->orderBy('created_at', 'DESC')->get()->toArray();
         $this->order_transaction = Transaction::generateOrderId();
+        $this->phone_brand = 'iPhone'; // Set default value
     }
 
     public function render()
@@ -144,14 +167,16 @@ class PointOfSales extends Component
     public function resetValue()
     {
         $this->biaya = '';
+        $this->potongan = '';
         $this->service = '';
         $this->product_id = '';
         $this->technical_id = '';
         $this->warranty = '';
-        $this->phone_brand = '';
+        $this->phone_brand = 'iPhone';
         $this->phone_type = '';
         $this->phone_color = '';
         $this->phone_imei = '';
+        $this->phone_internal = '';
 
         $this->dispatchBrowserEvent('refreshSelect', ['product_id', 'technical_id']);
     }
@@ -159,6 +184,7 @@ class PointOfSales extends Component
     public function resetAll()
     {
         $this->biaya = '';
+        $this->potongan = '';
         $this->service = '';
         $this->product_id = '';
         $this->technical_id = '';
@@ -209,6 +235,7 @@ class PointOfSales extends Component
 
         $this->serviceItems[] = [
             'biaya' => preg_replace("/[^0-9]/", "", $this->biaya),
+            'potongan' => preg_replace("/[^0-9]/", "", $this->potongan) ?: 0,
             'service' => $this->service,
             'product_id' => $this->product_id,
             'product_name' => $product_name,
@@ -221,6 +248,7 @@ class PointOfSales extends Component
             'phone_type' => $this->phone_type,
             'phone_color' => $this->phone_color,
             'phone_imei' => $this->phone_imei,
+            'phone_internal' => $this->phone_internal,
         ];
 
         $this->resetValue();

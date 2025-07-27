@@ -52,11 +52,27 @@ class UpdateTransaction extends Component
     public function setSelected($value, $name)
     {
         $this->$name = $value;
+        
+        // If product is selected, set biaya to harga_jual
+        if ($name === 'product' && $value) {
+            $product = Product::find($value);
+            if ($product && $product->harga_jual) {
+                $this->biaya = number_format($product->harga_jual, 0, ',', '.');
+            }
+        }
     }
 
     public function setProduct($value)
     {
         $this->editProduct = $value;
+        
+        // If product is selected in edit mode, set editBiaya to harga_jual
+        if ($value) {
+            $product = Product::find($value);
+            if ($product && $product->harga_jual) {
+                $this->editBiaya = number_format($product->harga_jual, 0, ',', '.');
+            }
+        }
     }
 
     public function updateIsEdit()
@@ -164,22 +180,10 @@ class UpdateTransaction extends Component
         $validateData['technical_id'] = $this->technical;
         $validateData['product_id'] = $this->product;
 
-        // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
-            // Store data and show reason modal
-            $this->pendingAction = 'addServiceItem';
-            $this->pendingActionData = [
-                'validateData' => $validateData,
-                'warranty' => $warranty,
-                'warranty_type' => $warranty_type
-            ];
-            $this->showReasonModal = true;
-            return; // Return early
-        }
-
-        // Master admin can add directly
+        // All users can add transaction items directly without verification
 
         $newTransactionItem = new TransactionItem();
+        $newTransactionItem->bypassVerification = true; // Bypass verification for all users
         $newTransactionItem->transaction_id = $this->transactionId;
 
         $validateData['modal'] = 0;
@@ -250,19 +254,8 @@ class UpdateTransaction extends Component
     {
         $transactionItem = TransactionItem::find($itemId);
 
-        // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
-            // Store data and show reason modal
-            $this->pendingAction = 'removeItem';
-            $this->pendingActionData = [
-                'itemId' => $itemId,
-                'transactionItem' => $transactionItem->toArray()
-            ];
-            $this->showReasonModal = true;
-            return; // Return early
-        }
-
-        // Master admin can delete directly
+        // All users can delete transaction items directly without verification
+        $transactionItem->bypassVerification = true; // Bypass verification for all users
         // Return stock if product was used
         if ($transactionItem->product_id) {
             $product = Product::find($transactionItem->product_id);
@@ -500,7 +493,7 @@ class UpdateTransaction extends Component
 
         $transaction = TransactionItem::findOrFail($this->editId);
 
-        // Check if user is sysadmin (operator) - needs verification
+        // Check if user is sysadmin (operator) - needs verification for updates
         if (Auth::user()->role === 'sysadmin') {
             // Store data and show reason modal
             $this->pendingAction = 'updateItem';
@@ -792,60 +785,6 @@ class UpdateTransaction extends Component
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
                 'text' => 'Perubahan berhasil disimpan dan menunggu verifikasi.',
-                'icon' => 'info'
-            ]);
-        } elseif ($this->pendingAction === 'removeItem') {
-            $itemId = $this->pendingActionData['itemId'];
-            $transactionItem = $this->pendingActionData['transactionItem'];
-
-            // Create pending change with reason for deletion
-            PendingChange::create([
-                'changeable_type' => TransactionItem::class,
-                'changeable_id' => $itemId,
-                'action' => 'delete',
-                'old_data' => $transactionItem,
-                'new_data' => null,
-                'reason' => $this->reason,
-                'requested_by' => Auth::user()->id,
-                'requested_at' => now(),
-            ]);
-
-            $this->dispatchBrowserEvent('swal', [
-                'title' => 'Success',
-                'text' => 'Permintaan penghapusan berhasil disimpan dan menunggu verifikasi.',
-                'icon' => 'info'
-            ]);
-        } elseif ($this->pendingAction === 'addServiceItem') {
-            $validateData = $this->pendingActionData['validateData'];
-            $warranty = $this->pendingActionData['warranty'];
-            $warranty_type = $this->pendingActionData['warranty_type'];
-
-            // Prepare new transaction item data
-            $newItemData = [
-                'transaction_id' => $this->transactionId,
-                'service' => $validateData['service'],
-                'biaya' => $validateData['biaya'],
-                'technical_id' => $validateData['technical_id'],
-                'product_id' => $validateData['product_id'],
-                'warranty' => $warranty,
-                'warranty_type' => $warranty_type
-            ];
-
-            // Create pending change with reason for creation
-            PendingChange::create([
-                'changeable_type' => TransactionItem::class,
-                'changeable_id' => null, // No ID yet as it's a new item
-                'action' => 'create',
-                'old_data' => null,
-                'new_data' => $newItemData,
-                'reason' => $this->reason,
-                'requested_by' => Auth::user()->id,
-                'requested_at' => now()
-            ]);
-
-            $this->dispatchBrowserEvent('swal', [
-                'title' => 'Success',
-                'text' => 'Permintaan penambahan item berhasil disimpan dan menunggu verifikasi.',
                 'icon' => 'info'
             ]);
         }

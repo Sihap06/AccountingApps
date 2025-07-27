@@ -1,6 +1,6 @@
 <!-- sidenav  -->
 <aside
-    class="fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand xl:ml-6 z-100 rounded-2xl xl:left-0 md:translate-x-0"
+    class="fixed inset-y-0 flex flex-col w-full p-0 my-4 antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand xl:ml-6 z-100 rounded-2xl xl:left-0 md:translate-x-0"
     aria-expanded="false">
 
     <div class="h-auto">
@@ -12,34 +12,12 @@
             sidenav-card="">
             <img class="w-full mx-auto" src="{{ asset('assets/img/logo.png') }}" alt="logo">
         </div>
-
-        <!-- User Info -->
-        <div class="px-8 pb-4">
-            <div class="flex flex-col items-center">
-
-                <p class="mb-4 text-xs leading-normal text-slate-700 dark:text-white/80">
-                    <span
-                        class="px-2 py-1 text-xs rounded-full bg-gradient-to-tl from-gray-600 to-gray-400 text-neutral-900 dark:text-white">
-                        {{ auth()->user()->role === 'master_admin' ? 'Admin Utama' : 'Operator' }}
-                    </span>
-                </p>
-            </div>
-
-            <!-- Logout Button -->
-            <form action="{{ url('logout') }}" method="POST">
-                @csrf
-                <button type="submit"
-                    class="relative inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-red-600 border-0 rounded-lg shadow-md select-none hover:bg-red-700 hover:shadow-xs hover:-translate-y-px">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </button>
-            </form>
-        </div>
     </div>
 
     <hr
         class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" />
 
-    <div class="items-center block w-auto max-h-screen overflow-auto grow basis-full">
+    <div class="flex-1 overflow-y-auto">
         <ul class="flex flex-col pl-0 mb-0">
             <li class="mt-0.5 w-full">
                 <a class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 transition-colors {{ request()->routeIs('dashboard.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
@@ -150,8 +128,18 @@
                     </a>
                 </li>
             @endif
-
         </ul>
+    </div>
+
+    <!-- Logout Button - Sticky at bottom -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        <form action="{{ url('logout') }}" method="POST">
+            @csrf
+            <button type="submit"
+                class="relative inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-red-600 border-0 rounded-lg shadow-md select-none hover:bg-red-700 hover:shadow-xs hover:-translate-y-px">
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </button>
+        </form>
     </div>
 
 </aside>

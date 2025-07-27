@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Dashboard;
 use App\Exports\TransactionChartExport;
 use App\Models\Expenditure;
 use App\Models\Transaction;
+use App\Models\PendingChange;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -13,10 +14,18 @@ use Maatwebsite\Excel\Facades\Excel;
 class Dashboard extends Component
 {
     public $selectedYear;
+    public $showPendingModal = false;
+    public $pendingCount = 0;
 
     public function mount()
     {
         $this->selectedYear = Carbon::now()->format('Y');
+        
+        // Check for pending verifications if user is master_admin
+        if (auth()->user()->role === 'master_admin') {
+            $this->pendingCount = PendingChange::pending()->count();
+            $this->showPendingModal = $this->pendingCount > 0;
+        }
     }
 
     public function transactionChart()
@@ -193,5 +202,10 @@ class Dashboard extends Component
         $this->updateChart();
 
         return Excel::download($export, 'transaction-chart-' . $this->selectedYear . '.xlsx');
+    }
+
+    public function goToVerification()
+    {
+        return redirect()->route('dashboard.verification.index');
     }
 }

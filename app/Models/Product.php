@@ -10,7 +10,7 @@ class Product extends Model
 {
     use HasFactory, RequiresVerification;
     
-    protected $fillable = ['name', 'kode', 'harga', 'stok'];
+    protected $fillable = ['name', 'kode', 'harga', 'harga_jual', 'stok'];
     
     // Flag to bypass verification for transaction stock updates
     public $bypassVerification = false;

@@ -14,6 +14,7 @@ class ProductController extends Controller
         $rules = [
             'name' => 'required|max:255',
             'harga' => 'required|numeric|between:1,99999999999999',
+            'harga_jual' => 'required|numeric|between:1,99999999999999',
             'stok' => 'required|numeric',
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -35,8 +36,9 @@ class ProductController extends Controller
             $data = new Product();
             $data->name = $request->get('name');
             $data->harga = $request->get('harga');
+            $data->harga_jual = $request->get('harga_jual');
             $data->stok = (int)$request->get('stok');
-            $data->kode = time();
+            $data->kode = $request->get('kode', time());
             $data->save();
             return response()->json([
                 'status' => 'success',
@@ -120,6 +122,7 @@ class ProductController extends Controller
         $rules = [
             'name' => 'required|max:255',
             'harga' => 'required|numeric|between:1,99999999999999',
+            'harga_jual' => 'required|numeric|between:1,99999999999999',
             'stok' => 'required|numeric',
         ];
         $validator = Validator::make($request->all(), $rules);
@@ -134,6 +137,7 @@ class ProductController extends Controller
         if ($data) {
             $data->name = $request->get('name');
             $data->harga = $request->get('harga');
+            $data->harga_jual = $request->get('harga_jual');
             $data->stok = $request->get('stok');
             $data->save();
             return response()->json([

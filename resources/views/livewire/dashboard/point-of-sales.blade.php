@@ -1,452 +1,504 @@
-<div class="flex flex-row gap-x-4 justify-center">
-    <div
-        class="w-2/3 border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl rounded-2xl border-0 border-solid bg-white bg-clip-border items-center mb-4">
-        <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
-            <div class="flex justify-between items-center">
-                <p class="mb-0 dark:text-white/80">Transaction</p>
-                <p>ORDER ID : {{ $order_transaction }}</p>
-            </div>
-        </div>
-        <div class="p-6">
-            <form wire:submit.prevent="submit" class="h-full">
-                <div class="flex flex-col justify-between -mx-3">
-                    <div class="mb-8">
-                        <div class="w-full grid grid-cols-4 gap-x-3 items-end">
-                            <div class="col-span-3">
-                                <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
-                                    @livewire('searchable-select', ['list' => $customers, 'selectedOption' => $customer_id, 'name' => 'customer_id', 'label' => 'Customer'])
-                                    @error('customer_id')
-                                        <div class="text-red-500 text-sm">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-span-1">
-                                <button type="button" wire:click='create'
-                                    class="w-full p-3 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px ">
-                                    <div wire:loading wire:target='create'>
-                                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                            role="status">
-                                            <span
-                                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                        </div>
-                                    </div>
-                                    <span wire:loading.remove wire:target='create'>New Customer</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="px-0 pt-0 mt-4 pb-4 overflow-auto min-h-80">
-                            <div class="p-0">
-                                <table
-                                    class="w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
-                                    <thead class="align-bottom">
-                                        <tr>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Service</th>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Biaya</th>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Teknisi</th>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Sparepart</th>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Garansi</th>
-                                            <th
-                                                class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($serviceItems as $index => $item)
-                                            <tr wire:key='{{ $index }}' wire:loading.remove
-                                                wire:target='gotoPage, previousPage, nextPage, searchTerm'>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item['service'] }}</span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ number_format($item['biaya']) }}</span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item['technical_name'] !== '' ? $item['technical_name'] : '-' }}</span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item['product_name'] !== '' ? $item['product_name'] : '-' }}</span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <span
-                                                        class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        @if ($item['warranty'] != '')
-                                                            {{ $item['warranty'] }}
-                                                            @if ($item['warranty_type'] == 'daily')
-                                                                Hari
-                                                            @elseif ($item['warranty_type'] == 'weekly')
-                                                                Minggu
-                                                            @else
-                                                                Bulan
-                                                            @endif
-                                                        @else
-                                                            -
-                                                        @endif
-
-                                                    </span>
-                                                </td>
-                                                <td
-                                                    class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                                    <div>
-                                                        <button type="button"
-                                                            wire:click="removeServiceItem({{ $index }})"
-                                                            class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                            <i class="fas fa-trash-alt" wire:loading.remove
-                                                                wire:target='removeServiceItem({{ $index }})'></i>
-                                                            <div wire:loading
-                                                                wire:target='removeServiceItem({{ $index }})'>
-                                                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                                                    role="status">
-                                                                    <span
-                                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                                                </div>
-                                                            </div>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
+<div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-1 gap-x-6 gap-y-6">
+        <!-- Left Panel - Transaction Items -->
+        <div class="lg:col-span-1">
+            <div class="bg-white dark:bg-slate-850 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                <!-- Customer Selection -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Customer Information</h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">Order ID:</span>
+                            <span
+                                class="font-mono bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $order_transaction }}</span>
                         </div>
                     </div>
-
-                    <div class="px-3">
-                        <x-ui.button type="submit" title="Submit" color="primary" wireLoading formAction="submit" />
+                    <div class="flex space-x-3">
+                        <div class="flex-1">
+                            @livewire('searchable-select', ['list' => $customers, 'selectedOption' => $customer_id, 'name' => 'customer_id', 'label' => 'Select Customer'])
+                            @error('customer_id')
+                                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" wire:click='create'
+                                class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 flex items-center h-[38px]">
+                                <div wire:loading wire:target='create'>
+                                    <div
+                                        class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent">
+                                    </div>
+                                </div>
+                                <span wire:loading.remove wire:target='create'>
+                                    <i class="fas fa-plus mr-1"></i>New
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </form>
-        </div>
-    </div>
-    <div
-        class="w-1/3 border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl rounded-2xl border-0 border-solid bg-white bg-clip-border items-center mb-4">
-        <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
-            <div class="flex justify-between items-center">
-                <p class="mb-0 dark:text-white/80">Add Service Items</p>
+
+                <!-- Transaction Items Table -->
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Service Items</h3>
+
+                    @if (count($serviceItems) > 0)
+                        <div class="overflow-x-auto">
+                            <table class="w-full table-auto">
+                                <thead>
+                                    <tr class="bg-gray-50 dark:bg-gray-800">
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Service</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Cost</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Technician</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Spare Part</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Warranty</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Phone Info</th>
+                                        <th
+                                            class="px-4 py-3 text-center text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                    @foreach ($serviceItems as $index => $item)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                {{ $item['service'] }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                <div>
+                                                    Rp {{ number_format($item['biaya'] - ($item['potongan'] ?? 0)) }}
+                                                </div>
+                                                @if (isset($item['potongan']) && $item['potongan'] > 0)
+                                                    <div class="text-xs text-gray-500">
+                                                        <span class="line-through">Rp
+                                                            {{ number_format($item['biaya']) }}</span>
+                                                        <span class="text-red-600">
+                                                            -{{ number_format($item['potongan']) }}</span>
+                                                    </div>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                {{ $item['technical_name'] ?: '-' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                {{ $item['product_name'] ?: '-' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                @if ($item['warranty'])
+                                                    {{ $item['warranty'] }}
+                                                    {{ $item['warranty_type'] == 'daily' ? 'Hari' : ($item['warranty_type'] == 'weekly' ? 'Minggu' : 'Bulan') }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                @if (
+                                                    $item['phone_brand'] ||
+                                                        $item['phone_type'] ||
+                                                        $item['phone_internal'] ||
+                                                        $item['phone_color'] ||
+                                                        $item['phone_imei']
+                                                )
+                                                    <div class="space-y-1">
+                                                        @if ($item['phone_type'])
+                                                            <div class="font-medium">{{ $item['phone_type'] }}</div>
+                                                        @endif
+                                                        @if ($item['phone_internal'] || $item['phone_color'])
+                                                            <div class="text-xs text-gray-600 dark:text-gray-400">
+                                                                @if ($item['phone_internal'])
+                                                                    {{ $item['phone_internal'] }}@if ($item['phone_internal'] == '1T' || $item['phone_internal'] == '2T')
+                                                                        TB
+                                                                    @else
+                                                                        GB
+                                                                    @endif
+                                                                @endif
+                                                                @if ($item['phone_internal'] && $item['phone_color'])
+                                                                    •
+                                                                @endif
+                                                                @if ($item['phone_color'])
+                                                                    {{ $item['phone_color'] }}
+                                                                @endif
+                                                            </div>
+                                                        @endif
+                                                        @if ($item['phone_imei'])
+                                                            <div class="text-xs text-gray-500 dark:text-gray-500">
+                                                                IMEI: {{ $item['phone_imei'] }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <button type="button"
+                                                    wire:click="removeServiceItem({{ $index }})"
+                                                    class="text-red-600 hover:text-red-800 transition-colors">
+                                                    <i class="fas fa-trash-alt" wire:loading.remove
+                                                        wire:target='removeServiceItem({{ $index }})'></i>
+                                                    <div wire:loading
+                                                        wire:target='removeServiceItem({{ $index }})'>
+                                                        <div
+                                                            class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent">
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Total Section -->
+                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-800 dark:text-white">Total:</span>
+                                <span class="text-2xl font-bold text-primary dark:text-primary-400">
+                                    Rp
+                                    {{ number_format(collect($serviceItems)->sum(function ($item) {return $item['biaya'] - ($item['potongan'] ?? 0);})) }}
+                                </span>
+                            </div>
+                        </div>
+                    @else
+                        <div class="text-center py-12">
+                            <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                            <p class="text-gray-500">No service items added yet</p>
+                        </div>
+                    @endif
+
+                    <!-- Submit Button -->
+                    <div class="mt-6">
+                        <form wire:submit.prevent="submit">
+                            <button type="submit"
+                                class="w-full bg-primary hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                                @if (count($serviceItems) == 0) disabled @endif>
+                                <div wire:loading wire:target='submit'
+                                    class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
+                                </div>
+                                <span wire:loading.remove wire:target='submit'>Process Transaction</span>
+                                <span wire:loading wire:target='submit'>Processing...</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="p-6 mt-4">
-            <form wire:submit.prevent="addServiceItems">
-                <div class="flex flex-col justify-between h-full -mx-3">
-                    <div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="service" class="text-sm">Service</label>
-                            <input type="text" wire:model.lazy='service' id="service"
-                                class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
-                            @error('service')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
+
+        <!-- Right Panel - Add Service Form -->
+        <div class="lg:col-span-1">
+            <div
+                class="bg-white dark:bg-slate-850 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 sticky top-4">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Add Service Item</h3>
+                </div>
+
+                <form wire:submit.prevent="addServiceItems" class="p-6">
+                    <div class="space-y-4">
+                        <!-- Service & Cost Group -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Service Details</h4>
+
+                            <div>
+                                <x-ui.input-default wire:model.lazy="service" label="Service"
+                                    placeholder="Enter service name" required="true" :error="$errors->first('service')" />
+                            </div>
+
+                            <div>
+                                <div class="relative">
+                                    <x-ui.input-default wire:model="biaya" id="biaya" label="Cost (Rp)"
+                                        placeholder="0" required="true" :error="$errors->first('biaya')" :disabled="$product_id ? true : false"
+                                        x-data="{
+                                            formatNumber: function(event) {
+                                                const input = event.target;
+                                                const value = input.value.replace(/\D/g, '');
+                                                input.value = new Intl.NumberFormat('en-US').format(value);
+                                            },
+                                            init() {
+                                                this.$watch('$wire.biaya', (value) => {
+                                                    if (value && value.toString().includes('.')) {
+                                                        this.$el.value = value;
+                                                    }
+                                                });
+                                            }
+                                        }" x-on:input="formatNumber($event)" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="relative">
+                                    <x-ui.input-default wire:model="potongan" id="potongan" label="Discount (Rp)"
+                                        placeholder="0" :error="$errors->first('potongan')" x-data="{
+                                            formatNumber: function(event) {
+                                                const input = event.target;
+                                                const value = input.value.replace(/\D/g, '');
+                                                input.value = new Intl.NumberFormat('en-US').format(value);
+                                            },
+                                            init() {
+                                                this.$watch('$wire.potongan', (value) => {
+                                                    if (value && value.toString().includes('.')) {
+                                                        this.$el.value = value;
+                                                    }
+                                                });
+                                            }
+                                        }"
+                                        x-on:input="formatNumber($event)" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="biaya" class="text-sm">Biaya</label>
-                            <input type="text" wire:model.lazy='biaya' id="biaya" x-data="{
-                                formatNumber: function(event) {
-                                    const input = event.target;
-                                    const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-                                    input.value = new Intl.NumberFormat('en-US').format(value);
-                                }
-                            }"
-                                x-on:input="formatNumber($event)"
-                                class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
-                            @error('biaya')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
+
+                        <!-- Technician & Spare Part Group -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Assignment</h4>
+
+                            <div>
+                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical_id, 'name' => 'technical_id', 'label' => 'Technician (Optional)'])
+                                @error('technical_id')
+                                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                @livewire('searchable-select', ['list' => $inventory, 'selectedOption' => $product_id, 'name' => 'product_id', 'label' => 'Spare Part (Optional)'])
+                                @error('product_id')
+                                    <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label
+                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">
+                                    Warranty (Optional)
+                                </label>
+                                <div class="flex space-x-2">
+                                    <input type="text" wire:model.lazy='warranty' id="warranty" placeholder="0"
+                                        class="flex-1 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                        x-data="{
+                                            formatNumber: function(event) {
+                                                const input = event.target;
+                                                const value = input.value.replace(/\D/g, '');
+                                                input.value = new Intl.NumberFormat('en-US').format(value);
+                                            }
+                                        }" x-on:input="formatNumber($event)">
+                                    <select wire:model.lazy="warranty_type"
+                                        class="w-32 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                        <option value="daily">Days</option>
+                                        <option value="weekly">Weeks</option>
+                                        <option value="monthly">Months</option>
+                                    </select>
+                                </div>
+                                @error('warranty')
+                                    <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical_id, 'name' => 'technical_id', 'label' => 'Teknisi'])
-                            @error('technical_id')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            @livewire('searchable-select', ['list' => $inventory, 'selectedOption' => $product_id, 'name' => 'product_id', 'label' => 'Sparepart'])
-                            @error('product_id')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="warranty" class="text-sm">Garansi</label>
-                            <div class="flex flex-row gap-2">
-                                <input type="text" wire:model.lazy='warranty' id="warranty" x-data="{
-                                    formatNumber: function(event) {
-                                        const input = event.target;
-                                        const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
-                                        input.value = new Intl.NumberFormat('en-US').format(value);
-                                    }
-                                }"
-                                    x-on:input="formatNumber($event)"
-                                    class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
-                                <select wire:model.lazy="warranty_type"
-                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                    <option value="daily">Hari</option>
-                                    <option value="weekly">Minggu</option>
-                                    <option value="monthly">Bulan</option>
+
+                        <!-- Phone Details Group -->
+                        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Phone Details
+                                (Optional)</h4>
+
+                            <div class="grid grid-cols-2 gap-x-3">
+                                <div>
+                                    <x-ui.input-default wire:model.lazy="phone_brand" label="Brand" value="iPhone"
+                                        disabled="true" />
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Storage</label>
+                                    <select wire:model.lazy="phone_internal"
+                                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                        <option value="">Select</option>
+                                        <option value="16">16 GB</option>
+                                        <option value="32">32 GB</option>
+                                        <option value="64">64 GB</option>
+                                        <option value="128">128 GB</option>
+                                        <option value="256">256 GB</option>
+                                        <option value="512">512 GB</option>
+                                        <option value="1T">1 TB</option>
+                                        <option value="2T">2 TB</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Model</label>
+                                <select wire:model.lazy="phone_type"
+                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select iPhone Model</option>
+                                    <optgroup label="iPhone 15 Series">
+                                        <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
+                                        <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                                        <option value="iPhone 15 Plus">iPhone 15 Plus</option>
+                                        <option value="iPhone 15">iPhone 15</option>
+                                    </optgroup>
+                                    <optgroup label="iPhone 14 Series">
+                                        <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
+                                        <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                                        <option value="iPhone 14 Plus">iPhone 14 Plus</option>
+                                        <option value="iPhone 14">iPhone 14</option>
+                                    </optgroup>
+                                    <optgroup label="iPhone 13 Series">
+                                        <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
+                                        <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                                        <option value="iPhone 13">iPhone 13</option>
+                                        <option value="iPhone 13 Mini">iPhone 13 Mini</option>
+                                    </optgroup>
+                                    <optgroup label="iPhone 12 Series">
+                                        <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
+                                        <option value="iPhone 12 Pro">iPhone 12 Pro</option>
+                                        <option value="iPhone 12">iPhone 12</option>
+                                        <option value="iPhone 12 Mini">iPhone 12 Mini</option>
+                                    </optgroup>
+                                    <optgroup label="iPhone 11 Series">
+                                        <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
+                                        <option value="iPhone 11 Pro">iPhone 11 Pro</option>
+                                        <option value="iPhone 11">iPhone 11</option>
+                                    </optgroup>
+                                    <optgroup label="iPhone SE">
+                                        <option value="iPhone SE 3">iPhone SE 3</option>
+                                        <option value="iPhone SE 2">iPhone SE 2</option>
+                                    </optgroup>
+                                    <optgroup label="Older Models">
+                                        <option value="iPhone XS Max">iPhone XS Max</option>
+                                        <option value="iPhone XS">iPhone XS</option>
+                                        <option value="iPhone XR">iPhone XR</option>
+                                        <option value="iPhone X">iPhone X</option>
+                                        <option value="iPhone 8 Plus">iPhone 8 Plus</option>
+                                        <option value="iPhone 8">iPhone 8</option>
+                                        <option value="iPhone 7 Plus">iPhone 7 Plus</option>
+                                        <option value="iPhone 7">iPhone 7</option>
+                                        <option value="iPhone 6s Plus">iPhone 6s Plus</option>
+                                        <option value="iPhone 6s">iPhone 6s</option>
+                                        <option value="iPhone 6 Plus">iPhone 6 Plus</option>
+                                        <option value="iPhone 6">iPhone 6</option>
+                                    </optgroup>
                                 </select>
                             </div>
-                            @error('warranty')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="phone_brand" class="text-sm">Brand HP</label>
-                            <select wire:model.lazy="phone_brand" id="phone_brand"
-                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                <option value="">Pilih Brand</option>
-                                <option value="iPhone">iPhone</option>
-                                <option value="Android">Android</option>
-                                <option value="Internal">Internal</option>
-                            </select>
-                            @error('phone_brand')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="phone_type" class="text-sm">Tipe HP</label>
-                            <select wire:model.lazy="phone_type" id="phone_type"
-                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                <option value="">Pilih Tipe</option>
-                                @if($phone_brand == 'iPhone')
-                                    <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-                                    <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-                                    <option value="iPhone 15 Plus">iPhone 15 Plus</option>
-                                    <option value="iPhone 15">iPhone 15</option>
-                                    <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
-                                    <option value="iPhone 14 Pro">iPhone 14 Pro</option>
-                                    <option value="iPhone 14 Plus">iPhone 14 Plus</option>
-                                    <option value="iPhone 14">iPhone 14</option>
-                                    <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
-                                    <option value="iPhone 13 Pro">iPhone 13 Pro</option>
-                                    <option value="iPhone 13">iPhone 13</option>
-                                    <option value="iPhone 13 Mini">iPhone 13 Mini</option>
-                                    <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
-                                    <option value="iPhone 12 Pro">iPhone 12 Pro</option>
-                                    <option value="iPhone 12">iPhone 12</option>
-                                    <option value="iPhone 12 Mini">iPhone 12 Mini</option>
-                                    <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
-                                    <option value="iPhone 11 Pro">iPhone 11 Pro</option>
-                                    <option value="iPhone 11">iPhone 11</option>
-                                    <option value="iPhone SE 3">iPhone SE 3</option>
-                                    <option value="iPhone SE 2">iPhone SE 2</option>
-                                    <option value="iPhone XS Max">iPhone XS Max</option>
-                                    <option value="iPhone XS">iPhone XS</option>
-                                    <option value="iPhone XR">iPhone XR</option>
-                                    <option value="iPhone X">iPhone X</option>
-                                    <option value="iPhone 8 Plus">iPhone 8 Plus</option>
-                                    <option value="iPhone 8">iPhone 8</option>
-                                    <option value="iPhone 7 Plus">iPhone 7 Plus</option>
-                                    <option value="iPhone 7">iPhone 7</option>
-                                    <option value="iPhone 6s Plus">iPhone 6s Plus</option>
-                                    <option value="iPhone 6s">iPhone 6s</option>
-                                    <option value="iPhone 6 Plus">iPhone 6 Plus</option>
-                                    <option value="iPhone 6">iPhone 6</option>
-                                @elseif($phone_brand == 'Android')
-                                    <option value="Samsung Galaxy S24 Ultra">Samsung Galaxy S24 Ultra</option>
-                                    <option value="Samsung Galaxy S24+">Samsung Galaxy S24+</option>
-                                    <option value="Samsung Galaxy S24">Samsung Galaxy S24</option>
-                                    <option value="Samsung Galaxy S23 Ultra">Samsung Galaxy S23 Ultra</option>
-                                    <option value="Samsung Galaxy S23+">Samsung Galaxy S23+</option>
-                                    <option value="Samsung Galaxy S23">Samsung Galaxy S23</option>
-                                    <option value="Samsung Galaxy A54">Samsung Galaxy A54</option>
-                                    <option value="Samsung Galaxy A34">Samsung Galaxy A34</option>
-                                    <option value="Samsung Galaxy A14">Samsung Galaxy A14</option>
-                                    <option value="Xiaomi 14 Pro">Xiaomi 14 Pro</option>
-                                    <option value="Xiaomi 14">Xiaomi 14</option>
-                                    <option value="Xiaomi 13 Pro">Xiaomi 13 Pro</option>
-                                    <option value="Xiaomi 13">Xiaomi 13</option>
-                                    <option value="Xiaomi Redmi Note 13 Pro">Xiaomi Redmi Note 13 Pro</option>
-                                    <option value="Xiaomi Redmi Note 13">Xiaomi Redmi Note 13</option>
-                                    <option value="Xiaomi Redmi Note 12 Pro">Xiaomi Redmi Note 12 Pro</option>
-                                    <option value="Xiaomi Redmi Note 12">Xiaomi Redmi Note 12</option>
-                                    <option value="Oppo Find X7 Pro">Oppo Find X7 Pro</option>
-                                    <option value="Oppo Find X7">Oppo Find X7</option>
-                                    <option value="Oppo Reno 11 Pro">Oppo Reno 11 Pro</option>
-                                    <option value="Oppo Reno 11">Oppo Reno 11</option>
-                                    <option value="Oppo A98">Oppo A98</option>
-                                    <option value="Oppo A78">Oppo A78</option>
-                                    <option value="Vivo X100 Pro">Vivo X100 Pro</option>
-                                    <option value="Vivo X100">Vivo X100</option>
-                                    <option value="Vivo V29 Pro">Vivo V29 Pro</option>
-                                    <option value="Vivo V29">Vivo V29</option>
-                                    <option value="Vivo Y36">Vivo Y36</option>
-                                    <option value="Vivo Y27">Vivo Y27</option>
-                                    <option value="Realme 12 Pro+">Realme 12 Pro+</option>
-                                    <option value="Realme 12 Pro">Realme 12 Pro</option>
-                                    <option value="Realme 12">Realme 12</option>
-                                    <option value="Realme 11 Pro+">Realme 11 Pro+</option>
-                                    <option value="Realme 11 Pro">Realme 11 Pro</option>
-                                    <option value="Realme 11">Realme 11</option>
-                                    <option value="Infinix Note 30 Pro">Infinix Note 30 Pro</option>
-                                    <option value="Infinix Note 30">Infinix Note 30</option>
-                                    <option value="Infinix Smart 8">Infinix Smart 8</option>
-                                    <option value="Poco X6 Pro">Poco X6 Pro</option>
-                                    <option value="Poco X6">Poco X6</option>
-                                    <option value="Poco F5 Pro">Poco F5 Pro</option>
-                                    <option value="Poco F5">Poco F5</option>
-                                @elseif($phone_brand == 'Internal')
-                                    <option value="Staff Phone 1">Staff Phone 1</option>
-                                    <option value="Staff Phone 2">Staff Phone 2</option>
-                                    <option value="Test Device 1">Test Device 1</option>
-                                    <option value="Test Device 2">Test Device 2</option>
-                                    <option value="Demo Unit">Demo Unit</option>
-                                @endif
-                            </select>
-                            @error('phone_type')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="phone_color" class="text-sm">Warna HP</label>
-                            <select wire:model.lazy="phone_color" id="phone_color"
-                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                <option value="">Pilih Warna</option>
-                                <option value="Black">Black</option>
-                                <option value="White">White</option>
-                                <option value="Silver">Silver</option>
-                                <option value="Gold">Gold</option>
-                                <option value="Rose Gold">Rose Gold</option>
-                                <option value="Blue">Blue</option>
-                                <option value="Navy Blue">Navy Blue</option>
-                                <option value="Midnight">Midnight</option>
-                                <option value="Green">Green</option>
-                                <option value="Red">Red</option>
-                                <option value="Pink">Pink</option>
-                                <option value="Purple">Purple</option>
-                                <option value="Yellow">Yellow</option>
-                                <option value="Orange">Orange</option>
-                                <option value="Gray">Gray</option>
-                                <option value="Space Gray">Space Gray</option>
-                                <option value="Graphite">Graphite</option>
-                                <option value="Pacific Blue">Pacific Blue</option>
-                                <option value="Sierra Blue">Sierra Blue</option>
-                                <option value="Alpine Green">Alpine Green</option>
-                                <option value="Starlight">Starlight</option>
-                                <option value="Midnight Blue">Midnight Blue</option>
-                                <option value="Coral">Coral</option>
-                                <option value="Lavender">Lavender</option>
-                                <option value="Cream">Cream</option>
-                                <option value="Mint">Mint</option>
-                                <option value="Brown">Brown</option>
-                                <option value="Bronze">Bronze</option>
-                                <option value="Titanium">Titanium</option>
-                            </select>
-                            @error('phone_color')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                            <label for="phone_imei" class="text-sm">IMEI</label>
-                            <input type="text" wire:model.lazy='phone_imei' id="phone_imei"
-                                class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500"
-                                placeholder="Masukkan IMEI">
-                            @error('phone_imei')
-                                <div class="text-red-500 text-sm">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="w-full max-w-full px-3 shrink-0 md:flex-0 mt-4">
-                        <x-ui.button type="submit" title="Add Service" color="primary" wireLoading
-                            formAction="addServiceItems" />
-                    </div>
 
-                </div>
-            </form>
+                            <div>
+                                <label
+                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Color</label>
+                                <select wire:model.lazy="phone_color"
+                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    <option value="">Select Color</option>
+                                    <optgroup label="Common Colors">
+                                        <option value="Black">Black</option>
+                                        <option value="White">White</option>
+                                        <option value="Silver">Silver</option>
+                                        <option value="Gold">Gold</option>
+                                        <option value="Space Gray">Space Gray</option>
+                                    </optgroup>
+                                    <optgroup label="Pro Colors">
+                                        <option value="Graphite">Graphite</option>
+                                        <option value="Pacific Blue">Pacific Blue</option>
+                                        <option value="Sierra Blue">Sierra Blue</option>
+                                        <option value="Alpine Green">Alpine Green</option>
+                                        <option value="Deep Purple">Deep Purple</option>
+                                    </optgroup>
+                                    <optgroup label="Standard Colors">
+                                        <option value="Blue">Blue</option>
+                                        <option value="Midnight">Midnight</option>
+                                        <option value="Starlight">Starlight</option>
+                                        <option value="Pink">Pink</option>
+                                        <option value="Red">Red</option>
+                                        <option value="Green">Green</option>
+                                        <option value="Yellow">Yellow</option>
+                                        <option value="Purple">Purple</option>
+                                    </optgroup>
+                                    <optgroup label="Special Edition">
+                                        <option value="Rose Gold">Rose Gold</option>
+                                        <option value="Coral">Coral</option>
+                                        <option value="Lavender">Lavender</option>
+                                        <option value="Mint">Mint</option>
+                                    </optgroup>
+                                </select>
+                            </div>
 
+                            <div>
+                                <x-ui.input-default wire:model.lazy="phone_imei" label="IMEI"
+                                    placeholder="Enter IMEI number" />
+                            </div>
+                        </div>
+
+                        <!-- Add Button -->
+                        <button type="submit"
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg transition-colors duration-200">
+                            <div wire:loading wire:target='addServiceItems'
+                                class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
+                            </div>
+                            <span wire:loading.remove wire:target='addServiceItems'>
+                                <i class="fas fa-plus mr-2"></i>Add Service Item
+                            </span>
+                            <span wire:loading wire:target='addServiceItems'>Adding...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
+    <!-- New Customer Modal -->
     @if ($isOpen)
-        <div class="fixed z-10 inset-0 overflow-y-auto">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-                </div>
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
 
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full p-6 transform transition-all">
+                    <div class="absolute top-4 right-4">
+                        <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
 
-                <div
-                    class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-                    <div>
-                        <div class="mt-3 sm:mt-5">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Add New Customer
-                            </h3>
-                            <div class="mt-2">
-                                <div class="mt-4">
-                                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                    <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model.lazy="name" id="name"
-                                            class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
-                                    </div>
-                                    @error('name')
-                                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="mt-4">
-                                    <label for="no_telp" class="block text-sm font-medium text-gray-700">No
-                                        Telefon</label>
-                                    <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model.lazy="no_telp" id="no_telp"
-                                            class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
-                                    </div>
-                                    @error('no_telp')
-                                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="mt-4">
-                                    <label for="alamat" class="block text-sm font-medium text-gray-700">Address
-                                        (optional)</label>
-                                    <div class="mt-1 relative rounded-md">
-                                        <input type="text" wire:model.lazy="alamat" id="alamat"
-                                            class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
-                                    </div>
-                                    @error('alamat')
-                                        <span class="text-red-500 text-xs">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Add New Customer</h3>
+
+                    <div class="space-y-4">
+                        <div>
+                            <x-ui.input-default wire:model.lazy="name" label="Name"
+                                placeholder="Enter customer name" required="true" :error="$errors->first('name')" />
+                        </div>
+
+                        <div>
+                            <x-ui.input-default wire:model.lazy="no_telp" label="Phone Number"
+                                placeholder="Enter phone number" required="true" :error="$errors->first('no_telp')" />
+                        </div>
+
+                        <div>
+                            <label for="alamat"
+                                class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">
+                                Address <span class="text-gray-400">(Optional)</span>
+                            </label>
+                            <textarea wire:model.lazy="alamat" id="alamat" rows="3"
+                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                placeholder="Enter customer address"></textarea>
+                            @error('alamat')
+                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
+                            @enderror
                         </div>
                     </div>
-                    <div class="flex gap-x-2 mt-5 sm:mt-6">
+
+                    <div class="flex space-x-3 mt-6">
                         <button wire:click="storeNewCustomer" wire:loading.attr="disabled"
                             wire:target="storeNewCustomer"
-                            class="inline-flex gap-x-2 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-500 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
-                            <div wire:loading wire:target='storeNewCustomer'>
-                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                    role="status">
-                                    <span
-                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                </div>
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg transition-colors duration-200 disabled:opacity-50">
+                            <div wire:loading wire:target='storeNewCustomer'
+                                class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
                             </div>
-                            Save
+                            <span wire:loading.remove wire:target='storeNewCustomer'>Save Customer</span>
+                            <span wire:loading wire:target='storeNewCustomer'>Saving...</span>
                         </button>
                         <button wire:click="closeModal" wire:loading.attr="disabled" wire:target="closeModal"
-                            class="inline-flex gap-x-2 justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-500 text-base font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:text-sm">
-                            <div wire:loading wire:target='closeModal'>
-                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                    role="status">
-                                    <span
-                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                                </div>
-                            </div>
+                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 rounded-lg transition-colors duration-200">
                             Cancel
                         </button>
                     </div>
@@ -466,12 +518,23 @@
 
 @push('style')
     <style>
-        .custom-height-pos {
-            min-height: calc(100vh - 155px);
+        /* Custom scrollbar for tables */
+        .overflow-x-auto::-webkit-scrollbar {
+            height: 6px;
         }
 
-        .table-height-pos {
-            min-height: calc(100vh - 400px);
+        .overflow-x-auto::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 @endpush
@@ -506,9 +569,7 @@
                 })
             });
 
-
             updateSelectOptions(newOptions);
-
         });
     </script>
 @endpush

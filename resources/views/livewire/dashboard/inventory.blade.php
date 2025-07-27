@@ -39,7 +39,10 @@
                                     Kode</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Harga</th>
+                                    Harga Beli</th>
+                                <th
+                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Harga Jual</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Stok</th>
@@ -53,22 +56,32 @@
                                 {{-- Show loading skeleton when data is not loaded yet --}}
                                 @for ($i = 0; $i < 5; $i++)
                                     <tr>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-12 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
-                                        <td class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-32 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-24 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-20 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-20 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-16 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
-                                        <td class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="flex gap-2 justify-center">
                                                 <div class="h-8 w-12 rounded bg-gray-200 animate-pulse"></div>
                                                 <div class="h-8 w-12 rounded bg-gray-200 animate-pulse"></div>
@@ -78,78 +91,87 @@
                                 @endfor
                             @else
                                 @foreach ($data as $index => $item)
-                                <tr wire:key='product-{{ $item['id'] ?? $index }}'>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ $index + 1 }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ $item['name'] }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            {{ $item['kode'] }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            Rp {{ number_format($item['harga']) }}
-                                        </span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <span
-                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item['stok'] }}</span>
-                                    </td>
-                                    <td
-                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                        <div>
-                                            <button type="button" wire:click='edit({{ $item['id'] }})'
-                                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                <i class="fas fa-edit" wire:loading.remove
-                                                    wire:target='edit({{ $item['id'] }})'></i>
-                                                <div wire:loading wire:target='edit({{ $item['id'] }})'>
-                                                    <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                                        role="status">
-                                                        <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                    <tr wire:key='product-{{ $item['id'] ?? $index }}'>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $index + 1 }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-left align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item['name'] }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item['kode'] }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                Rp {{ number_format($item['harga']) }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                Rp {{ number_format($item['harga_jual'] ?? 0) }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $item['stok'] }}</span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div>
+                                                <button type="button" wire:click='edit({{ $item['id'] }})'
+                                                    class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                                    <i class="fas fa-edit" wire:loading.remove
+                                                        wire:target='edit({{ $item['id'] }})'></i>
+                                                    <div wire:loading wire:target='edit({{ $item['id'] }})'>
+                                                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                            role="status">
+                                                            <span
+                                                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </button>
-                                            <button type="button"
-                                                wire:click="$emit('triggerDelete',{{ $item['id'] }})"
-                                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                                                <i class="fas fa-trash-alt" wire:loading.remove
-                                                    wire:target='delete({{ $item['id'] }})'></i>
+                                                </button>
+                                                <button type="button"
+                                                    wire:click="$emit('triggerDelete',{{ $item['id'] }})"
+                                                    class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                                    <i class="fas fa-trash-alt" wire:loading.remove
+                                                        wire:target='delete({{ $item['id'] }})'></i>
 
-                                                <div wire:loading wire:target='delete({{ $item['id'] }})'>
-                                                    <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                                                        role="status">
-                                                        <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                    <div wire:loading wire:target='delete({{ $item['id'] }})'>
+                                                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                            role="status">
+                                                            <span
+                                                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
 
-                                @if(count($data) == 0)
+                                @if (count($data) == 0)
                                     <tr>
-                                        <td colspan="6" class="p-4 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                            <span class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                        <td colspan="6"
+                                            class="p-4 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                 Tidak ada data inventory
                                             </span>
                                         </td>
@@ -160,7 +182,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 {{-- Load More Trigger --}}
                 @if ($readyToLoad && $hasMorePages)
                     <div x-data="{
@@ -174,13 +196,14 @@
                             });
                             observer.observe(this.$el);
                         }
-                    }"
-                    x-init="observe"
-                    class="p-4 text-center">
-                        <div wire:loading wire:target="loadMore" class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite] text-primary">
-                            <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                    }" x-init="observe" class="p-4 text-center">
+                        <div wire:loading wire:target="loadMore"
+                            class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite] text-primary">
+                            <span
+                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                         </div>
-                        <span wire:loading.remove wire:target="loadMore" class="text-sm text-gray-500">Scroll untuk melihat lebih banyak...</span>
+                        <span wire:loading.remove wire:target="loadMore" class="text-sm text-gray-500">Scroll untuk
+                            melihat lebih banyak...</span>
                     </div>
                 @endif
             </div>
@@ -212,7 +235,7 @@
                                         @enderror
                                     </div>
                                     <div class="relative mb-8">
-                                        <x-ui.input-default wire:model="harga" id="harga" label="Price"
+                                        <x-ui.input-default wire:model="harga" id="harga" label="Harga Beli"
                                             x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
@@ -225,7 +248,21 @@
                                         @enderror
                                     </div>
                                     <div class="relative mb-8">
-                                        <x-ui.input-default disabled wire:model="stok" id="stok" label="Stock"
+                                        <x-ui.input-default wire:model="harga_jual" id="harga_jual"
+                                            label="Harga Jual" x-data="{
+                                                formatNumber: function(event) {
+                                                    const input = event.target;
+                                                    const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
+                                                    input.value = new Intl.NumberFormat('en-US').format(value);
+                                                }
+                                            }"
+                                            x-on:input="formatNumber($event)" />
+                                        @error('harga_jual')
+                                            <div class="text-red-500 text-sm">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                    <div class="relative mb-8">
+                                        <x-ui.input-default wire:model="stok" id="stok" label="Stock"
                                             x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
@@ -285,7 +322,9 @@
                                 <form wire:submit.prevent="submitReason">
                                     <div class="relative mb-8 mt-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2">
-                                            Masukkan alasan {{ $pendingAction === 'update' ? 'perubahan' : 'penghapusan' }} <span class="text-red-500">*</span>
+                                            Masukkan alasan
+                                            {{ $pendingAction === 'update' ? 'perubahan' : 'penghapusan' }} <span
+                                                class="text-red-500">*</span>
                                         </label>
                                         <textarea wire:model="reason" rows="4"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
