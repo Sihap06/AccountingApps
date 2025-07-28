@@ -225,7 +225,6 @@ class PointOfSales extends Component
 
         if ($this->technical_id !== '') {
             $technical_name = $this->findTechnicianById($this->technical_id)->name;
-            $product_name = '';
         }
 
         if ($this->warranty != 0 || $this->warranty != '') {

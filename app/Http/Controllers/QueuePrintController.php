@@ -15,6 +15,7 @@ class QueuePrintController extends Controller
                     ->whereNull('transaction_items.deleted_at');
             })
             ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
+            ->leftJoin('users', 'transactions.created_by', '=', 'users.id')
             ->select(
                 'transactions.id as transaction_id',
                 'transactions.biaya as transaction_biaya',
@@ -36,6 +37,7 @@ class QueuePrintController extends Controller
                 'transactions.updated_at as transaction_updated_at',
                 'customers.name as customer_name',
                 'customers.no_telp as customer_no_telp',
+                'users.name as operator_name',
                 'transaction_items.id as item_id',
                 'transaction_items.biaya as item_biaya',
                 'transaction_items.created_at as item_created_at',
@@ -67,6 +69,7 @@ class QueuePrintController extends Controller
                 'payment_method' => $transaction->transaction_payment_method,
                 'customer_name' => $transaction->customer_name,
                 'no_telp' => $transaction->customer_no_telp,
+                'operator_name' => $transaction->operator_name,
                 'biaya' => $transaction->transaction_biaya,
                 'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,

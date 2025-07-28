@@ -53,7 +53,10 @@
                                         Kode</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Persentase</th>
+                                        % Fee</th>
+                                    <th
+                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        % Fee With Sparepart</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
@@ -92,6 +95,13 @@
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item->percent_with_sparepart !== null ? $item->percent_with_sparepart . '%' : '-' }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <button type="button" wire:click='edit({{ $item->id }})'
                                                 class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                 <i class="fas fa-edit" wire:loading.remove
@@ -104,7 +114,7 @@
                                                     </div>
                                                 </div>
                                             </button>
-                                            {{-- <button type="button"
+                                            <button type="button"
                                                 wire:click="$emit('triggerDelete',{{ $item->id }})"
                                                 class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                 <i class="fas fa-trash-alt" wire:loading.remove
@@ -117,7 +127,7 @@
                                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
-                                            </button> --}}
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -162,6 +172,13 @@
                             <div class="relative mb-8">
                                 <x-ui.input-default wire:model="percent_fee" label="Persentase" />
                                 @error('percent_fee')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+
+                            </div>
+                            <div class="relative mb-8">
+                                <x-ui.input-default wire:model="percent_with_sparepart" label="% With Sparepart" />
+                                @error('percent_with_sparepart')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
 

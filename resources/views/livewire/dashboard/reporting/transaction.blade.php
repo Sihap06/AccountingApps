@@ -5,17 +5,17 @@
         <div
             class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl w-full custom-height-transaction">
             <div class="flex flex-col md:flex-row justify-between p-6 pb-0 ">
-                <h6 class="dark:text-white">Transaction Table</h6>
+                <h6 class="dark:text-white">Transaction Report</h6>
                 <div class="w-3/12 text-slate-900 font-bold">
                     <div class="flex justify-between mb-2">
-                        <span>Omset</span>
+                        <span>Revenue</span>
                         <span>Rp {{ number_format($totalBiaya) }}</span>
                     </div>
                 </div>
             </div>
             <div class="my-4 px-6 flex items-center justify-between">
                 <div class="flex gap-x-4 items-center w-full">
-                    <p class="mb-0">Filter :</p>
+                    <p class="mb-0">Filter:</p>
                     <div class="flex w-full md:w-3/12 items-center">
                         <input type="date" wire:model.debounce.500ms="selectedDate"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
@@ -23,7 +23,7 @@
                     <div class="flex w-full md:w-4/12 items-center">
                         <select wire:model.debounce.500ms="selectedPaymentMethod"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                            <option value="">Semua Metode Pembayaran</option>
+                            <option value="">All Payment Methods</option>
                             <option value="cash">CASH</option>
                             <option value="qris">QRIS</option>
                             <option value="bca">BCA</option>
@@ -38,7 +38,7 @@
                 <div class="flex w-full md:w-5/12 items-center">
                     <input type="text" wire:model.debounce.500ms="searchTerm"
                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                        placeholder="Masukkan order id atau nama customer" />
+                        placeholder="Enter order ID or customer name" />
                 </div>
             </div>
             <div class="flex-auto p-6">
@@ -49,7 +49,7 @@
                             <tr>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Tanggal
+                                    Date
                                 </th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -65,21 +65,25 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Biaya
+                                    Amount
                                 </th>
                                 @if (auth()->user()->role !== 'sysadmin')
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Modal
+                                        Capital
                                     </th>
                                 @endif
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Metode Pembayaran
+                                    Payment Method
                                 </th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-
+                                    Operator
+                                </th>
+                                <th
+                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
@@ -153,6 +157,13 @@
                                         <span
                                             class="text-xs font-semibold uppercase leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                             {{ $item->payment_method }}
+                                        </span>
+                                    </td>
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                            {{ $item->operator_name ?? 'Unknown' }}
                                         </span>
                                     </td>
                                     <td
@@ -244,6 +255,14 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                     </td>
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                    </td>
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                        <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
+                                    </td>
                                 </tr>
                             @endfor
 
@@ -299,14 +318,14 @@
 
             @this.on('printOptions', (id, payment_method) => {
                 Swal.fire({
-                    title: 'Pilih Format Cetak',
-                    text: "Ingin mencetak dalam format apa?",
+                    title: 'Select Print Format',
+                    text: "Which format would you like to print?",
                     icon: 'question',
                     showCancelButton: true,
                     showDenyButton: true,
                     confirmButtonText: 'PDF',
-                    denyButtonText: `Word`,
-                    cancelButtonText: 'Batal',
+                    denyButtonText: 'Word',
+                    cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         window.open(`/receipt/${id}/${payment_method}`, '_blank');

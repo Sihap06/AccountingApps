@@ -273,6 +273,62 @@
                         </div>
                     </div>
 
+                    {{-- Phone Details Section --}}
+                    @if ($detailItem['phone_type'] || (isset($detailItem['items']) && count($detailItem['items']) > 0 && collect($detailItem['items'])->contains(function($item) {
+                        return !empty($item['phone_type']);
+                    })))
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Phone Details</h4>
+                            @if ($detailItem['phone_type'])
+                                <div class="mb-2">
+                                    <div class="flex gap-x-2 text-sm">
+                                        <span class="text-gray-600">Main Transaction:</span>
+                                        <span class="text-gray-900 font-medium">
+                                            {{ $detailItem['phone_brand'] ?? 'iPhone' }} {{ $detailItem['phone_type'] }}
+                                            @if ($detailItem['phone_internal'])
+                                                - {{ $detailItem['phone_internal'] }}@if (in_array($detailItem['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                            @endif
+                                            @if ($detailItem['phone_color'])
+                                                - {{ $detailItem['phone_color'] }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if ($detailItem['phone_imei'])
+                                        <div class="flex gap-x-2 text-sm mt-1">
+                                            <span class="text-gray-600">IMEI:</span>
+                                            <span class="text-gray-900">{{ $detailItem['phone_imei'] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            @foreach ($detailItem['items'] as $index => $item)
+                                @if (!empty($item['phone_type']))
+                                    <div class="mb-2 @if ($detailItem['phone_type']) border-t pt-2 @endif">
+                                        <div class="flex gap-x-2 text-sm">
+                                            <span class="text-gray-600">{{ $item['service'] }}:</span>
+                                            <span class="text-gray-900 font-medium">
+                                                {{ $item['phone_brand'] ?? 'iPhone' }} {{ $item['phone_type'] }}
+                                                @if ($item['phone_internal'])
+                                                    - {{ $item['phone_internal'] }}@if (in_array($item['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                                @endif
+                                                @if ($item['phone_color'])
+                                                    - {{ $item['phone_color'] }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        @if ($item['phone_imei'])
+                                            <div class="flex gap-x-2 text-sm mt-1">
+                                                <span class="text-gray-600">IMEI:</span>
+                                                <span class="text-gray-900">{{ $item['phone_imei'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="mt-3">
                         <table
                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">

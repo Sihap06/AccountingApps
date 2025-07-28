@@ -12,11 +12,14 @@
 
     <div class="flex flex-wrap -mx-3 mt-6 custom-height">
         <div class="flex-none w-full max-w-full px-3 h-full">
-            <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
+            <div
+                class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
                 {{-- Filter Section --}}
-                <div class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+                <div
+                    class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                     <div class="flex items-center gap-3 mb-2 md:mb-0">
-                        <h6 class="mb-0 font-bold dark:text-white">{{ $listMonth[$selectedMonth] }} {{ $selectedYear }}</h6>
+                        <h6 class="mb-0 font-bold dark:text-white">{{ $listMonth[$selectedMonth] }} {{ $selectedYear }}
+                        </h6>
                     </div>
                     <div class="flex flex-col md:flex-row w-full md:w-8/12 items-end gap-3">
                         <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
@@ -39,7 +42,7 @@
                                 </select>
                             </div>
                         </div>
-                        @if(auth()->user()->role === 'master_admin')
+                        @if (auth()->user()->role === 'master_admin')
                             <button wire:click='exportToExcel' wire:loading.attr="disabled"
                                 class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
                                 <span wire:loading.remove wire:target="exportToExcel">
@@ -49,7 +52,8 @@
                                 <span wire:loading wire:target="exportToExcel">
                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                         role="status">
-                                        <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                        <span
+                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                     </div>
                                     Exporting...
                                 </span>
@@ -64,13 +68,16 @@
                         <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
-                                    <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    <th
+                                        class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Metric
                                     </th>
-                                    <th class="px-6 py-3 pl-2 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    <th
+                                        class="px-6 py-3 pl-2 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Value
                                     </th>
-                                    <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    <th
+                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Status
                                     </th>
                                 </tr>
@@ -78,22 +85,29 @@
                             <tbody>
                                 {{-- Total Income Row --}}
                                 <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                    <td
+                                        class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-green-600 to-green-400 rounded-lg">
+                                            <div
+                                                class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-green-600 to-green-400 rounded-lg">
                                                 <i class="ni ni-money-coins text-sm"></i>
                                             </div>
                                             <div class="flex flex-col justify-center">
                                                 <h6 class="mb-0 text-sm leading-normal font-semibold">Total Income</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Revenue from completed transactions</p>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Revenue from
+                                                    completed transactions</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp {{ number_format($totalIncome) }}</span>
+                                    <td
+                                        class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp
+                                            {{ number_format($totalIncome) }}</span>
                                     </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl from-green-600 to-green-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="bg-gradient-to-tl from-green-600 to-green-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                             Positive
                                         </span>
                                     </td>
@@ -101,22 +115,30 @@
 
                                 {{-- Total Expenditure Row --}}
                                 <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                    <td
+                                        class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-red-600 to-red-400 rounded-lg">
+                                            <div
+                                                class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-red-600 to-red-400 rounded-lg">
                                                 <i class="ni ni-cart text-sm"></i>
                                             </div>
                                             <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Total Expenditure</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Total business expenses</p>
+                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Total Expenditure
+                                                </h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Total business
+                                                    expenses</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp {{ number_format($totalExpenditure) }}</span>
+                                    <td
+                                        class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp
+                                            {{ number_format($totalExpenditure) }}</span>
                                     </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl from-red-600 to-red-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="bg-gradient-to-tl from-red-600 to-red-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                             Expense
                                         </span>
                                     </td>
@@ -124,22 +146,29 @@
 
                                 {{-- Net Profit Row --}}
                                 <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                    <td
+                                        class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl {{ $netto >= 0 ? 'from-blue-600 to-blue-400' : 'from-orange-600 to-orange-400' }} rounded-lg">
+                                            <div
+                                                class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl {{ $netto >= 0 ? 'from-blue-600 to-blue-400' : 'from-orange-600 to-orange-400' }} rounded-lg">
                                                 <i class="fas fa-chart-line text-sm"></i>
                                             </div>
                                             <div class="flex flex-col justify-center">
                                                 <h6 class="mb-0 text-sm leading-normal font-semibold">Net Profit</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Income minus expenditure</p>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Income minus
+                                                    expenditure</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp {{ number_format(abs($netto)) }}</span>
+                                    <td
+                                        class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">Rp
+                                            {{ number_format(abs($netto)) }}</span>
                                     </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl {{ $netto >= 0 ? 'from-green-600 to-green-400' : 'from-red-600 to-red-400' }} px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="bg-gradient-to-tl {{ $netto >= 0 ? 'from-green-600 to-green-400' : 'from-red-600 to-red-400' }} px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                             {{ $netto >= 0 ? 'Profit' : 'Loss' }}
                                         </span>
                                     </td>
@@ -147,22 +176,31 @@
 
                                 {{-- Completed Transactions Row --}}
                                 <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                    <td
+                                        class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-emerald-600 to-emerald-400 rounded-lg">
+                                            <div
+                                                class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-emerald-600 to-emerald-400 rounded-lg">
                                                 <i class="fas fa-check text-sm"></i>
                                             </div>
                                             <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Completed Transactions</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Successfully completed orders</p>
+                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Completed
+                                                    Transactions</h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Successfully
+                                                    completed orders</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="text-xs font-semibold leading-tight text-slate-400">{{ number_format($totalDone) }} transactions</span>
+                                    <td
+                                        class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="text-xs font-semibold leading-tight text-slate-400">{{ number_format($totalDone) }}
+                                            transactions</span>
                                     </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl from-emerald-600 to-emerald-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="bg-gradient-to-tl from-emerald-600 to-emerald-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                             Complete
                                         </span>
                                     </td>
@@ -170,22 +208,31 @@
 
                                 {{-- Cancelled Transactions Row --}}
                                 <tr>
-                                    <td class="p-2 align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
+                                    <td
+                                        class="p-2 align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
                                         <div class="flex px-2 py-1">
-                                            <div class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-gray-600 to-gray-400 rounded-lg">
+                                            <div
+                                                class="flex items-center justify-center w-10 h-10 mr-4 text-center text-white bg-gradient-to-tl from-gray-600 to-gray-400 rounded-lg">
                                                 <i class="fas fa-times text-sm"></i>
                                             </div>
                                             <div class="flex flex-col justify-center">
-                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Cancelled Transactions</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Orders that were cancelled</p>
+                                                <h6 class="mb-0 text-sm leading-normal font-semibold">Cancelled
+                                                    Transactions</h6>
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Orders that were
+                                                    cancelled</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="p-2 text-right align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
-                                        <span class="text-xs font-semibold leading-tight text-slate-400">{{ number_format($totalCancel) }} transactions</span>
+                                    <td
+                                        class="p-2 text-right align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="text-xs font-semibold leading-tight text-slate-400">{{ number_format($totalCancel) }}
+                                            transactions</span>
                                     </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
-                                        <span class="bg-gradient-to-tl from-gray-600 to-gray-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                    <td
+                                        class="p-2 text-center align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
+                                        <span
+                                            class="bg-gradient-to-tl from-gray-600 to-gray-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
                                             Cancelled
                                         </span>
                                     </td>
@@ -194,8 +241,80 @@
                         </table>
                     </div>
                 </div>
+
+                {{-- Transaction Details Section --}}
+                @if (count($transactionDetails) > 0)
+                    <div class="flex-auto px-4 pt-6 pb-2">
+                        <div class="p-0 overflow-x-auto">
+                            <h6 class="px-6 pb-3 mb-0 font-bold dark:text-white">Transaction Details</h6>
+                            <table class="items-center w-full mb-0 align-top border-gray-200 text-slate-500">
+                                <thead class="align-bottom">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            Date
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            Status
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 font-bold text-right uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            Amount
+                                        </th>
+                                        <th
+                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-gray-200 shadow-none text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                            Operator
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (array_slice($transactionDetails, 0, 10) as $transaction)
+                                        <tr>
+                                            <td
+                                                class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span class="text-xs font-semibold leading-tight text-slate-400">
+                                                    {{ \Carbon\Carbon::parse($transaction['created_at'])->format('d/m/Y H:i') }}
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span
+                                                    class="bg-gradient-to-tl {{ $transaction['status'] === 'done' ? 'from-green-600 to-green-400' : 'from-red-600 to-red-400' }} px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white">
+                                                    {{ ucfirst($transaction['status']) }}
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="p-2 text-right align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span class="text-xs font-semibold leading-tight text-slate-400">
+                                                    Rp {{ number_format($transaction['total_amount']) }}
+                                                </span>
+                                            </td>
+                                            <td
+                                                class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                                <span class="text-xs font-semibold leading-tight text-slate-400">
+                                                    {{ $transaction['operator_name'] ?? 'Unknown' }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @if (count($transactionDetails) > 10)
+                                        <tr>
+                                            <td colspan="4"
+                                                class="p-2 text-center align-middle bg-transparent border-b-0 whitespace-nowrap shadow-transparent">
+                                                <span class="text-xs leading-tight text-slate-400">
+                                                    And {{ count($transactionDetails) - 10 }} more transactions...
+                                                    (Export to see all)
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-

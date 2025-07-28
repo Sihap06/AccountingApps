@@ -48,6 +48,9 @@
                                     Stok</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Return Stock</th>
+                                <th
+                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                 </th>
                             </tr>
                         </thead>
@@ -75,6 +78,10 @@
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-20 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-16 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -134,6 +141,20 @@
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            @if ($item['return_stock'] > 0)
+                                                <button wire:click="showReturns({{ $item['id'] }})"
+                                                    class="text-xs font-semibold leading-tight text-red-600 hover:text-red-800 cursor-pointer underline">
+                                                    {{ $item['return_stock'] ?? 0 }}
+                                                </button>
+                                            @else
+                                                <span
+                                                    class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                    {{ $item['return_stock'] ?? 0 }}
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div>
                                                 <button type="button" wire:click='edit({{ $item['id'] }})'
                                                     class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
@@ -168,7 +189,7 @@
 
                                 @if (count($data) == 0)
                                     <tr>
-                                        <td colspan="6"
+                                        <td colspan="7"
                                             class="p-4 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
@@ -355,6 +376,108 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Product Returns Modal --}}
+    @if ($showReturnModal)
+        <div class="fixed z-10 inset-0 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
+                    <div class="border-b-2 flex justify-between items-center mb-4">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Product Returns
+                        </h3>
+                        <button wire:click='closeReturnModal' type="button">
+                            <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M3 21.32L21 3.32001" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M3 3.32001L21 21.32" stroke="#000000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="max-h-96 overflow-y-auto">
+                        <table class="items-center w-full mb-0 align-top border-collapse text-slate-500">
+                            <thead class="align-bottom">
+                                <tr>
+                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Date
+                                    </th>
+                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Transaction Order
+                                    </th>
+                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Quantity
+                                    </th>
+                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Return Reason
+                                    </th>
+                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Returned By
+                                    </th>
+                                    <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Notes
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($productReturns as $return)
+                                <tr>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">
+                                            {{ \Carbon\Carbon::parse($return['created_at'])->format('Y-m-d H:i') }}
+                                        </span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">
+                                            {{ $return['transaction']['order_transaction'] ?? '-' }}
+                                        </span>
+                                    </td>
+                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">
+                                            {{ $return['quantity'] }}
+                                        </span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400 px-2 py-1 bg-red-100 rounded">
+                                            {{ ucfirst(str_replace('_', ' ', $return['return_reason'])) }}
+                                        </span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">
+                                            {{ $return['returned_by']['name'] ?? 'N/A' }}
+                                        </span>
+                                    </td>
+                                    <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs leading-tight text-slate-400">
+                                            {{ $return['notes'] ? \Illuminate\Support\Str::limit($return['notes'], 50) : '-' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <span class="text-xs font-semibold leading-tight text-slate-400">
+                                            No returns found for this product
+                                        </span>
+                                    </td>
+                                </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

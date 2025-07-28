@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Dashboard;
 use App\Http\Controllers\ProductController;
 use App\Models\LogActivityProduct;
 use App\Models\Product;
+use App\Models\ProductReturn;
 use App\Models\PendingChange;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,10 @@ class Inventory extends Component
     public $hasMorePages = true;
     public $page = 1;
     public $perPage = 10;
+    
+    public $showReturnModal = false;
+    public $selectedProductId = null;
+    public $productReturns = [];
 
     public $action = 'add';
 
@@ -238,6 +243,7 @@ class Inventory extends Component
             $sub_query->where('name', 'like', '%' . $this->searchTerm . '%')
                 ->orWhere('kode', 'like', '%' . $this->searchTerm . '%');
         })
+        ->withSum('returns as return_stock', 'quantity')
         ->orderby('name', 'ASC');
 
         $newProducts = $query->skip(($this->page - 1) * $this->perPage)
@@ -372,5 +378,23 @@ class Inventory extends Component
         $this->reason = '';
         $this->pendingAction = null;
         $this->pendingActionData = null;
+    }
+
+    public function showReturns($productId)
+    {
+        $this->selectedProductId = $productId;
+        $this->productReturns = ProductReturn::with(['transaction', 'returnedBy'])
+            ->where('product_id', $productId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->toArray();
+        $this->showReturnModal = true;
+    }
+
+    public function closeReturnModal()
+    {
+        $this->showReturnModal = false;
+        $this->selectedProductId = null;
+        $this->productReturns = [];
     }
 }

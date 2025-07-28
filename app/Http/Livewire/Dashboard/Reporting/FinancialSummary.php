@@ -24,6 +24,7 @@ class FinancialSummary extends Component
     public $netto = 0;
     public $totalDone = 0;
     public $totalCancel = 0;
+    public $transactionDetails = [];
 
 
     public function mount()
@@ -78,7 +79,7 @@ class FinancialSummary extends Component
         $endDate = Carbon::create($this->selectedYear, $this->selectedMonth, 1)->endOfMonth();
 
         // Calculate Income (from completed transactions)
-        // First get the count
+        // First get the count of completed transactions
         $this->totalDone = Transaction::where('status', 'done')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->whereNull('deleted_at')
@@ -103,18 +104,42 @@ class FinancialSummary extends Component
 
         $this->totalIncome = $incomeData->total_income ?? 0;
 
-        // Calculate Expenditure
+        // Calculate Total Expenditure
         $this->totalExpenditure = Expenditure::whereBetween('tanggal', [$startDate, $endDate])
             ->sum('total');
 
-        // Calculate Cancelled transactions
+        // Calculate count of cancelled transactions
         $this->totalCancel = Transaction::whereBetween('created_at', [$startDate, $endDate])
             ->where('status', 'cancel')
             ->whereNull('deleted_at')
             ->count();
 
-        // Calculate Netto (Income - Expenditure)
+        // Calculate Net Profit (Income - Expenditure)
         $this->netto = $this->totalIncome - $this->totalExpenditure;
+
+        // Get transaction details with operator information for display
+        $transactions = Transaction::with(['user', 'transactionItems'])
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->whereIn('status', ['done', 'cancel'])
+            ->whereNull('deleted_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $this->transactionDetails = $transactions->map(function ($transaction) {
+            // Calculate total amount including transaction items
+            $itemsTotal = $transaction->transactionItems->sum('biaya');
+            $totalAmount = $transaction->biaya + $itemsTotal - ($transaction->potongan ?? 0);
+
+            // Return array with all needed data
+            return [
+                'id' => $transaction->id,
+                'created_at' => $transaction->created_at,
+                'status' => $transaction->status,
+                'created_by' => $transaction->created_by,
+                'total_amount' => $totalAmount,
+                'operator_name' => $transaction->user ? $transaction->user->name : null
+            ];
+        })->toArray();
     }
 
     public function exportToExcel()
@@ -127,10 +152,20 @@ class FinancialSummary extends Component
             ['Cancelled Transactions', number_format($this->totalCancel)],
         ];
 
+        // Prepare transaction details for export
+        $transactionDetails = collect($this->transactionDetails)->map(function ($transaction) {
+            return [
+                'created_at' => \Carbon\Carbon::parse($transaction['created_at'])->format('d/m/Y H:i'),
+                'status' => $transaction['status'],
+                'biaya' => $transaction['total_amount'],
+                'operator' => $transaction['operator_name'] ?? 'Unknown'
+            ];
+        })->toArray();
+
         $period = $this->listMonth[$this->selectedMonth] . ' ' . $this->selectedYear;
         $filename = 'financial_summary_' . $this->selectedYear . '_' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT) . '.xlsx';
         
-        $export = new FinancialSummaryExport($data, $period);
+        $export = new FinancialSummaryExport($data, $period, $transactionDetails);
         
         return Excel::download($export, $filename);
     }

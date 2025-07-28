@@ -140,6 +140,17 @@
                                         </div>
                                         <span>Transaction Completed</span>
                                     </button>
+                                    <button wire:click="$emit('triggerCancelTransaction',{{ $item->id }})"
+                                        class="inline-flex gap-x-2 items-center px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-500 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
+                                        <div wire:loading wire:target='cancelComplaintTransaction("{{ $item->id }}")'>
+                                            <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                role="status">
+                                                <span
+                                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                            </div>
+                                        </div>
+                                        <span>Cancel Transaction</span>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -229,6 +240,62 @@
                             </p>
                         </div>
                     </div>
+
+                    {{-- Phone Details Section --}}
+                    @if ($detailItem['phone_type'] || (isset($detailItem['items']) && count($detailItem['items']) > 0 && collect($detailItem['items'])->contains(function($item) {
+                        return !empty($item['phone_type']);
+                    })))
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Phone Details</h4>
+                            @if ($detailItem['phone_type'])
+                                <div class="mb-2">
+                                    <div class="flex gap-x-2 text-sm">
+                                        <span class="text-gray-600">Main Transaction:</span>
+                                        <span class="text-gray-900 font-medium">
+                                            {{ $detailItem['phone_brand'] ?? 'iPhone' }} {{ $detailItem['phone_type'] }}
+                                            @if ($detailItem['phone_internal'])
+                                                - {{ $detailItem['phone_internal'] }}@if (in_array($detailItem['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                            @endif
+                                            @if ($detailItem['phone_color'])
+                                                - {{ $detailItem['phone_color'] }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if ($detailItem['phone_imei'])
+                                        <div class="flex gap-x-2 text-sm mt-1">
+                                            <span class="text-gray-600">IMEI:</span>
+                                            <span class="text-gray-900">{{ $detailItem['phone_imei'] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            @foreach ($detailItem['items'] as $index => $item)
+                                @if (!empty($item['phone_type']))
+                                    <div class="mb-2 @if ($detailItem['phone_type']) border-t pt-2 @endif">
+                                        <div class="flex gap-x-2 text-sm">
+                                            <span class="text-gray-600">{{ $item['service'] }}:</span>
+                                            <span class="text-gray-900 font-medium">
+                                                {{ $item['phone_brand'] ?? 'iPhone' }} {{ $item['phone_type'] }}
+                                                @if ($item['phone_internal'])
+                                                    - {{ $item['phone_internal'] }}@if (in_array($item['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                                @endif
+                                                @if ($item['phone_color'])
+                                                    - {{ $item['phone_color'] }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        @if ($item['phone_imei'])
+                                            <div class="flex gap-x-2 text-sm mt-1">
+                                                <span class="text-gray-600">IMEI:</span>
+                                                <span class="text-gray-900">{{ $item['phone_imei'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
 
                     <div class="mt-3">
                         <table
@@ -371,6 +438,21 @@
                 }).then((result) => {
                     if (result.value) {
                         @this.call('TransactionComplete', id)
+                    }
+                });
+            });
+
+            @this.on('triggerCancelTransaction', id => {
+                Swal.fire({
+                    title: 'Cancel this complaint transaction?',
+                    html: "Products will be moved to return stock instead of regular inventory",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Cancel Transaction',
+                    cancelButtonText: 'No, Keep Transaction'
+                }).then((result) => {
+                    if (result.value) {
+                        @this.call('cancelComplaintTransaction', id)
                     }
                 });
             });

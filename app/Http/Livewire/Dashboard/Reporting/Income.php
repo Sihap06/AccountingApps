@@ -157,4 +157,14 @@ class Income extends Component
 
         return view('livewire.dashboard.reporting.income', compact('technician', 'dataFeeTechnician', 'income', 'listYear', 'listMonth', 'totalFeeTeknisi', 'totalIncome', 'totalExpenditure', 'totalNetto'));
     }
+
+    public function exportReport()
+    {
+        // TODO: Implement export functionality
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Export Feature',
+            'text' => 'Export functionality will be implemented soon',
+            'icon' => 'info'
+        ]);
+    }
 }

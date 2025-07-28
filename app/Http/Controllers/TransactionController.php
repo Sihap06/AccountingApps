@@ -36,10 +36,6 @@ class TransactionController extends Controller
                 $product = app(ProductController::class)->detailProduct((int)$value['product_id'])->getData(true)['data'];
                 $value['modal'] = $product['harga'];
                 $value['product_id'] = (int)$value['product_id'];
-                $value['technical_id'] = null;
-            } elseif ($value['technical_id'] !== null) {
-                $value['modal'] = 0;
-                $value['product_id'] = null;
             }
 
             // Calculate effective price after discount
@@ -236,14 +232,24 @@ class TransactionController extends Controller
     {
         if ($technical_id != null) {
             $tecnician = Technician::findOrFail($technical_id);
-            $percentModal = $tecnician->percent_fee;
+            
+            // Check if using sparepart (modal > 0) to determine which percentage to use
+            if ($modal > 0) {
+                // Using sparepart, use percent_with_sparepart
+                $percentModal = $tecnician->percent_with_sparepart;
+            } else {
+                // Not using sparepart, use normal percent_fee
+                $percentModal = $tecnician->percent_fee;
+            }
+            
             $percentUntung = 100 - $percentModal;
             $countModal = $biaya * $percentModal / 100;
             $countUntung = $biaya * $percentUntung / 100;
+            
             return [
                 'fee_teknisi' => $countModal,
-                'modal' => $countModal,
-                'untung' => $countUntung
+                'modal' => $modal > 0 ? $modal + $countModal : $countModal,
+                'untung' => $modal > 0 ? $biaya - $modal - $countModal : $countUntung
             ];
         } else {
             return [

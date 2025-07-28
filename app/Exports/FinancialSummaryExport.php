@@ -18,16 +18,36 @@ class FinancialSummaryExport implements FromArray, WithHeadings, WithStyles, Sho
 {
     protected $data;
     protected $period;
+    protected $transactionDetails;
 
-    public function __construct($data, $period)
+    public function __construct($data, $period, $transactionDetails = [])
     {
         $this->data = $data;
         $this->period = $period;
+        $this->transactionDetails = $transactionDetails;
     }
 
     public function array(): array
     {
-        return $this->data;
+        $summaryData = $this->data;
+        
+        // Add transaction details if available
+        if (!empty($this->transactionDetails)) {
+            $summaryData[] = [''];
+            $summaryData[] = ['Transaction Details'];
+            $summaryData[] = ['Date', 'Status', 'Amount', 'Operator'];
+            
+            foreach ($this->transactionDetails as $transaction) {
+                $summaryData[] = [
+                    $transaction['created_at'],
+                    ucfirst($transaction['status']),
+                    'Rp ' . number_format($transaction['biaya']),
+                    $transaction['operator']
+                ];
+            }
+        }
+        
+        return $summaryData;
     }
 
     public function headings(): array

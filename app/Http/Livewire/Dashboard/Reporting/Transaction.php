@@ -81,6 +81,7 @@ class Transaction extends Component
                 ->whereNull('transaction_items.deleted_at');
         })
             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('users', 'transactions.created_by', '=', 'users.id')
             ->select(
                 'transactions.created_at',
                 'customers.name as customer_name',
@@ -88,12 +89,13 @@ class Transaction extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
-                DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
-                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
-                DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
-                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Modal untuk item lainnya dari transaction_items
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
+                DB::raw('transactions.biaya as first_item_biaya'), // Transaction base amount
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Transaction items amount
+                DB::raw('transactions.modal as first_item_modal'), // Transaction base modal
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Transaction items modal
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total amount
                 'transactions.payment_method',
+                'users.name as operator_name'
             )
             ->where('transactions.status', 'done')
             ->whereNull('transactions.deleted_at')
@@ -104,15 +106,16 @@ class Transaction extends Component
                 'transactions.order_transaction',
                 'transactions.biaya',
                 'transactions.modal',
-                'transactions.payment_method'
+                'transactions.payment_method',
+                'users.name'
             );
 
-        // Menambahkan filter untuk payment_method jika ada
+        // Add payment method filter if specified
         if ($this->selectedPaymentMethod !== '') {
             $data->where('transactions.payment_method', $this->selectedPaymentMethod);
         }
 
-        // Menambahkan filter untuk searchTerm jika ada
+        // Add search term filter if specified
         if ($this->searchTerm !== '') {
             $data->where(function ($sub_query) {
                 $sub_query->where('transactions.order_transaction', 'like', '%' . $this->searchTerm . '%')
@@ -122,7 +125,7 @@ class Transaction extends Component
             $data->whereDate('transactions.created_at', $this->selectedDate);
         }
 
-        // Mengambil hasil query
+        // Execute the query
         $data = $data->get();
 
         // dd($data);
@@ -212,7 +215,7 @@ class Transaction extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => 'Perubahan berhasil disimpan dan menunggu verifikasi.',
+                'text' => 'Changes have been saved and are awaiting verification.',
                 'icon' => 'info'
             ]);
         } else {
@@ -256,7 +259,7 @@ class Transaction extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => 'Successfully update transaction',
+                'text' => 'Transaction updated successfully',
                 'icon' => 'success'
             ]);
         }
@@ -286,7 +289,7 @@ class Transaction extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => 'Permintaan penghapusan berhasil disimpan dan menunggu verifikasi.',
+                'text' => 'Delete request has been saved and is awaiting verification.',
                 'icon' => 'info'
             ]);
         } else {
@@ -312,7 +315,7 @@ class Transaction extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => 'Successfully delete transaction',
+                'text' => 'Transaction deleted successfully',
                 'icon' => 'success'
             ]);
         }
@@ -326,7 +329,7 @@ class Transaction extends Component
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',
-            'text' => 'Successfully complaint transaction',
+            'text' => 'Transaction complaint submitted successfully',
             'icon' => 'success'
         ]);
     }

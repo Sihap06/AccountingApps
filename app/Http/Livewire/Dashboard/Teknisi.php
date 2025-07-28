@@ -17,19 +17,23 @@ class Teknisi extends Component
     public $name;
     public $kode;
     public $percent_fee;
+    public $percent_with_sparepart;
     public $currentId;
 
     protected $rules = [
         'name' => 'required',
         'kode' => 'required',
-        'percent_fee' => 'required|numeric'
+        'percent_fee' => 'required|numeric',
+        'percent_with_sparepart' => 'required|numeric'
     ];
 
     protected $messages =  [
         'name.required' => 'Nama teknisi tidak boleh kosong',
         'kode.required' => 'Kode teknisi tidak boleh kosong',
         'percent_fee.required' => 'Persentase fee tidak boleh kosong',
-        'percent_fee.numeric' => 'Persentase fee harus berupa angka'
+        'percent_fee.numeric' => 'Persentase fee harus berupa angka',
+        'percent_with_sparepart.required' => 'Persentase with sparepart tidak boleh kosong',
+        'percent_with_sparepart.numeric' => 'Persentase with sparepart harus berupa angka'
     ];
 
     public function setShowAdd()
@@ -63,6 +67,7 @@ class Teknisi extends Component
         $this->name = $data->name;
         $this->kode = $data->kode;
         $this->percent_fee = $data->percent_fee;
+        $this->percent_with_sparepart = $data->percent_with_sparepart;
 
         $this->currentId = $id;
 

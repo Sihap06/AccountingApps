@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4">
+<div class="w-full">
     <div class="grid grid-cols-1 lg:grid-cols-1 gap-x-6 gap-y-6">
         <!-- Left Panel - Transaction Items -->
         <div class="lg:col-span-1">

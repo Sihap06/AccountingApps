@@ -26,6 +26,11 @@ class Transaction extends Model
         return $this->hasMany(TransactionItem::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     public static function generateOrderId()
     {
         $prefix = 'INV';

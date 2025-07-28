@@ -58,6 +58,11 @@ class TransactionCancel extends Component
                 'transactions.technical_id as transaction_technical_id',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
+                'transactions.phone_brand as transaction_phone_brand',
+                'transactions.phone_type as transaction_phone_type',
+                'transactions.phone_color as transaction_phone_color',
+                'transactions.phone_imei as transaction_phone_imei',
+                'transactions.phone_internal as transaction_phone_internal',
                 'customers.name as customer_name',
                 'transaction_items.id as item_id',
                 'transaction_items.biaya as item_biaya',
@@ -69,7 +74,12 @@ class TransactionCancel extends Component
                 'transaction_items.service as item_service',
                 'transaction_items.technical_id as item_technical_id',
                 'transaction_items.untung as item_untung',
-                'transaction_items.updated_at as item_updated_at'
+                'transaction_items.updated_at as item_updated_at',
+                'transaction_items.phone_brand as item_phone_brand',
+                'transaction_items.phone_type as item_phone_type',
+                'transaction_items.phone_color as item_phone_color',
+                'transaction_items.phone_imei as item_phone_imei',
+                'transaction_items.phone_internal as item_phone_internal'
             )
             ->where('transactions.id', $id)
             ->get()
@@ -94,6 +104,11 @@ class TransactionCancel extends Component
                 'service' => $transaction->transaction_service,
                 'technical_id' => $transaction->transaction_technical_id,
                 'untung' => $transaction->transaction_untung,
+                'phone_brand' => $transaction->transaction_phone_brand,
+                'phone_type' => $transaction->transaction_phone_type,
+                'phone_color' => $transaction->transaction_phone_color,
+                'phone_imei' => $transaction->transaction_phone_imei,
+                'phone_internal' => $transaction->transaction_phone_internal,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     if ($index === 0) {
@@ -111,6 +126,11 @@ class TransactionCancel extends Component
                         'service' => $item->item_service,
                         'technical_id' => $item->item_technical_id,
                         'untung' => $item->item_untung,
+                        'phone_brand' => $item->item_phone_brand,
+                        'phone_type' => $item->item_phone_type,
+                        'phone_color' => $item->item_phone_color,
+                        'phone_imei' => $item->item_phone_imei,
+                        'phone_internal' => $item->item_phone_internal,
                     ];
                 })->toArray() : [],
                 'total' => $total

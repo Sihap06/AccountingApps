@@ -20,6 +20,11 @@ class Product extends Model
         return $this->belongsToMany(Transaction::class);
     }
 
+    public function returns()
+    {
+        return $this->hasMany(ProductReturn::class);
+    }
+
     public static function getProductName($id)
     {
         $product = self::find($id);

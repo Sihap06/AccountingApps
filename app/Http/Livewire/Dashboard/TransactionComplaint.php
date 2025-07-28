@@ -3,7 +3,11 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\Transaction;
+use App\Models\TransactionItem;
+use App\Models\Product;
+use App\Models\ProductReturn;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
@@ -59,6 +63,11 @@ class TransactionComplaint extends Component
                 'transactions.technical_id as transaction_technical_id',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
+                'transactions.phone_brand as transaction_phone_brand',
+                'transactions.phone_type as transaction_phone_type',
+                'transactions.phone_color as transaction_phone_color',
+                'transactions.phone_imei as transaction_phone_imei',
+                'transactions.phone_internal as transaction_phone_internal',
                 'customers.name as customer_name',
                 'customers.no_telp as customer_no_telp',
                 'transaction_items.id as item_id',
@@ -71,7 +80,12 @@ class TransactionComplaint extends Component
                 'transaction_items.service as item_service',
                 'transaction_items.technical_id as item_technical_id',
                 'transaction_items.untung as item_untung',
-                'transaction_items.updated_at as item_updated_at'
+                'transaction_items.updated_at as item_updated_at',
+                'transaction_items.phone_brand as item_phone_brand',
+                'transaction_items.phone_type as item_phone_type',
+                'transaction_items.phone_color as item_phone_color',
+                'transaction_items.phone_imei as item_phone_imei',
+                'transaction_items.phone_internal as item_phone_internal'
             )
             ->where('transactions.id', $id)
             ->get()
@@ -97,6 +111,11 @@ class TransactionComplaint extends Component
                 'service' => $transaction->transaction_service,
                 'technical_id' => $transaction->transaction_technical_id,
                 'untung' => $transaction->transaction_untung,
+                'phone_brand' => $transaction->transaction_phone_brand,
+                'phone_type' => $transaction->transaction_phone_type,
+                'phone_color' => $transaction->transaction_phone_color,
+                'phone_imei' => $transaction->transaction_phone_imei,
+                'phone_internal' => $transaction->transaction_phone_internal,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     if ($index === 0) {
@@ -114,6 +133,11 @@ class TransactionComplaint extends Component
                         'service' => $item->item_service,
                         'technical_id' => $item->item_technical_id,
                         'untung' => $item->item_untung,
+                        'phone_brand' => $item->item_phone_brand,
+                        'phone_type' => $item->item_phone_type,
+                        'phone_color' => $item->item_phone_color,
+                        'phone_imei' => $item->item_phone_imei,
+                        'phone_internal' => $item->item_phone_internal,
                     ];
                 })->toArray() : [],
                 'total' => $total
@@ -177,6 +201,58 @@ class TransactionComplaint extends Component
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Transaction Done',
             'text' => '',
+            'icon' => 'success'
+        ]);
+    }
+
+    public function cancelComplaintTransaction($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        
+        // Move main transaction sparepart to return stock if used and product exists
+        if ($transaction->product_id !== null) {
+            $product = Product::find($transaction->product_id);
+            if ($product) {
+                ProductReturn::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $transaction->product_id,
+                    'quantity' => 1,
+                    'return_reason' => 'complaint_cancel',
+                    'return_type' => 'transaction',
+                    'returned_by' => Auth::id(),
+                    'notes' => 'Returned due to complaint cancellation - Order: ' . $transaction->order_transaction
+                ]);
+            }
+        }
+
+        // Move transaction items spareparts to return stock
+        $transactionItems = TransactionItem::where('transaction_id', $id)
+            ->whereNotNull('product_id')
+            ->get();
+            
+        foreach ($transactionItems as $item) {
+            $product = Product::find($item->product_id);
+            if ($product) {
+                ProductReturn::create([
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $item->product_id,
+                    'quantity' => 1,
+                    'return_reason' => 'complaint_cancel',
+                    'return_type' => 'transaction_item',
+                    'transaction_item_id' => $item->id,
+                    'returned_by' => Auth::id(),
+                    'notes' => 'Returned due to complaint cancellation - Service: ' . $item->service
+                ]);
+            }
+        }
+
+        // Cancel the transaction
+        $transaction->status = 'cancel';
+        $transaction->save();
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Transaction Cancelled',
+            'text' => 'Products have been moved to return stock',
             'icon' => 'success'
         ]);
     }

@@ -10,6 +10,8 @@ use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TransactionProcessExport;
 use App\Models\PaymentMethod;
+use App\Models\Product;
+use App\Models\TransactionItem;
 
 class TransactionProcess extends Component
 {
@@ -66,6 +68,11 @@ class TransactionProcess extends Component
                 'transactions.warranty_type as transaction_warranty_type',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
+                'transactions.phone_brand as transaction_phone_brand',
+                'transactions.phone_type as transaction_phone_type',
+                'transactions.phone_color as transaction_phone_color',
+                'transactions.phone_imei as transaction_phone_imei',
+                'transactions.phone_internal as transaction_phone_internal',
                 'customers.name as customer_name',
                 'customers.no_telp as customer_no_telp',
                 'transaction_items.id as item_id',
@@ -80,7 +87,12 @@ class TransactionProcess extends Component
                 'transaction_items.untung as item_untung',
                 'transaction_items.warranty as item_warranty',
                 'transaction_items.warranty_type as item_warranty_type',
-                'transaction_items.updated_at as item_updated_at'
+                'transaction_items.updated_at as item_updated_at',
+                'transaction_items.phone_brand as item_phone_brand',
+                'transaction_items.phone_type as item_phone_type',
+                'transaction_items.phone_color as item_phone_color',
+                'transaction_items.phone_imei as item_phone_imei',
+                'transaction_items.phone_internal as item_phone_internal'
             )
             ->where('transactions.id', $id)
             ->get()
@@ -109,6 +121,11 @@ class TransactionProcess extends Component
                 'untung' => $transaction->transaction_untung,
                 'warranty' => $transaction->transaction_warranty,
                 'warranty_type' => $transaction->transaction_warranty_type,
+                'phone_brand' => $transaction->transaction_phone_brand,
+                'phone_type' => $transaction->transaction_phone_type,
+                'phone_color' => $transaction->transaction_phone_color,
+                'phone_imei' => $transaction->transaction_phone_imei,
+                'phone_internal' => $transaction->transaction_phone_internal,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     $total += $item->item_biaya;
@@ -123,7 +140,12 @@ class TransactionProcess extends Component
                         'technical_id' => $item->item_technical_id,
                         'untung' => $item->item_untung,
                         'warranty' => $item->item_warranty,
-                        'warranty_type' => $item->item_warranty_type
+                        'warranty_type' => $item->item_warranty_type,
+                        'phone_brand' => $item->item_phone_brand,
+                        'phone_type' => $item->item_phone_type,
+                        'phone_color' => $item->item_phone_color,
+                        'phone_imei' => $item->item_phone_imei,
+                        'phone_internal' => $item->item_phone_internal
                     ];
                 })->toArray() : [],
                 'total' => $total
@@ -171,16 +193,37 @@ class TransactionProcess extends Component
 
     public function handleCancelTransaction($id)
     {
-        $data = Transaction::findOrFail($id);
-        $data->bypassVerification = true;
-        $data->status = 'cancel';
-        $data->save();
+        $transaction = Transaction::findOrFail($id);
+
+        // Return sparepart quantities to inventory if used
+        if ($transaction->product_id !== null) {
+            $product = Product::findOrFail($transaction->product_id);
+            $product->bypassVerification = true;
+            $product->stok = $product->stok + 1;
+            $product->save();
+        }
+
+        // Return transaction items sparepart quantities to inventory
+        $transactionItems = TransactionItem::where('transaction_id', $id)->get();
+        foreach ($transactionItems as $item) {
+            if ($item->product_id !== null) {
+                $product = Product::findOrFail($item->product_id);
+                $product->bypassVerification = true;
+                $product->stok = $product->stok + 1;
+                $product->save();
+            }
+        }
+
+        // Cancel the transaction
+        $transaction->bypassVerification = true;
+        $transaction->status = 'cancel';
+        $transaction->save();
         $this->closeModal();
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Transaction Cancel',
-            'text' => '',
-            'icon' => 'error'
+            'title' => 'Transaction Cancelled',
+            'text' => 'Sparepart quantities have been returned to inventory',
+            'icon' => 'success'
         ]);
     }
 
