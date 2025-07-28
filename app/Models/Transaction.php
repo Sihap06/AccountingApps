@@ -20,6 +20,11 @@ class Transaction extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+    
+    public function transactionItems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
 
     public static function generateOrderId()
     {

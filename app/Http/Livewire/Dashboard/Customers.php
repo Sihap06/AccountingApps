@@ -249,6 +249,12 @@ class Customers extends Component
 
     public function exportExcel()
     {
+        // Check if user is master admin
+        if (auth()->user()->role !== 'master_admin') {
+            session()->flash('error', 'Hanya master admin yang dapat mengekspor data.');
+            return;
+        }
+
         // Set default dates if not provided
         $startDate = $this->startDate ? Carbon::parse($this->startDate)->startOfDay() : null;
         $endDate = $this->endDate ? Carbon::parse($this->endDate)->endOfDay() : null;

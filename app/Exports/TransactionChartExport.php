@@ -2,19 +2,9 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Border;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class TransactionChartExport implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize, WithEvents
+class TransactionChartExport implements WithMultipleSheets
 {
     protected $transactionData;
     protected $chartData;
@@ -29,143 +19,47 @@ class TransactionChartExport implements FromCollection, WithHeadings, WithMappin
         $this->selectedYear = $selectedYear;
     }
 
-    public function collection()
+    public function sheets(): array
     {
-        return $this->transactionData;
-    }
-
-    public function headings(): array
-    {
-        return [
-            'No',
-            'Tanggal',
-            'Order Transaction',
-            'Service',
-            'Customer ID',
-            'Biaya',
-            'Total Fee',
-            'Status',
-            'Payment Method',
-            'Bulan'
+        $sheets = [];
+        
+        // First sheet: Statistics Summary
+        $sheets[] = new Sheets\StatisticsSummarySheet(
+            $this->transactionData,
+            $this->chartData,
+            $this->chartLabels,
+            $this->selectedYear
+        );
+        
+        // Group transactions by month
+        $transactionsByMonth = $this->transactionData->groupBy('month_number');
+        
+        // Create a sheet for each month
+        $monthNames = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
-    }
-
-    public function map($transaction): array
-    {
-        static $no = 0;
-        $no++;
-
-        return [
-            $no,
-            date('d-m-Y H:i:s', strtotime($transaction->created_at)),
-            $transaction->order_transaction,
-            $transaction->service,
-            $transaction->customer_id ?? '-',
-            number_format($transaction->biaya),
-            number_format($transaction->total_fee),
-            strtoupper($transaction->status),
-            strtoupper($transaction->payment_method),
-            $transaction->month
-        ];
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        return [
-            1 => ['font' => ['bold' => true]],
-        ];
-    }
-
-    public function registerEvents(): array
-    {
-        return [
-            AfterSheet::class => function(AfterSheet $event) {
-                $sheet = $event->sheet;
-                
-                // Style header
-                $sheet->getStyle('A1:J1')->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'color' => ['rgb' => 'FFFFFF']
-                    ],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '4CAF50']
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER
-                    ]
-                ]);
-
-                // Add summary section
-                $lastRow = $sheet->getHighestRow();
-                $summaryStartRow = $lastRow + 3;
-
-                // Summary title
-                $sheet->setCellValue('A' . $summaryStartRow, 'RINGKASAN CHART TRANSAKSI ' . $this->selectedYear);
-                $sheet->mergeCells('A' . $summaryStartRow . ':D' . $summaryStartRow);
-                $sheet->getStyle('A' . $summaryStartRow)->applyFromArray([
-                    'font' => ['bold' => true, 'size' => 14],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
-                ]);
-
-                // Monthly summary
-                $monthRow = $summaryStartRow + 2;
-                $sheet->setCellValue('A' . $monthRow, 'Bulan');
-                $sheet->setCellValue('B' . $monthRow, 'Total Transaksi (Rp)');
-                
-                $sheet->getStyle('A' . $monthRow . ':B' . $monthRow)->applyFromArray([
-                    'font' => ['bold' => true],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => 'E0E0E0']
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN
-                        ]
-                    ]
-                ]);
-
-                // Add chart data
-                $dataRow = $monthRow + 1;
-                foreach ($this->chartLabels as $index => $label) {
-                    $sheet->setCellValue('A' . $dataRow, $label);
-                    $sheet->setCellValue('B' . $dataRow, isset($this->chartData[$index]) ? number_format($this->chartData[$index]) : '0');
-                    
-                    $sheet->getStyle('A' . $dataRow . ':B' . $dataRow)->applyFromArray([
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN
-                            ]
-                        ]
-                    ]);
-                    
-                    $dataRow++;
-                }
-
-                // Total row
-                $sheet->setCellValue('A' . $dataRow, 'TOTAL');
-                $sheet->setCellValue('B' . $dataRow, number_format(array_sum($this->chartData)));
-                $sheet->getStyle('A' . $dataRow . ':B' . $dataRow)->applyFromArray([
-                    'font' => ['bold' => true],
-                    'fill' => [
-                        'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => 'FFFF00']
-                    ],
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN
-                        ]
-                    ]
-                ]);
-
-                // Auto adjust column widths
-                foreach(range('A','J') as $column) {
-                    $sheet->getColumnDimension($column)->setAutoSize(true);
-                }
+        
+        foreach ($monthNames as $monthNumber => $monthName) {
+            if ($transactionsByMonth->has($monthNumber)) {
+                $sheets[] = new Sheets\MonthlyTransactionSheet(
+                    $transactionsByMonth->get($monthNumber),
+                    $monthName,
+                    $this->selectedYear
+                );
             }
-        ];
+        }
+        
+        return $sheets;
     }
 }

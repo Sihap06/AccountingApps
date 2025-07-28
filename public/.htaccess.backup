@@ -4,15 +4,6 @@
     </IfModule>
 
     RewriteEngine On
-    
-    # PHP Settings for Upload
-    <IfModule mod_php7.c>
-        php_value upload_max_filesize 10M
-        php_value post_max_size 15M
-        php_value max_execution_time 300
-        php_value max_input_time 300
-        php_value memory_limit 256M
-    </IfModule>
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -27,6 +18,15 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+# PHP 7 Module
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 15M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
 </IfModule>
 
 # PHP 8 Module  

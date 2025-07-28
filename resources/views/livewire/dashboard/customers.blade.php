@@ -42,19 +42,28 @@
                            <input type="text" wire:model.debounce.500ms="searchTerm"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full md:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                                placeholder="Search name/phone" />
-                           <button wire:click='exportExcel()' wire:loading.attr="disabled"
-                               class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
-                               <span wire:loading.remove wire:target="exportExcel">
-                                   <i class="fas fa-file-excel mr-1"></i>
-                                   Export
-                               </span>
-                               <span wire:loading wire:target="exportExcel">
-                                   <i class="fas fa-spinner fa-spin mr-1"></i>
-                                   Exporting...
-                               </span>
-                           </button>
+                           @if(auth()->user()->role === 'master_admin')
+                               <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                                   class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
+                                   <span wire:loading.remove wire:target="exportExcel">
+                                       <i class="fas fa-file-excel mr-1"></i>
+                                       Export
+                                   </span>
+                                   <span wire:loading wire:target="exportExcel">
+                                       <i class="fas fa-spinner fa-spin mr-1"></i>
+                                       Exporting...
+                                   </span>
+                               </button>
+                           @endif
                        </div>
                    </div>
+
+                   {{-- Error Message Display --}}
+                   @if (session()->has('error'))
+                       <div class="mx-6 mt-4 relative px-4 py-3 text-white bg-red-500 rounded-lg">
+                           {{ session('error') }}
+                       </div>
+                   @endif
 
                    <div class="flex-auto px-0 pt-0 mt-4 pb-4 overflow-auto h-full">
                        <div class="p-0">

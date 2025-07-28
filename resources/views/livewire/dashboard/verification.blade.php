@@ -303,12 +303,23 @@
                                     <h5 class="text-sm font-semibold text-green-800 mb-2">Data Baru</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->new_data as $key => $value)
-                                            <div>
-                                                <span
-                                                    class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
-                                                <span
-                                                    class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
-                                            </div>
+                                            @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
+                                                <div class="col-span-2">
+                                                    <span class="text-xs text-gray-600">Gambar:</span>
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset('storage/' . $value) }}" alt="Expenditure Image"
+                                                            class="w-48 h-48 object-cover rounded-lg border cursor-pointer"
+                                                            onclick="showVerificationImageModal('{{ asset('storage/' . $value) }}')">
+                                                    </div>
+                                                </div>
+                                            @elseif ($key !== 'image')
+                                                <div>
+                                                    <span
+                                                        class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
+                                                    <span
+                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </div>
@@ -318,13 +329,24 @@
                                         <h5 class="text-sm font-semibold text-yellow-800 mb-2">Data Lama</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->old_data as $key => $value)
-                                                <div
-                                                    class="{{ isset($selectedChange->new_data[$key]) && $selectedChange->new_data[$key] != $value ? 'text-red-600' : '' }}">
-                                                    <span
-                                                        class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
-                                                    <span
-                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
-                                                </div>
+                                                @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
+                                                    <div class="{{ isset($selectedChange->new_data[$key]) && $selectedChange->new_data[$key] != $value ? 'text-red-600' : '' }}">
+                                                        <span class="text-xs text-gray-600">Gambar:</span>
+                                                        <div class="mt-2">
+                                                            <img src="{{ asset('storage/' . $value) }}" alt="Old Expenditure Image"
+                                                                class="w-32 h-32 object-cover rounded-lg border cursor-pointer"
+                                                                onclick="showVerificationImageModal('{{ asset('storage/' . $value) }}')">
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div
+                                                        class="{{ isset($selectedChange->new_data[$key]) && $selectedChange->new_data[$key] != $value ? 'text-red-600' : '' }}">
+                                                        <span
+                                                            class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
+                                                        <span
+                                                            class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                    </div>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>
@@ -332,13 +354,24 @@
                                         <h5 class="text-sm font-semibold text-green-800 mb-2">Data Baru</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->new_data as $key => $value)
-                                                <div
-                                                    class="{{ isset($selectedChange->old_data[$key]) && $selectedChange->old_data[$key] != $value ? 'text-green-600' : '' }}">
-                                                    <span
-                                                        class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
-                                                    <span
-                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
-                                                </div>
+                                                @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
+                                                    <div class="{{ isset($selectedChange->old_data[$key]) && $selectedChange->old_data[$key] != $value ? 'text-green-600' : '' }}">
+                                                        <span class="text-xs text-gray-600">Gambar:</span>
+                                                        <div class="mt-2">
+                                                            <img src="{{ asset('storage/' . $value) }}" alt="New Expenditure Image"
+                                                                class="w-32 h-32 object-cover rounded-lg border cursor-pointer"
+                                                                onclick="showVerificationImageModal('{{ asset('storage/' . $value) }}')">
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div
+                                                        class="{{ isset($selectedChange->old_data[$key]) && $selectedChange->old_data[$key] != $value ? 'text-green-600' : '' }}">
+                                                        <span
+                                                            class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
+                                                        <span
+                                                            class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                    </div>
+                                                @endif
                                             @endforeach
                                         </div>
                                     </div>
@@ -348,12 +381,23 @@
                                     <h5 class="text-sm font-semibold text-red-800 mb-2">Data yang Akan Dihapus</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->old_data as $key => $value)
-                                            <div>
-                                                <span
-                                                    class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
-                                                <span
-                                                    class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
-                                            </div>
+                                            @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
+                                                <div class="col-span-2">
+                                                    <span class="text-xs text-gray-600">Gambar:</span>
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset('storage/' . $value) }}" alt="Expenditure Image to Delete"
+                                                            class="w-48 h-48 object-cover rounded-lg border cursor-pointer"
+                                                            onclick="showVerificationImageModal('{{ asset('storage/' . $value) }}')">
+                                                    </div>
+                                                </div>
+                                            @elseif ($key !== 'image')
+                                                <div>
+                                                    <span
+                                                        class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
+                                                    <span
+                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                </div>
+                                            @endif
                                         @endforeach
                                     </div>
                                 </div>
@@ -415,6 +459,17 @@
             </div>
         </div>
     @endif
+    
+    {{-- Image Modal for Verification --}}
+    <div id="verificationImageModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-75">
+        <div class="relative max-w-4xl mx-auto p-4">
+            <button onclick="closeVerificationImageModal()" 
+                    class="absolute top-2 right-2 text-white text-2xl font-bold hover:text-gray-300">
+                &times;
+            </button>
+            <img id="verificationModalImage" src="" alt="Full Size Image" class="max-w-full max-h-full object-contain">
+        </div>
+    </div>
 </div>
 
 <script>
@@ -465,7 +520,7 @@
     }
 
     function confirmBulkApprove() {
-        const count = {{ count($selectedChanges) }};
+        const count = @this.selectedChanges.length;
         Swal.fire({
             title: 'Konfirmasi Persetujuan Massal',
             text: `Apakah Anda yakin ingin menyetujui ${count} perubahan yang dipilih?`,
@@ -481,4 +536,35 @@
             }
         });
     }
+    
+    // Image modal functions for verification
+    window.showVerificationImageModal = function(imageSrc) {
+        const modalImage = document.getElementById('verificationModalImage');
+        const imageModal = document.getElementById('verificationImageModal');
+        if (modalImage && imageModal) {
+            modalImage.src = imageSrc;
+            imageModal.classList.remove('hidden');
+            imageModal.classList.add('flex');
+        }
+    }
+
+    window.closeVerificationImageModal = function() {
+        const imageModal = document.getElementById('verificationImageModal');
+        if (imageModal) {
+            imageModal.classList.add('hidden');
+            imageModal.classList.remove('flex');
+        }
+    }
+
+    // Close modal when clicking outside the image
+    document.addEventListener('DOMContentLoaded', function() {
+        const imageModal = document.getElementById('verificationImageModal');
+        if (imageModal) {
+            imageModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    window.closeVerificationImageModal();
+                }
+            });
+        }
+    });
 </script>

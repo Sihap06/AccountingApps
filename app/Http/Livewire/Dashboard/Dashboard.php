@@ -16,13 +16,24 @@ class Dashboard extends Component
     public $selectedYear;
     public $showPendingModal = false;
     public $pendingCount = 0;
+    public $selectedMonthFilter;
+    public $selectedYearFilter;
+    public $chartData = [];
+    public $chartLabels = [];
 
     public function mount()
     {
         $this->selectedYear = Carbon::now()->format('Y');
+        $this->selectedMonthFilter = Carbon::now()->format('m');
+        $this->selectedYearFilter = Carbon::now()->format('Y');
         
-        // Check for pending verifications if user is master_admin
+        // Initialize chart data
         if (auth()->user()->role === 'master_admin') {
+            $chartResult = $this->transactionChart();
+            $this->chartData = $chartResult[0];
+            $this->chartLabels = $chartResult[1];
+            
+            // Check for pending verifications
             $this->pendingCount = PendingChange::pending()->count();
             $this->showPendingModal = $this->pendingCount > 0;
         }
@@ -113,10 +124,9 @@ class Dashboard extends Component
 
         $todayExpenditure = $expenditur[0]['total'];
 
-        $transactionChart = $this->transactionChart();
-
-        $dataChart = $transactionChart[0];
-        $labelChart = $transactionChart[1];
+        // Use cached chart data instead of calling transactionChart() every render
+        $dataChart = $this->chartData;
+        $labelChart = $this->chartLabels;
 
         $dataTransaction = Transaction::take(6)->latest()->get();
 
@@ -130,7 +140,8 @@ class Dashboard extends Component
                 'transactions.id',
                 'transactions.status',
             )
-            // ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereYear('transactions.created_at', $this->selectedYearFilter)
+            ->whereMonth('transactions.created_at', $this->selectedMonthFilter)
             ->whereNull('transactions.deleted_at')
             ->groupBy(
                 'transactions.id',
@@ -156,17 +167,23 @@ class Dashboard extends Component
     {
         $transactionChart = $this->transactionChart();
 
-        $dataChart = $transactionChart[0];
-        $labelChart = $transactionChart[1];
+        $this->chartData = $transactionChart[0];
+        $this->chartLabels = $transactionChart[1];
 
-        $this->emit('chartUpdate', $dataChart, $labelChart);
+        $this->emit('chartUpdate', $this->chartData, $this->chartLabels);
     }
 
     public function exportExcel()
     {
-        $transactionChart = $this->transactionChart();
-        $dataChart = $transactionChart[0];
-        $labelChart = $transactionChart[1];
+        // Use cached data if available, otherwise fetch fresh data
+        if (empty($this->chartData) || empty($this->chartLabels)) {
+            $transactionChart = $this->transactionChart();
+            $dataChart = $transactionChart[0];
+            $labelChart = $transactionChart[1];
+        } else {
+            $dataChart = $this->chartData;
+            $labelChart = $this->chartLabels;
+        }
 
         $transactionData = DB::table('transactions as t')
             ->leftJoinSub(
@@ -207,5 +224,12 @@ class Dashboard extends Component
     public function goToVerification()
     {
         return redirect()->route('dashboard.verification.index');
+    }
+
+    public function updateTransactionStats()
+    {
+        // This method is called when statistics filters change
+        // We don't need to do anything here as Livewire will automatically re-render
+        // the component when the properties change
     }
 }

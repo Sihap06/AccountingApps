@@ -231,7 +231,52 @@
            </div>
        </div>
 
+       <!-- Transaction Statistics Filter Section -->
        <div class="flex flex-wrap -mx-3 mt-8">
+           <div class="w-full px-3 mb-4">
+               <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-850 p-4 rounded-lg shadow-lg">
+                   <h6 class="text-base font-semibold dark:text-white flex items-center">
+                       <i class="fas fa-filter mr-2 text-blue-500"></i>
+                       Filter Statistik Transaksi
+                   </h6>
+                   <div class="flex flex-col sm:flex-row gap-3 items-center w-full md:w-auto">
+                       <select wire:model="selectedMonthFilter" wire:change="updateTransactionStats"
+                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                           <option value="01">Januari</option>
+                           <option value="02">Februari</option>
+                           <option value="03">Maret</option>
+                           <option value="04">April</option>
+                           <option value="05">Mei</option>
+                           <option value="06">Juni</option>
+                           <option value="07">Juli</option>
+                           <option value="08">Agustus</option>
+                           <option value="09">September</option>
+                           <option value="10">Oktober</option>
+                           <option value="11">November</option>
+                           <option value="12">Desember</option>
+                       </select>
+                       
+                       <select wire:model="selectedYearFilter" wire:change="updateTransactionStats"
+                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                           @foreach ($years as $year)
+                               <option value="{{ $year }}">{{ $year }}</option>
+                           @endforeach
+                       </select>
+                       
+                       <div wire:loading wire:target="updateTransactionStats" class="flex items-center">
+                           <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                               role="status">
+                               <span
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                           </div>
+                           <span class="ml-2 text-sm text-gray-600">Memperbarui...</span>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+       <div class="flex flex-wrap -mx-3">
            <!-- card1 -->
            <div class="w-full max-w-full px-3 mb-6 sm:w-full sm:flex-none xl:mb-0 xl:w-4/12">
                <div
@@ -241,11 +286,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Transaction Done</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_done) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -268,11 +316,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Transaction Cancel</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_cancel) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -293,11 +344,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Transaction Process</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_proses) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">

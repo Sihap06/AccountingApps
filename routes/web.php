@@ -21,6 +21,7 @@ use App\Http\Livewire\Dashboard\Teknisi;
 use App\Http\Livewire\Dashboard\Verification;
 use App\Http\Livewire\Dashboard\UserManagement;
 use App\Http\Livewire\Dashboard\PaymentMethods;
+use App\Http\Livewire\Dashboard\Reporting\FinancialSummary;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -56,6 +57,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('reporting', Reporting::class)->name('reporting');
         Route::get('reporting/{type}', Reporting::class);
         Route::get('detail-transaction/{id}', Reporting::class);
+        Route::get('financial-summary', FinancialSummary::class)->name('financial-summary');
 
         Route::prefix('inventory')->name('inventory')->group(function () {
             Route::get('/', TabOnInventory::class);
