@@ -28,6 +28,7 @@ class AddCustomerIdTable extends Migration
     public function down()
     {
         Schema::table('transactions', function (Blueprint $table) {
+            $table->dropForeign(['customer_id']);
             $table->dropColumn('customer_id');
         });
     }
