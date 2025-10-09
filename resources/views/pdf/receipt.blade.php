@@ -97,6 +97,21 @@
         .signature p {
             margin: 4px 0;
         }
+
+        .center-box {
+            border: 2px solid #000;
+            padding: 10px;
+            text-align: center;
+            width: 300px;
+            font-weight: bold;
+            font-size: 14px;
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            z-index: 10;
+        }
     </style>
 </head>
 
@@ -177,6 +192,10 @@
             @endforeach
         </tbody>
     </table>
+
+    <div class="center-box">
+        PER 1 NOVEMBER 2025, KAMI PINDAH DI JL. MASTRIP NO 71 (DEPAN NELONGSO)
+    </div>
 
     <table style="width: 100%; font-size: 12px">
         <tr style="vertical-align: top">
