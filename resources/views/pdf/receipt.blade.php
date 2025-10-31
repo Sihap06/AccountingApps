@@ -97,21 +97,6 @@
         .signature p {
             margin: 4px 0;
         }
-
-        .center-box {
-            border: 2px solid #000;
-            padding: 10px;
-            text-align: center;
-            width: 300px;
-            font-weight: bold;
-            font-size: 14px;
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            z-index: 10;
-        }
     </style>
 </head>
 
@@ -121,7 +106,8 @@
             <td>
                 <div class="header-left">
                     <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo">
-                    <p style="margin-top: 8px">Jl. Karimata No. 58B <span style="margin-left: 10px">089638911151</span>
+                    <p style="margin-top: 8px">Jalan mastrip 71 (depan nelongso) <span
+                            style="margin-left: 10px">089638911151</span>
                     </p>
                 </div>
             </td>
@@ -192,10 +178,6 @@
             @endforeach
         </tbody>
     </table>
-
-    <div class="center-box">
-        PER 1 NOVEMBER 2025, KAMI PINDAH DI JL. MASTRIP NO 71 (DEPAN NELONGSO)
-    </div>
 
     <table style="width: 100%; font-size: 12px">
         <tr style="vertical-align: top">
