@@ -466,6 +466,9 @@
                         <table class="items-center w-full mb-0 align-top border-collapse text-slate-500">
                             <thead class="align-bottom">
                                 <tr>
+                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Aksi
+                                    </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Date
                                     </th>
@@ -484,14 +487,29 @@
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Notes
                                     </th>
-                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Aksi
-                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($productReturns as $return)
                                 <tr>
+                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button wire:click="restoreReturnToStock({{ $return['id'] }})" wire:loading.attr="disabled"
+                                                onclick="return confirm('Kembalikan {{ $return['quantity'] }} unit ke stok inventory?') || event.stopImmediatePropagation()"
+                                                class="px-2.5 py-1 text-xs font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50"
+                                                title="Kembalikan ke stok">
+                                                <div wire:loading wire:target="restoreReturnToStock({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                                <span wire:loading.remove wire:target="restoreReturnToStock({{ $return['id'] }})"><i class="fas fa-undo-alt"></i></span>
+                                            </button>
+                                            <button wire:click="deleteReturn({{ $return['id'] }})" wire:loading.attr="disabled"
+                                                onclick="return confirm('Hapus data return ini tanpa mengembalikan stok?') || event.stopImmediatePropagation()"
+                                                class="px-2.5 py-1 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50"
+                                                title="Hapus return">
+                                                <div wire:loading wire:target="deleteReturn({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                                <span wire:loading.remove wire:target="deleteReturn({{ $return['id'] }})"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </div>
+                                    </td>
                                     <td class="p-2 align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <span class="text-xs font-semibold leading-tight text-slate-400">
                                             {{ \Carbon\Carbon::parse($return['created_at'])->format('Y-m-d H:i') }}
@@ -521,24 +539,6 @@
                                         <span class="text-xs leading-tight text-slate-400">
                                             {{ $return['notes'] ? \Illuminate\Support\Str::limit($return['notes'], 50) : '-' }}
                                         </span>
-                                    </td>
-                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <button wire:click="restoreReturnToStock({{ $return['id'] }})" wire:loading.attr="disabled"
-                                                onclick="return confirm('Kembalikan {{ $return['quantity'] }} unit ke stok inventory?') || event.stopImmediatePropagation()"
-                                                class="px-2.5 py-1 text-xs font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50"
-                                                title="Kembalikan ke stok">
-                                                <div wire:loading wire:target="restoreReturnToStock({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
-                                                <span wire:loading.remove wire:target="restoreReturnToStock({{ $return['id'] }})"><i class="fas fa-undo-alt"></i></span>
-                                            </button>
-                                            <button wire:click="deleteReturn({{ $return['id'] }})" wire:loading.attr="disabled"
-                                                onclick="return confirm('Hapus data return ini tanpa mengembalikan stok?') || event.stopImmediatePropagation()"
-                                                class="px-2.5 py-1 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50"
-                                                title="Hapus return">
-                                                <div wire:loading wire:target="deleteReturn({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
-                                                <span wire:loading.remove wire:target="deleteReturn({{ $return['id'] }})"><i class="fas fa-trash-alt"></i></span>
-                                            </button>
-                                        </div>
                                     </td>
                                 </tr>
                                 @empty
