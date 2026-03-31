@@ -494,15 +494,13 @@
                                 <tr>
                                     <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button wire:click="restoreReturnToStock({{ $return['id'] }})" wire:loading.attr="disabled"
-                                                onclick="return confirm('Kembalikan {{ $return['quantity'] }} unit ke stok inventory?') || event.stopImmediatePropagation()"
+                                            <button wire:click="$emit('triggerRestoreReturn', {{ $return['id'] }}, {{ $return['quantity'] }})" wire:loading.attr="disabled"
                                                 class="px-2.5 py-1 text-xs font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50"
                                                 title="Kembalikan ke stok">
                                                 <div wire:loading wire:target="restoreReturnToStock({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                                 <span wire:loading.remove wire:target="restoreReturnToStock({{ $return['id'] }})"><i class="fas fa-undo-alt"></i></span>
                                             </button>
-                                            <button wire:click="deleteReturn({{ $return['id'] }})" wire:loading.attr="disabled"
-                                                onclick="return confirm('Hapus data return ini tanpa mengembalikan stok?') || event.stopImmediatePropagation()"
+                                            <button wire:click="$emit('triggerDeleteReturn', {{ $return['id'] }})" wire:loading.attr="disabled"
                                                 class="px-2.5 py-1 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50"
                                                 title="Hapus return">
                                                 <div wire:loading wire:target="deleteReturn({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
@@ -743,6 +741,38 @@
                 }).then((result) => {
                     if (result.value) {
                         @this.call('delete', id)
+                    }
+                });
+            });
+
+            @this.on('triggerRestoreReturn', (id, qty) => {
+                Swal.fire({
+                    title: 'Kembalikan ke Stok?',
+                    html: `<b>${qty}</b> unit akan dikembalikan ke stok inventory.`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#16a34a',
+                    confirmButtonText: 'Ya, Kembalikan',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.value) {
+                        @this.call('restoreReturnToStock', id)
+                    }
+                });
+            });
+
+            @this.on('triggerDeleteReturn', id => {
+                Swal.fire({
+                    title: 'Hapus Data Return?',
+                    html: "Data return akan dihapus tanpa mengembalikan stok.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                }).then((result) => {
+                    if (result.value) {
+                        @this.call('deleteReturn', id)
                     }
                 });
             });
