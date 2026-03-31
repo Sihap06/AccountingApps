@@ -67,7 +67,7 @@
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Amount
                                 </th>
-                                @if (auth()->user()->role !== 'sysadmin')
+                                @if (auth()->user()->hasPermission('financial_summary'))
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Capital
@@ -142,7 +142,7 @@
                                             {{ number_format($item->first_item_biaya + $item->other_items_biaya) }}
                                         </span>
                                     </td>
-                                    @if (auth()->user()->role !== 'sysadmin')
+                                    @if (auth()->user()->hasPermission('financial_summary'))
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
@@ -187,7 +187,7 @@
                                                     </div>
                                                 </div>
                                             </button>
-                                            @if (auth()->user()->role === 'master_admin')
+                                            @if (auth()->user()->isOwner())
                                                 <button wire:click="$emit('triggerDelete',{{ $item->id }})"
                                                     class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                     <i class="fas fa-trash" wire:loading.remove
@@ -244,7 +244,7 @@
                                         class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <div class="mb-2 h-5 w-full rounded overflow-hidden relative bg-gray-200" />
                                     </td>
-                                    @if (auth()->user()->role !== 'sysadmin')
+                                    @if (auth()->user()->hasPermission('financial_summary'))
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div

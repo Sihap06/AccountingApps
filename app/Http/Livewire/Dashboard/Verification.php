@@ -37,7 +37,7 @@ class Verification extends Component
 
     public function mount()
     {
-        if (Auth::user()->role !== 'master_admin') {
+        if (!Auth::user()->hasPermission('verification')) {
             abort(403, 'Unauthorized');
         }
     }

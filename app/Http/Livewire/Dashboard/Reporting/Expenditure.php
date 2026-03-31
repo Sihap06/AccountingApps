@@ -123,7 +123,7 @@ class Expenditure extends Component
         }
 
         // Check if user is sysadmin (operator) - needs verification
-        if (auth()->user()->role === 'sysadmin') {
+        if (auth()->user()->requiresVerification()) {
             // Create pending change instead of direct create
             PendingChange::create([
                 'changeable_type' => ModelsExpenditure::class,
@@ -202,7 +202,7 @@ class Expenditure extends Component
         }
 
         // Check if user is sysadmin (operator) - needs verification
-        if (auth()->user()->role === 'sysadmin') {
+        if (auth()->user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'update';
             $this->pendingActionData = [
@@ -253,7 +253,7 @@ class Expenditure extends Component
         $expend = ModelsExpenditure::findOrFail($id);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (auth()->user()->role === 'sysadmin') {
+        if (auth()->user()->requiresVerification()) {
             // Create pending change instead of direct delete
             PendingChange::create([
                 'changeable_type' => ModelsExpenditure::class,
@@ -305,7 +305,7 @@ class Expenditure extends Component
         $query = ModelsExpenditure::whereMonth('tanggal', $this->selectedMonth)
             ->whereYear('tanggal', $this->selectedYear);
 
-        if (auth()->user()->role != 'master_admin') {
+        if (!auth()->user()->isOwner()) {
             $query = $query->where('created_by', auth()->user()->id);
         }
 

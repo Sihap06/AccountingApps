@@ -22,7 +22,7 @@ trait RequiresVerification
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
             
-            if (Auth::check() && Auth::user()->role === 'sysadmin') {
+            if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptCreate();
                 return false;
             }
@@ -40,7 +40,7 @@ trait RequiresVerification
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
             
-            if (Auth::check() && Auth::user()->role === 'sysadmin') {
+            if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptUpdate();
                 return false;
             }
@@ -58,7 +58,7 @@ trait RequiresVerification
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
             
-            if (Auth::check() && Auth::user()->role === 'sysadmin') {
+            if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptDelete();
                 return false;
             }

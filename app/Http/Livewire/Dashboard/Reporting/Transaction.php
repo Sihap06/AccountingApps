@@ -175,7 +175,7 @@ class Transaction extends Component
         $transaction = ModelsTransaction::findOrFail($this->selectedId);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Prepare the new data
             $newData = [
                 'order_transaction' => $this->order_transaction,
@@ -275,7 +275,7 @@ class Transaction extends Component
         $transaction = ModelsTransaction::findOrFail($id);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Create pending change instead of direct delete
             PendingChange::create([
                 'changeable_type' => ModelsTransaction::class,

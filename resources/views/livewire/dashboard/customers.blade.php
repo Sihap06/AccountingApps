@@ -42,7 +42,7 @@
                            <input type="text" wire:model.debounce.500ms="searchTerm"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full md:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                                placeholder="Search name/phone" />
-                           @if(auth()->user()->role === 'master_admin')
+                           @if(auth()->user()->isOwner())
                                <button wire:click='exportExcel()' wire:loading.attr="disabled"
                                    class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
                                    <span wire:loading.remove wire:target="exportExcel">

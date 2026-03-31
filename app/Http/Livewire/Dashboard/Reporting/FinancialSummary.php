@@ -29,8 +29,7 @@ class FinancialSummary extends Component
 
     public function mount()
     {
-        // Check if user is master_admin
-        if (auth()->user()->role !== 'master_admin') {
+        if (!auth()->user()->hasPermission('financial_summary')) {
             abort(403, 'Unauthorized access');
         }
         // Initialize months

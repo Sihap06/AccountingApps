@@ -14,11 +14,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(PermissionSeeder::class);
+
         User::create([
-            'name' => 'masteradmin',
-            'email' => 'master_admin@gmail.com',
+            'name' => 'Owner',
+            'email' => 'owner@gmail.com',
             'password' => bcrypt('rahasia'),
-            'role' => 'master_admin'
+            'role' => 'owner'
         ]);
     }
 }

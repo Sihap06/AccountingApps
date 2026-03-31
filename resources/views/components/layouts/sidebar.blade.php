@@ -19,6 +19,7 @@
 
     <div class="flex-1 overflow-y-auto">
         <ul class="flex flex-col pl-0 mb-0">
+            @if(auth()->user()->hasPermission('dashboard'))
             <li class="mt-0.5 w-full">
                 <a class="py-2.7 dark:text-white dark:opacity-80 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap rounded-lg px-4 transition-colors {{ request()->routeIs('dashboard.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
                     href="{{ route('dashboard.index') }}">
@@ -29,7 +30,9 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Dashboard</span>
                 </a>
             </li>
+            @endif
 
+            @if(auth()->user()->hasPermission('inventory'))
             <li class="mt-0.5 w-full">
                 <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.inventory') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
                     href="{{ route('dashboard.inventory') }}">
@@ -40,7 +43,22 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Inventory</span>
                 </a>
             </li>
+            @endif
 
+            @if(auth()->user()->hasPermission('stock_opname'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.stock-opname.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.stock-opname.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-amber-500 fas fa-clipboard-check"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Stok Opname</span>
+                </a>
+            </li>
+            @endif
+
+            @if(auth()->user()->hasPermission('pos'))
             <li class="mt-0.5 w-full">
                 <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 rounded-lg transition-colors {{ request()->routeIs('dashboard.point-of-sales') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
                     href="{{ route('dashboard.point-of-sales') }}">
@@ -51,7 +69,9 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">POS</span>
                 </a>
             </li>
+            @endif
 
+            @if(auth()->user()->hasPermission('reporting'))
             <li class="mt-0.5 w-full">
                 <a class="rounded-lg dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.reporting') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
                     href="{{ route('dashboard.reporting') }}">
@@ -62,30 +82,35 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Reporting</span>
                 </a>
             </li>
-            @if (auth()->user()->role === 'master_admin')
-                <li class="mt-0.5 w-full">
-                    <a class="rounded-lg dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.financial-summary') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.financial-summary') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-emerald-500 fas fa-chart-pie"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Financial Summary</span>
-                    </a>
-                </li>
             @endif
-            @if (auth()->user()->role !== 'sysadmin')
-                <li class="mt-0.5 w-full">
-                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.teknisi.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.teknisi.index') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-yellow-500 ni ni-planet"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Technician</span>
-                    </a>
-                </li>
+
+            @if(auth()->user()->hasPermission('financial_summary'))
+            <li class="mt-0.5 w-full">
+                <a class="rounded-lg dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.financial-summary') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.financial-summary') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-emerald-500 fas fa-chart-pie"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Financial Summary</span>
+                </a>
+            </li>
             @endif
+
+            @if(auth()->user()->hasPermission('technician'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.teknisi.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.teknisi.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-yellow-500 ni ni-planet"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Technician</span>
+                </a>
+            </li>
+            @endif
+
+            @if(auth()->user()->hasPermission('customers'))
             <li class="mt-0.5 w-full">
                 <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.customers.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
                     href="{{ route('dashboard.customers.index') }}">
@@ -96,49 +121,58 @@
                     <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Customers</span>
                 </a>
             </li>
-            @if (auth()->user()->role === 'master_admin')
-                <li class="mt-0.5 w-full">
-                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.payment-methods.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.payment-methods.index') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-green-500 ni ni-money-coins"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Metode Pembayaran</span>
-                    </a>
-                </li>
-                <li class="mt-0.5 w-full">
-                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.verification.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.verification.index') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-purple-500 ni ni-check-bold"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Verifikasi</span>
-                    </a>
-                </li>
-                <li class="mt-0.5 w-full">
-                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.users.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.users.index') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-indigo-500 ni ni-single-02"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">User Management</span>
-                    </a>
-                </li>
             @endif
-            @if (auth()->user()->role !== 'sysadmin')
-                <li class="mt-0.5 w-full">
-                    <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.log_activity.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
-                        href="{{ route('dashboard.log_activity.index') }}">
-                        <div
-                            class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
-                            <i class="relative top-0 text-sm leading-normal text-orange-600 ni ni-briefcase-24"></i>
-                        </div>
-                        <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Catatan Aktivitas</span>
-                    </a>
-                </li>
+
+            @if(auth()->user()->hasPermission('payment_methods'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.payment-methods.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.payment-methods.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-green-500 ni ni-money-coins"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Metode Pembayaran</span>
+                </a>
+            </li>
+            @endif
+
+            @if(auth()->user()->hasPermission('verification'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.verification.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.verification.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-purple-500 ni ni-check-bold"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Verifikasi</span>
+                </a>
+            </li>
+            @endif
+
+            @if(auth()->user()->hasPermission('user_management'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.users.*') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.users.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-indigo-500 ni ni-single-02"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">User Management</span>
+                </a>
+            </li>
+            @endif
+
+            @if(auth()->user()->hasPermission('log_activity'))
+            <li class="mt-0.5 w-full">
+                <a class=" dark:text-white dark:opacity-80 py-2.7 text-sm ease-nav-brand my-0 mx-2 flex items-center whitespace-nowrap px-4 transition-colors {{ request()->routeIs('dashboard.log_activity.index') ? 'bg-blue-500/13 text-slate-700 font-semibold' : '' }}"
+                    href="{{ route('dashboard.log_activity.index') }}">
+                    <div
+                        class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
+                        <i class="relative top-0 text-sm leading-normal text-orange-600 ni ni-briefcase-24"></i>
+                    </div>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Catatan Aktivitas</span>
+                </a>
+            </li>
             @endif
         </ul>
     </div>

@@ -7,12 +7,18 @@ use App\Models\LogActivityProduct;
 use App\Models\Product;
 use App\Models\ProductReturn;
 use App\Models\PendingChange;
+use App\Models\StockUpdate;
+use App\Models\StockUpdateItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Inventory extends Component
 {
+    use WithFileUploads;
+
     public $searchTerm;
     public $isOpen;
     public $name;
@@ -35,6 +41,13 @@ class Inventory extends Component
     public $productReturns = [];
 
     public $action = 'add';
+
+    // Stock Update properties
+    public $showStockUpdateModal = false;
+    public $stockUpdateSearch = '';
+    public $stockUpdateItems = []; // [{product_id, product_name, current_stock, qty_added}]
+    public $stockUpdateNota = null;
+    public $stockUpdateNotes = '';
 
     protected $rules = [
         'name' => 'required',
@@ -74,6 +87,9 @@ class Inventory extends Component
 
     public function openModal()
     {
+        $this->reset(['name', 'harga', 'harga_jual', 'stok', 'productId']);
+        $this->resetValidation();
+        $this->action = 'add';
         $this->isOpen = true;
     }
 
@@ -89,7 +105,7 @@ class Inventory extends Component
         $validateData["kode"] = time(); // Generate kode using timestamp
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Create pending change instead of direct create
             PendingChange::create([
                 'changeable_type' => Product::class,
@@ -168,7 +184,7 @@ class Inventory extends Component
         $product = Product::findOrFail($this->productId);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'update';
             $this->pendingActionData = [
@@ -270,7 +286,7 @@ class Inventory extends Component
         $product = Product::findOrFail($id);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'delete';
             $this->pendingActionData = [
@@ -391,10 +407,250 @@ class Inventory extends Component
         $this->showReturnModal = true;
     }
 
+    public function restoreReturnToStock($returnId)
+    {
+        $return = ProductReturn::find($returnId);
+        if (!$return) return;
+
+        $product = Product::find($return->product_id);
+        if (!$product) return;
+
+        // Add return quantity back to product stock
+        $product->bypassVerification = true;
+        $product->stok = $product->stok + $return->quantity;
+        $product->save();
+
+        // Log activity
+        $log = new LogActivityProduct();
+        $log->user = Auth::user()->name;
+        $log->activity = 'update';
+        $log->product = $product->name;
+        $log->old_stok = $product->stok - $return->quantity;
+        $log->new_stok = $product->stok;
+        $log->save();
+
+        $return->delete();
+
+        // Refresh return modal data
+        $this->showReturns($this->selectedProductId);
+
+        // Refresh products list
+        if ($this->readyToLoad) {
+            $this->products = [];
+            $this->page = 1;
+            $this->hasMorePages = true;
+            $this->loadMore();
+        }
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Stok Dikembalikan',
+            'text' => "Stok produk berhasil ditambah {$return->quantity} unit.",
+            'icon' => 'success'
+        ]);
+    }
+
+    public function deleteReturn($returnId)
+    {
+        $return = ProductReturn::find($returnId);
+        if (!$return) return;
+
+        $return->delete();
+
+        // Refresh return modal data
+        $this->showReturns($this->selectedProductId);
+
+        // Refresh products list
+        if ($this->readyToLoad) {
+            $this->products = [];
+            $this->page = 1;
+            $this->hasMorePages = true;
+            $this->loadMore();
+        }
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Return Dihapus',
+            'text' => 'Data return berhasil dihapus.',
+            'icon' => 'success'
+        ]);
+    }
+
     public function closeReturnModal()
     {
         $this->showReturnModal = false;
         $this->selectedProductId = null;
         $this->productReturns = [];
+    }
+
+    // === Stock Update Methods ===
+
+    public function openStockUpdateModal()
+    {
+        $this->showStockUpdateModal = true;
+        $this->stockUpdateItems = [];
+        $this->stockUpdateNota = null;
+        $this->stockUpdateNotes = '';
+        $this->stockUpdateSearch = '';
+    }
+
+    public function closeStockUpdateModal()
+    {
+        $this->showStockUpdateModal = false;
+        $this->stockUpdateItems = [];
+        $this->stockUpdateNota = null;
+        $this->stockUpdateNotes = '';
+        $this->stockUpdateSearch = '';
+        $this->resetValidation();
+    }
+
+    public function addStockUpdateProduct($productId)
+    {
+        // Prevent duplicates
+        foreach ($this->stockUpdateItems as $item) {
+            if ($item['product_id'] == $productId) {
+                return;
+            }
+        }
+
+        $product = Product::find($productId);
+        if (!$product) return;
+
+        $this->stockUpdateItems[] = [
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'current_stock' => $product->stok,
+            'current_price' => $product->harga,
+            'qty_added' => 1,
+            'purchase_price' => '',
+        ];
+
+        $this->stockUpdateSearch = '';
+    }
+
+    public function removeStockUpdateProduct($index)
+    {
+        unset($this->stockUpdateItems[$index]);
+        $this->stockUpdateItems = array_values($this->stockUpdateItems);
+    }
+
+    public function submitStockUpdate()
+    {
+        $rules = [
+            'stockUpdateItems' => 'required|array|min:1',
+            'stockUpdateItems.*.qty_added' => 'required|integer|min:1',
+            'stockUpdateItems.*.purchase_price' => 'required',
+            'stockUpdateNota' => 'required|image|max:5120',
+        ];
+
+        $messages = [
+            'stockUpdateItems.required' => 'Pilih minimal 1 produk.',
+            'stockUpdateItems.min' => 'Pilih minimal 1 produk.',
+            'stockUpdateItems.*.qty_added.required' => 'Jumlah wajib diisi.',
+            'stockUpdateItems.*.qty_added.integer' => 'Jumlah harus angka.',
+            'stockUpdateItems.*.qty_added.min' => 'Jumlah minimal 1.',
+            'stockUpdateItems.*.purchase_price.required' => 'Harga beli wajib diisi.',
+            'stockUpdateNota.required' => 'Upload nota wajib diisi.',
+            'stockUpdateNota.image' => 'File harus berupa gambar.',
+            'stockUpdateNota.max' => 'Ukuran file maksimal 5MB.',
+        ];
+
+        $this->validate($rules, $messages);
+
+        // Compress and store nota image
+        $notaPath = $this->compressAndStoreNota($this->stockUpdateNota);
+
+        // Create stock update record
+        $stockUpdate = StockUpdate::create([
+            'user_id' => Auth::id(),
+            'nota_image' => $notaPath,
+            'notes' => $this->stockUpdateNotes ?: null,
+        ]);
+
+        // Update each product stock and price
+        foreach ($this->stockUpdateItems as $item) {
+            $product = Product::find($item['product_id']);
+            if (!$product) continue;
+
+            $stockBefore = $product->stok;
+            $priceBefore = $product->harga;
+            $qtyAdded = (int) $item['qty_added'];
+            $purchasePrice = (int) preg_replace("/[^0-9]/", "", $item['purchase_price']);
+
+            // Weighted average: ((old_stock * old_price) + (qty_added * new_price)) / (old_stock + qty_added)
+            $totalStock = $stockBefore + $qtyAdded;
+            $newAvgPrice = $totalStock > 0
+                ? (int) round((($stockBefore * $priceBefore) + ($qtyAdded * $purchasePrice)) / $totalStock)
+                : $purchasePrice;
+
+            // Bypass verification for stock updates
+            $product->bypassVerification = true;
+            $product->stok = $totalStock;
+            $product->harga = $newAvgPrice;
+            $product->save();
+
+            StockUpdateItem::create([
+                'stock_update_id' => $stockUpdate->id,
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'qty_added' => $qtyAdded,
+                'purchase_price' => $purchasePrice,
+                'stock_before' => $stockBefore,
+                'stock_after' => $totalStock,
+                'price_before' => $priceBefore,
+                'price_after' => $newAvgPrice,
+            ]);
+
+            // Log activity
+            $log = new LogActivityProduct();
+            $log->user = Auth::user()->name;
+            $log->activity = 'stock_update';
+            $log->product = $product->name;
+            $log->old_stok = $stockBefore;
+            $log->new_stok = $stockBefore + $qtyAdded;
+            $log->save();
+        }
+
+        $this->closeStockUpdateModal();
+
+        // Refresh products list
+        if ($this->readyToLoad) {
+            $this->products = [];
+            $this->page = 1;
+            $this->hasMorePages = true;
+            $this->loadMore();
+        }
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Stok Diperbarui',
+            'text' => 'Stok produk berhasil ditambahkan.',
+            'icon' => 'success'
+        ]);
+    }
+
+    private function compressAndStoreNota($imageFile)
+    {
+        $extension = strtolower($imageFile->getClientOriginalExtension());
+        $filename = time() . '_' . uniqid() . '.' . $extension;
+        $fullPath = 'stock-update-nota/' . $filename;
+
+        $path = $imageFile->storeAs('public/stock-update-nota', $filename);
+
+        return $fullPath;
+    }
+
+    public function getStockUpdateSearchResultsProperty()
+    {
+        if (strlen($this->stockUpdateSearch) < 2) {
+            return collect();
+        }
+
+        $existingIds = collect($this->stockUpdateItems)->pluck('product_id')->toArray();
+
+        return Product::where(function ($q) {
+            $q->where('name', 'like', '%' . $this->stockUpdateSearch . '%')
+              ->orWhere('kode', 'like', '%' . $this->stockUpdateSearch . '%');
+        })
+        ->whereNotIn('id', $existingIds)
+        ->limit(10)
+        ->get();
     }
 }

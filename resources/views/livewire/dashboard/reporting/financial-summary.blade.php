@@ -42,7 +42,7 @@
                                 </select>
                             </div>
                         </div>
-                        @if (auth()->user()->role === 'master_admin')
+                        @if (auth()->user()->hasPermission('financial_summary'))
                             <button wire:click='exportToExcel' wire:loading.attr="disabled"
                                 class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
                                 <span wire:loading.remove wire:target="exportToExcel">

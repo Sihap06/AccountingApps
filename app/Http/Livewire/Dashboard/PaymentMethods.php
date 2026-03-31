@@ -24,7 +24,7 @@ class PaymentMethods extends Component
 
     public function mount()
     {
-        if (Auth::user()->role !== 'master_admin') {
+        if (!Auth::user()->hasPermission('payment_methods')) {
             abort(403, 'Unauthorized');
         }
     }

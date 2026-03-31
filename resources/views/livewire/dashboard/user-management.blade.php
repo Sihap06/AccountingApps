@@ -24,12 +24,12 @@
                                     class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
                         </div>
-                        New User
+                        Tambah User
                     </button>
                     <div class="flex w-full md:w-4/12 items-center gap-x-3">
                         <input type="text" wire:model.debounce.500ms="searchTerm"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                            placeholder="Search name or email" />
+                            placeholder="Cari nama atau email" />
                     </div>
                 </div>
 
@@ -44,7 +44,7 @@
                                         No</th>
                                     <th
                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Name</th>
+                                        Nama</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Email</th>
@@ -53,7 +53,7 @@
                                         Role</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Created At</th>
+                                        Dibuat</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
@@ -88,8 +88,16 @@
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
-                                            <span class="px-2 py-1 text-xs rounded-full bg-gradient-to-tl from-green-600 to-lime-400 text-white">
-                                                SYSADMIN
+                                            @php
+                                                $roleBadgeColors = [
+                                                    'owner' => 'from-purple-600 to-indigo-400',
+                                                    'manajer' => 'from-blue-600 to-cyan-400',
+                                                    'kasir' => 'from-green-600 to-lime-400',
+                                                ];
+                                                $badgeColor = $roleBadgeColors[$user->role] ?? 'from-gray-600 to-gray-400';
+                                            @endphp
+                                            <span class="px-2 py-1 text-xs rounded-full bg-gradient-to-tl {{ $badgeColor }} text-white">
+                                                {{ strtoupper($user->role) }}
                                             </span>
                                         </td>
                                         <td
@@ -107,9 +115,9 @@
                                             @if($user->id !== auth()->id())
                                                 <span class="mx-2">|</span>
                                                 <button type="button" wire:click='delete({{ $user->id }})'
-                                                    onclick="return confirm('Are you sure you want to delete this user?') || event.stopImmediatePropagation()"
+                                                    onclick="return confirm('Yakin ingin menghapus user ini?') || event.stopImmediatePropagation()"
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-red-500">
-                                                    Delete
+                                                    Hapus
                                                 </button>
                                             @endif
                                         </td>
@@ -120,7 +128,7 @@
 
                         @if ($users->isEmpty())
                             <div class="text-center py-8">
-                                <p class="text-gray-500">No users found</p>
+                                <p class="text-gray-500">Tidak ada user ditemukan</p>
                             </div>
                         @endif
                     </div>
@@ -140,35 +148,34 @@
                 <!-- Background overlay -->
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
 
-                <!-- This element is to trick the browser into centering the modal contents. -->
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <!-- Modal panel -->
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                                    {{ $modalType === 'store' ? 'Create New User' : 'Update User' }}
+                                    {{ $modalType === 'store' ? 'Tambah User Baru' : 'Edit User' }}
                                 </h3>
-                                
+
                                 <form class="space-y-4">
                                     <div>
-                                        <x-ui.input-default 
-                                            label="Name" 
-                                            name="name" 
-                                            type="text" 
+                                        <x-ui.input-default
+                                            label="Nama"
+                                            name="name"
+                                            type="text"
                                             wire:model="name"
-                                            placeholder="Enter user name"
+                                            placeholder="Masukkan nama user"
                                             :error="$errors->first('name')"
                                             :required="true" />
                                     </div>
 
                                     <div>
-                                        <x-ui.input-default 
-                                            label="Email" 
-                                            name="email" 
-                                            type="email" 
+                                        <x-ui.input-default
+                                            label="Email"
+                                            name="email"
+                                            type="email"
                                             wire:model="email"
                                             placeholder="user@example.com"
                                             :error="$errors->first('email')"
@@ -176,34 +183,75 @@
                                     </div>
 
                                     <div>
-                                        <x-ui.input-default 
-                                            label="Password{{ $modalType === 'update' ? ' (Leave blank to keep current)' : '' }}" 
-                                            name="password" 
-                                            type="password" 
+                                        <x-ui.input-default
+                                            label="Password{{ $modalType === 'update' ? ' (Kosongkan jika tidak diubah)' : '' }}"
+                                            name="password"
+                                            type="password"
                                             wire:model="password"
-                                            placeholder="••••••••"
+                                            placeholder="********"
                                             :error="$errors->first('password')"
                                             :required="$modalType === 'store'" />
                                     </div>
 
                                     <div>
-                                        <x-ui.input-default 
-                                            label="Confirm Password" 
-                                            name="password_confirmation" 
-                                            type="password" 
+                                        <x-ui.input-default
+                                            label="Konfirmasi Password"
+                                            name="password_confirmation"
+                                            type="password"
                                             wire:model="password_confirmation"
-                                            placeholder="••••••••"
+                                            placeholder="********"
                                             :required="$modalType === 'store'" />
                                     </div>
 
                                     <div>
-                                        <x-ui.input-default 
-                                            label="Role" 
-                                            name="role" 
-                                            type="text" 
-                                            value="SYSADMIN"
-                                            :disabled="true" />
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                            Role <span class="text-red-500">*</span>
+                                        </label>
+                                        <select wire:model="role"
+                                            class="focus:shadow-primary-outline text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
+                                            <option value="kasir">Kasir</option>
+                                            <option value="manajer">Manajer</option>
+                                            <option value="owner">Owner</option>
+                                        </select>
+                                        @error('role')
+                                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
+
+                                    <!-- Permission Assignment -->
+                                    @if($role !== 'owner')
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-3">
+                                                Hak Akses Fitur
+                                            </label>
+                                            <div class="bg-gray-50 rounded-lg p-4 space-y-4 max-h-64 overflow-y-auto">
+                                                @foreach($allPermissions as $group => $permissions)
+                                                    <div>
+                                                        <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">{{ $group }}</h4>
+                                                        <div class="grid grid-cols-2 gap-2">
+                                                            @foreach($permissions as $permission)
+                                                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 rounded p-1.5 transition-colors">
+                                                                    <input type="checkbox"
+                                                                        wire:model="selectedPermissions"
+                                                                        value="{{ $permission['id'] }}"
+                                                                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+                                                                    <span class="text-sm text-gray-700">{{ $permission['name'] }}</span>
+                                                                </label>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            <p class="text-xs text-gray-400 mt-1">Centang fitur yang boleh diakses oleh user ini.</p>
+                                        </div>
+                                    @else
+                                        <div class="bg-purple-50 rounded-lg p-3">
+                                            <p class="text-sm text-purple-700">
+                                                <i class="fas fa-info-circle mr-1"></i>
+                                                Role Owner memiliki akses ke semua fitur secara otomatis.
+                                            </p>
+                                        </div>
+                                    @endif
                                 </form>
                             </div>
                         </div>
@@ -211,11 +259,11 @@
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="button" wire:click='{{ $modalType === 'store' ? 'store' : 'update' }}'
                             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                            {{ $modalType === 'store' ? 'Create User' : 'Update User' }}
+                            {{ $modalType === 'store' ? 'Buat User' : 'Perbarui User' }}
                         </button>
                         <button type="button" wire:click='closeModal'
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Cancel
+                            Batal
                         </button>
                     </div>
                 </div>

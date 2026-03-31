@@ -250,7 +250,7 @@ class Customers extends Component
     public function exportExcel()
     {
         // Check if user is master admin
-        if (auth()->user()->role !== 'master_admin') {
+        if (!auth()->user()->isOwner()) {
             session()->flash('error', 'Hanya master admin yang dapat mengekspor data.');
             return;
         }

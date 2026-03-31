@@ -1,6 +1,6 @@
    <div class="w-full px-6 py-4 mx-auto flex flex-col">
 
-       @if (auth()->user()->role === 'master_admin' && $showPendingModal)
+       @if (auth()->user()->hasPermission('verification') && $showPendingModal)
            <!-- Pending Verification Modal -->
            <div class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -36,6 +36,41 @@
                                Ke Halaman Verifikasi
                            </button>
                        </div>
+                   </div>
+               </div>
+           </div>
+       @endif
+
+       {{-- Stock Opname Notification (Kasir/Manajer) --}}
+       @if($showStockOpnameNotif && $stockOpnameData)
+           <div class="mb-6 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-xl p-5 text-white">
+               <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                   <div class="flex items-start gap-4">
+                       <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-white/20">
+                           <i class="fas fa-clipboard-check text-xl"></i>
+                       </div>
+                       <div>
+                           <h6 class="text-base font-bold mb-1">Stok Opname Diperlukan!</h6>
+                           <p class="text-sm opacity-90">
+                               <span class="font-semibold">{{ $stockOpnameData['triggered_by'] }}</span> meminta Anda untuk melakukan stok opname pada {{ $stockOpnameData['created_at'] }}.
+                           </p>
+                           @if($stockOpnameData['notes'])
+                               <p class="text-sm opacity-80 mt-1"><i class="fas fa-sticky-note mr-1"></i> {{ $stockOpnameData['notes'] }}</p>
+                           @endif
+                           <p class="text-xs opacity-70 mt-1">
+                               Status: {{ $stockOpnameData['status'] === 'pending' ? 'Menunggu dimulai' : 'Sedang berjalan' }}
+                           </p>
+                       </div>
+                   </div>
+                   <div class="flex items-center gap-3">
+                       <button wire:click="goToStockOpname"
+                           class="px-5 py-2.5 text-sm font-bold bg-white text-orange-600 rounded-lg hover:bg-orange-50 transition-all shadow-md whitespace-nowrap">
+                           <i class="fas fa-arrow-right mr-1"></i> Mulai Stok Opname
+                       </button>
+                       <button wire:click="dismissStockOpnameNotif"
+                           class="px-3 py-2.5 text-sm font-bold bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all whitespace-nowrap">
+                           <i class="fas fa-times"></i>
+                       </button>
                    </div>
                </div>
            </div>
@@ -139,7 +174,7 @@
 
        <!-- cards row 2 -->
        <div class="flex flex-grow mt-8 -mx-3">
-           @if (auth()->user()->role === 'master_admin')
+           @if (auth()->user()->hasPermission('verification'))
            <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
                <div
                    class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
@@ -190,7 +225,7 @@
            </div>
            @endif
 
-           <div class="w-full max-w-full px-3 {{ auth()->user()->role === 'master_admin' ? 'lg:w-5/12' : 'lg:w-full' }} lg:flex-none ">
+           <div class="w-full max-w-full px-3 {{ auth()->user()->hasPermission('verification') ? 'lg:w-5/12' : 'lg:w-full' }} lg:flex-none ">
                <div
                    class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div class="p-4 pb-0 rounded-t-4">
@@ -385,7 +420,7 @@
            let transactionChart; // Declare chart instance globally
 
            document.addEventListener('DOMContentLoaded', () => {
-               @if (auth()->user()->role === 'master_admin')
+               @if (auth()->user()->hasPermission('verification'))
                const data = @json($dataChart);
                const label = @json($labelChart);
 

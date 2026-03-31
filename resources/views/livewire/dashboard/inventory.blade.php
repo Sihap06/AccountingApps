@@ -4,23 +4,43 @@
             class="relative flex flex-col min-w-0 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
             <div
                 class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                <button wire:click='openModal' type="button"
-                    class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex items-center gap-x-2">
-                    <div wire:loading wire:target='openModal'>
-                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                            role="status">
-                            <span
-                                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                <div class="flex items-center gap-x-2 mb-2 md:mb-0">
+                    <button wire:click='openModal' type="button"
+                        class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex items-center gap-x-2">
+                        <div wire:loading wire:target='openModal'>
+                            <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                role="status">
+                                <span
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                            </div>
                         </div>
-                    </div>
-                    <span>New Inventory</span>
-                </button>
+                        <span>New Inventory</span>
+                    </button>
+                    <button wire:click='openStockUpdateModal' type="button"
+                        class="px-6 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-green-600 hover:shadow-xs hover:-translate-y-px flex items-center gap-x-2">
+                        <div wire:loading wire:target='openStockUpdateModal'>
+                            <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                role="status"></div>
+                        </div>
+                        <i class="fas fa-boxes" wire:loading.remove wire:target='openStockUpdateModal'></i>
+                        <span>Update Stok</span>
+                    </button>
+                </div>
                 <div class="flex w-full md:w-4/12 items-center gap-x-3">
                     <input type="text" wire:model.debounce.500ms="searchTerm"
                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
                         placeholder="Masukkan nama atau kode" />
                 </div>
             </div>
+
+            @if($readyToLoad && count($data) > 0)
+                <div class="px-6 pt-4">
+                    <div class="inline-flex items-center gap-2 bg-blue-50 rounded-lg px-4 py-2">
+                        <span class="text-xs font-semibold text-blue-700">Total Modal:</span>
+                        <span class="text-sm font-bold text-blue-800">Rp {{ number_format($data->sum(function($item) { return ($item['harga'] ?? 0) * ($item['stok'] ?? 0); })) }}</span>
+                    </div>
+                </div>
+            @endif
 
             <div class="flex-auto px-0 pt-0 mt-4 overflow-auto h-full">
                 <div class="p-0">
@@ -46,6 +66,9 @@
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Stok</th>
+                                <th
+                                    class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                    Total Modal</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Return Stock</th>
@@ -82,6 +105,10 @@
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <div class="h-5 w-16 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-24 rounded bg-gray-200 animate-pulse"></div>
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -141,6 +168,13 @@
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                Rp {{ number_format(($item['harga'] ?? 0) * ($item['stok'] ?? 0)) }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             @if ($item['return_stock'] > 0)
                                                 <button wire:click="showReturns({{ $item['id'] }})"
                                                     class="text-xs font-semibold leading-tight text-red-600 hover:text-red-800 cursor-pointer underline">
@@ -168,6 +202,7 @@
                                                         </div>
                                                     </div>
                                                 </button>
+                                                @if(auth()->user()->isOwner())
                                                 <button type="button"
                                                     wire:click="$emit('triggerDelete',{{ $item['id'] }})"
                                                     class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
@@ -182,6 +217,7 @@
                                                         </div>
                                                     </div>
                                                 </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -189,7 +225,7 @@
 
                                 @if (count($data) == 0)
                                     <tr>
-                                        <td colspan="7"
+                                        <td colspan="9"
                                             class="p-4 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
@@ -255,6 +291,7 @@
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @if($action === 'add')
                                     <div class="relative mb-8">
                                         <x-ui.input-default wire:model="harga" id="harga" label="Harga Beli"
                                             x-data="{
@@ -268,6 +305,14 @@
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @else
+                                    <div class="relative mb-8">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Harga Beli</label>
+                                        <input type="text" value="Rp {{ number_format($harga) }}" disabled
+                                            class="text-sm block w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 cursor-not-allowed" />
+                                        <p class="text-xs text-gray-400 mt-1">Harga beli hanya bisa diubah melalui fitur Update Stok.</p>
+                                    </div>
+                                    @endif
                                     <div class="relative mb-8">
                                         <x-ui.input-default wire:model="harga_jual" id="harga_jual"
                                             label="Harga Jual" x-data="{
@@ -282,6 +327,7 @@
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @if($action === 'add')
                                     <div class="relative mb-8">
                                         <x-ui.input-default wire:model="stok" id="stok" label="Stock"
                                             x-data="{
@@ -295,6 +341,14 @@
                                             <div class="text-red-500 text-sm">{{ $message }}</div>
                                         @enderror
                                     </div>
+                                    @else
+                                    <div class="relative mb-8">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                                        <input type="text" value="{{ number_format($stok) }}" disabled
+                                            class="text-sm block w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 cursor-not-allowed" />
+                                        <p class="text-xs text-gray-400 mt-1">Stok hanya bisa diubah melalui fitur Update Stok.</p>
+                                    </div>
+                                    @endif
 
                                     <div class="flex gap-x-2">
                                         <button type="button" wire:click='closeModal'
@@ -430,6 +484,9 @@
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Notes
                                     </th>
+                                    <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        Aksi
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -465,18 +522,209 @@
                                             {{ $return['notes'] ? \Illuminate\Support\Str::limit($return['notes'], 50) : '-' }}
                                         </span>
                                     </td>
+                                    <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <button wire:click="restoreReturnToStock({{ $return['id'] }})" wire:loading.attr="disabled"
+                                                onclick="return confirm('Kembalikan {{ $return['quantity'] }} unit ke stok inventory?') || event.stopImmediatePropagation()"
+                                                class="px-2.5 py-1 text-xs font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50"
+                                                title="Kembalikan ke stok">
+                                                <div wire:loading wire:target="restoreReturnToStock({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                                <span wire:loading.remove wire:target="restoreReturnToStock({{ $return['id'] }})"><i class="fas fa-undo-alt"></i></span>
+                                            </button>
+                                            <button wire:click="deleteReturn({{ $return['id'] }})" wire:loading.attr="disabled"
+                                                onclick="return confirm('Hapus data return ini tanpa mengembalikan stok?') || event.stopImmediatePropagation()"
+                                                class="px-2.5 py-1 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50"
+                                                title="Hapus return">
+                                                <div wire:loading wire:target="deleteReturn({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                                <span wire:loading.remove wire:target="deleteReturn({{ $return['id'] }})"><i class="fas fa-trash-alt"></i></span>
+                                            </button>
+                                        </div>
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
+                                    <td colspan="7" class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <span class="text-xs font-semibold leading-tight text-slate-400">
-                                            No returns found for this product
+                                            Tidak ada data return untuk produk ini
                                         </span>
                                     </td>
                                 </tr>
                                 @endforelse
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Stock Update Modal --}}
+    @if($showStockUpdateModal)
+        <div class="fixed z-10 inset-0 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full sm:p-6">
+                    <div>
+                        <div class="mt-3 sm:mt-0">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Update Stok Produk</h3>
+
+                            {{-- Product Search --}}
+                            <div class="relative mb-4" x-data="{ open: false }" @click.away="open = false">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Cari & Pilih Produk</label>
+                                <input type="text" wire:model.debounce.300ms="stockUpdateSearch"
+                                    @focus="open = true" @input="open = true"
+                                    class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                    placeholder="Ketik nama atau kode produk..." />
+
+                                {{-- Search Results Dropdown --}}
+                                @if(strlen($stockUpdateSearch) >= 2)
+                                    <div x-show="open" class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                        @forelse($this->stockUpdateSearchResults as $product)
+                                            <button type="button"
+                                                wire:click="addStockUpdateProduct({{ $product->id }})"
+                                                @click="open = false"
+                                                class="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 transition-colors flex justify-between items-center border-b border-gray-100 last:border-b-0">
+                                                <div>
+                                                    <span class="font-semibold text-gray-800">{{ $product->name }}</span>
+                                                    <span class="text-gray-400 text-xs ml-2">({{ $product->kode }})</span>
+                                                </div>
+                                                <span class="text-xs text-gray-500">Stok: {{ $product->stok }}</span>
+                                            </button>
+                                        @empty
+                                            <div class="px-4 py-3 text-sm text-gray-500 text-center">Produk tidak ditemukan</div>
+                                        @endforelse
+                                    </div>
+                                @endif
+                            </div>
+
+                            {{-- Selected Products Table --}}
+                            @if(count($stockUpdateItems) > 0)
+                                <div class="mb-4 border rounded-lg overflow-hidden overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-3 py-2 text-left text-xs font-bold uppercase text-gray-500">Produk</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Stok</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Beli Saat Ini</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Qty Tambah</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Beli Baru</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Rata-rata</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($stockUpdateItems as $index => $suItem)
+                                                @php
+                                                    $curStock = $suItem['current_stock'] ?? 0;
+                                                    $curPrice = $suItem['current_price'] ?? 0;
+                                                    $qtyAdd = (int)($suItem['qty_added'] ?? 0);
+                                                    $newPrice = (int) preg_replace("/[^0-9]/", "", $suItem['purchase_price'] ?? '0');
+                                                    $totalStock = $curStock + $qtyAdd;
+                                                    $avgPrice = $totalStock > 0 ? round((($curStock * $curPrice) + ($qtyAdd * $newPrice)) / $totalStock) : 0;
+                                                @endphp
+                                                <tr wire:key="su-item-{{ $index }}" class="border-t">
+                                                    <td class="px-3 py-2">
+                                                        <span class="font-semibold text-gray-800 text-xs">{{ $suItem['product_name'] }}</span>
+                                                    </td>
+                                                    <td class="px-3 py-2 text-center text-gray-600 text-xs">{{ $curStock }}</td>
+                                                    <td class="px-3 py-2 text-center text-gray-600 text-xs">Rp {{ number_format($curPrice) }}</td>
+                                                    <td class="px-3 py-2 text-center">
+                                                        <input type="number" min="1"
+                                                            wire:model.defer="stockUpdateItems.{{ $index }}.qty_added"
+                                                            class="w-16 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none" />
+                                                        @error("stockUpdateItems.{$index}.qty_added")
+                                                            <p class="text-red-500 text-xxs mt-0.5">{{ $message }}</p>
+                                                        @enderror
+                                                    </td>
+                                                    <td class="px-3 py-2 text-center">
+                                                        <input type="text"
+                                                            wire:model.defer="stockUpdateItems.{{ $index }}.purchase_price"
+                                                            class="w-28 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none"
+                                                            placeholder="Rp"
+                                                            x-data="{
+                                                                formatNumber(e) {
+                                                                    let val = e.target.value.replace(/\D/g, '');
+                                                                    e.target.value = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                                                }
+                                                            }" x-on:input="formatNumber($event)" />
+                                                        @error("stockUpdateItems.{$index}.purchase_price")
+                                                            <p class="text-red-500 text-xxs mt-0.5">{{ $message }}</p>
+                                                        @enderror
+                                                    </td>
+                                                    <td class="px-3 py-2 text-center">
+                                                        <span class="font-semibold text-blue-600 text-xs">Rp {{ number_format($avgPrice) }}</span>
+                                                    </td>
+                                                    <td class="px-3 py-2 text-center">
+                                                        <button wire:click="removeStockUpdateProduct({{ $index }})"
+                                                            class="text-red-500 hover:text-red-700">
+                                                            <i class="fas fa-trash-alt text-xs"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="mb-4 border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
+                                    <i class="fas fa-box-open text-3xl text-gray-300 mb-2"></i>
+                                    <p class="text-sm text-gray-400">Belum ada produk dipilih. Cari dan pilih produk di atas.</p>
+                                </div>
+                            @endif
+                            @error('stockUpdateItems')
+                                <p class="text-red-500 text-xs mb-3 -mt-2">{{ $message }}</p>
+                            @enderror
+
+                            {{-- Upload Nota --}}
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Nota <span class="text-red-500">*</span></label>
+                                <input type="file" wire:model="stockUpdateNota" accept="image/*"
+                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all" />
+                                <div wire:loading wire:target="stockUpdateNota" class="mt-2 flex items-center gap-2 text-sm text-gray-500">
+                                    <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-blue-500 border-r-transparent" role="status"></div>
+                                    Mengupload...
+                                </div>
+                                @if($stockUpdateNota)
+                                    <div class="mt-2">
+                                        <img src="{{ $stockUpdateNota->temporaryUrl() }}" class="h-32 rounded-lg border object-cover" alt="Preview nota" />
+                                    </div>
+                                @endif
+                                @error('stockUpdateNota')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Notes --}}
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
+                                <textarea wire:model.defer="stockUpdateNotes" rows="2"
+                                    class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                    placeholder="Contoh: Restock dari supplier X"></textarea>
+                            </div>
+
+                            {{-- Buttons --}}
+                            <div class="flex gap-x-2">
+                                <button type="button" wire:click='closeStockUpdateModal'
+                                    class="flex w-full justify-center gap-x-2 items-center rounded-lg bg-gray-600 px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white transition duration-150 ease-in-out hover:bg-gray-700">
+                                    <div wire:loading wire:target='closeStockUpdateModal'>
+                                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                    </div>
+                                    Batal
+                                </button>
+                                <button type="button" wire:click='submitStockUpdate' wire:loading.attr="disabled"
+                                    class="flex w-full justify-center gap-x-2 items-center rounded-lg bg-green-600 px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white transition duration-150 ease-in-out hover:bg-green-700 disabled:opacity-50">
+                                    <div wire:loading wire:target='submitStockUpdate'>
+                                        <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                    </div>
+                                    <span wire:loading.remove wire:target="submitStockUpdate">Simpan Update Stok</span>
+                                    <span wire:loading wire:target="submitStockUpdate">Menyimpan...</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

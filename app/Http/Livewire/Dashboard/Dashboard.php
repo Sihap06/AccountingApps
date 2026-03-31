@@ -6,6 +6,7 @@ use App\Exports\TransactionChartExport;
 use App\Models\Expenditure;
 use App\Models\Transaction;
 use App\Models\PendingChange;
+use App\Models\StockOpname;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -16,6 +17,8 @@ class Dashboard extends Component
     public $selectedYear;
     public $showPendingModal = false;
     public $pendingCount = 0;
+    public $showStockOpnameNotif = false;
+    public $stockOpnameData = null;
     public $selectedMonthFilter;
     public $selectedYearFilter;
     public $chartData = [];
@@ -28,7 +31,7 @@ class Dashboard extends Component
         $this->selectedYearFilter = Carbon::now()->format('Y');
         
         // Initialize chart data
-        if (auth()->user()->role === 'master_admin') {
+        if (auth()->user()->hasPermission('verification')) {
             $chartResult = $this->transactionChart();
             $this->chartData = $chartResult[0];
             $this->chartLabels = $chartResult[1];
@@ -36,6 +39,28 @@ class Dashboard extends Component
             // Check for pending verifications
             $this->pendingCount = PendingChange::pending()->count();
             $this->showPendingModal = $this->pendingCount > 0;
+        }
+
+        // Check for active stock opname notification (for non-owner)
+        if (!auth()->user()->isOwner()) {
+            $activeOpname = StockOpname::active()
+                ->where(function ($q) {
+                    $q->where('assigned_to', auth()->id())
+                      ->orWhereNull('assigned_to');
+                })
+                ->with('triggeredBy')
+                ->first();
+
+            if ($activeOpname) {
+                $this->showStockOpnameNotif = true;
+                $this->stockOpnameData = [
+                    'id' => $activeOpname->id,
+                    'triggered_by' => $activeOpname->triggeredBy->name ?? '-',
+                    'notes' => $activeOpname->notes,
+                    'created_at' => $activeOpname->created_at->format('d M Y H:i'),
+                    'status' => $activeOpname->status,
+                ];
+            }
         }
     }
 
@@ -224,6 +249,16 @@ class Dashboard extends Component
     public function goToVerification()
     {
         return redirect()->route('dashboard.verification.index');
+    }
+
+    public function goToStockOpname()
+    {
+        return redirect()->route('dashboard.stock-opname.index');
+    }
+
+    public function dismissStockOpnameNotif()
+    {
+        $this->showStockOpnameNotif = false;
     }
 
     public function updateTransactionStats()

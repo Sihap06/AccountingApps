@@ -344,7 +344,7 @@ class UpdateTransaction extends Component
         $transaction = Transaction::findOrFail($this->editId);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'updateItemTransaction';
             $this->pendingActionData = [
@@ -494,7 +494,7 @@ class UpdateTransaction extends Component
         $transaction = TransactionItem::findOrFail($this->editId);
 
         // Check if user is sysadmin (operator) - needs verification for updates
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'updateItem';
             $this->pendingActionData = [
@@ -640,7 +640,7 @@ class UpdateTransaction extends Component
         $transaction = Transaction::findOrFail($this->transactionId);
 
         // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->role === 'sysadmin') {
+        if (Auth::user()->requiresVerification()) {
             // Store data and show reason modal
             $this->pendingAction = 'updateTransaction';
             $this->pendingActionData = [

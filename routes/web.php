@@ -22,6 +22,7 @@ use App\Http\Livewire\Dashboard\Verification;
 use App\Http\Livewire\Dashboard\UserManagement;
 use App\Http\Livewire\Dashboard\PaymentMethods;
 use App\Http\Livewire\Dashboard\Reporting\FinancialSummary;
+use App\Http\Livewire\Dashboard\StockOpname;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -77,12 +78,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', TabOnLogActivity::class)->name('index');
         });
 
-        // Verification routes (master_admin only)
+        // Verification routes (permission-based)
         Route::prefix('verification')->name('verification.')->group(function () {
             Route::get('/', Verification::class)->name('index');
         });
 
-        // User Management routes (master_admin only)
+        // User Management routes (permission-based)
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', UserManagement::class)->name('index');
         });
@@ -90,6 +91,11 @@ Route::middleware(['auth'])->group(function () {
         // Payment Methods routes
         Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
             Route::get('/', PaymentMethods::class)->name('index');
+        });
+
+        // Stock Opname routes
+        Route::prefix('stock-opname')->name('stock-opname.')->group(function () {
+            Route::get('/', StockOpname::class)->name('index');
         });
     });
 });
