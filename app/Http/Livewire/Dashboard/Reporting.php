@@ -19,8 +19,23 @@ class Reporting extends Component
     public function mount($id = null, $type = null)
     {
         $this->selectedId = $id;
+        
+        $user = auth()->user();
         if ($type !== null) {
             $this->tabActive = $type;
+        } else {
+            // Priority default fallback Tab selection
+            if ($user->hasPermission('reporting_transaction') || $user->isOwner()) {
+                $this->tabActive = 'transaction';
+            } elseif ($user->hasPermission('reporting_expenditure')) {
+                $this->tabActive = 'expenditure';
+            } elseif ($user->hasPermission('reporting_income_fee')) {
+                $this->tabActive = 'income';
+            } elseif ($user->hasPermission('reporting_export')) {
+                $this->tabActive = 'export';
+            } else {
+                $this->tabActive = 'restricted';
+            }
         }
     }
 

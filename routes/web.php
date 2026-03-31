@@ -58,7 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('reporting', Reporting::class)->name('reporting');
         Route::get('reporting/{type}', Reporting::class);
         Route::get('detail-transaction/{id}', Reporting::class);
-        Route::get('financial-summary', FinancialSummary::class)->name('financial-summary');
+        Route::get('financial-summary', FinancialSummary::class)->name('financial-summary')->middleware('permission:financial_summary');
 
         Route::prefix('inventory')->name('inventory')->group(function () {
             Route::get('/', TabOnInventory::class);
@@ -79,22 +79,26 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Verification routes (permission-based)
-        Route::prefix('verification')->name('verification.')->group(function () {
+        Route::prefix('verification')->name('verification.')->middleware('permission:verification')->group(function () {
             Route::get('/', Verification::class)->name('index');
         });
 
-        // User Management routes (permission-based)
-        Route::prefix('users')->name('users.')->group(function () {
+        // User & Role Management routes (permission-based)
+        Route::prefix('users')->name('users.')->middleware('permission:user_management')->group(function () {
             Route::get('/', UserManagement::class)->name('index');
+        });
+        
+        Route::prefix('roles')->name('roles.')->middleware('permission:user_management')->group(function () {
+            Route::get('/', \App\Http\Livewire\Dashboard\RoleManagement::class)->name('index');
         });
 
         // Payment Methods routes
-        Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
+        Route::prefix('payment-methods')->name('payment-methods.')->middleware('permission:payment_methods')->group(function () {
             Route::get('/', PaymentMethods::class)->name('index');
         });
 
         // Stock Opname routes
-        Route::prefix('stock-opname')->name('stock-opname.')->group(function () {
+        Route::prefix('stock-opname')->name('stock-opname.')->middleware('permission:stock_opname')->group(function () {
             Route::get('/', StockOpname::class)->name('index');
         });
     });

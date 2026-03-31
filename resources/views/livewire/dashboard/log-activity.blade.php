@@ -30,13 +30,13 @@
                                                 No</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                User</th>
+                                                Pengguna</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Product</th>
+                                                Produk</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Activity</th>
+                                                Aktivitas</th>
 
                                         </tr>
                                     </thead>
@@ -70,29 +70,29 @@
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                         @if ($item->activity === 'store')
-                                                            Add new product
+                                                            Menambahkan produk baru
                                                         @elseif($item->activity === 'delete')
-                                                            Delete product
+                                                            Menghapus produk
                                                         @else
                                                             <ul>
                                                                 @if ($item->old_name !== null && $item->new_name !== null)
                                                                     <li>
-                                                                        Change product name from {{ $item->old_name }}
-                                                                        to
+                                                                        Mengubah nama produk dari {{ $item->old_name }}
+                                                                        menjadi
                                                                         {{ $item->new_name }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_price !== null && $item->new_price !== null)
                                                                     <li>
-                                                                        Change product price from {{ $item->old_price }}
-                                                                        to
+                                                                        Mengubah harga produk dari {{ $item->old_price }}
+                                                                        menjadi
                                                                         {{ $item->new_price }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_stok !== null && $item->new_stok !== null)
                                                                     <li>
-                                                                        Update product stok from {{ $item->old_stok }}
-                                                                        to
+                                                                        Memperbarui stok produk dari {{ $item->old_stok }}
+                                                                        menjadi
                                                                         {{ $item->new_stok }}
                                                                     </li>
                                                                 @endif

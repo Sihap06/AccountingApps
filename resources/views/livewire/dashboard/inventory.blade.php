@@ -11,10 +11,10 @@
                             <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                 role="status">
                                 <span
-                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                             </div>
                         </div>
-                        <span>New Inventory</span>
+                        <span>Inventaris Baru</span>
                     </button>
                     <button wire:click='openStockUpdateModal' type="button"
                         class="px-6 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-green-600 hover:shadow-xs hover:-translate-y-px flex items-center gap-x-2">
@@ -280,7 +280,7 @@
                     <div>
                         <div class="mt-3 sm:mt-5">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                {{ $action === 'add' ? 'Add New Inventory' : 'Edit Inventory' }}
+                                {{ $action === 'add' ? 'Tambah Inventaris Baru' : 'Edit Inventaris' }}
                             </h3>
                             <div class="flex-auto px-0 pt-0 pb-2">
                                 <form wire:submit.prevent="{{ $action === 'add' ? 'store' : 'update' }}">
@@ -357,13 +357,13 @@
                                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                     role="status">
                                                     <span
-                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                                                 </div>
                                             </div>
                                             Kembali
                                         </button>
 
-                                        <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                                        <x-ui.button type="submit" title="Simpan" color="primary" wireLoading
                                             formAction="{{ $action === 'add' ? 'store' : 'update' }}" />
                                     </div>
                                 </form>
@@ -449,7 +449,7 @@
                     class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
                     <div class="border-b-2 flex justify-between items-center mb-4">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                            Product Returns
+                            Pengembalian Produk
                         </h3>
                         <button wire:click='closeReturnModal' type="button">
                             <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none"
@@ -470,22 +470,22 @@
                                         Aksi
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Date
+                                        Tanggal
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Transaction Order
+                                        Order Transaksi
                                     </th>
                                     <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Quantity
+                                        Kuantitas
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Return Reason
+                                        Alasan Retur
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Returned By
+                                        Diretur Oleh
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Notes
+                                        Catatan
                                     </th>
                                 </tr>
                             </thead>
@@ -734,10 +734,12 @@
 
             @this.on('triggerDelete', id => {
                 Swal.fire({
-                    title: 'Are You Sure?',
-                    html: "You won't be able to revert this!",
+                    title: 'Apakah Anda yakin?',
+                    html: "Data ini tidak bisa dikembalikan!",
                     icon: 'warning',
                     showCancelButton: true,
+                    cancelButtonText: 'Batal',
+                    confirmButtonText: 'Ya, Hapus'
                 }).then((result) => {
                     if (result.value) {
                         @this.call('delete', id)

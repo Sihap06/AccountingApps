@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center ">
         <div class=" mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Technician</h5>
+            <h5 class="mb-1 font-serif">Teknisi</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -20,7 +20,7 @@
                 <div
                     class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                     <div class="pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                        <h6 class="dark:text-white">Technician Table</h6>
+                        <h6 class="dark:text-white">Daftar Teknisi</h6>
                     </div>
                     <button type="button" wire:click='setShowAdd'
                         class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px"
@@ -29,7 +29,7 @@
                             <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                 role="status">
                                 <span
-                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                             </div>
                         </div>
                         {{ $isAdd ? 'Batal' : 'Tambah' }}
@@ -56,7 +56,7 @@
                                         % Fee</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        % Fee With Sparepart</th>
+                                        % Komisi + Bahan</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
@@ -110,7 +110,7 @@
                                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                         role="status">
                                                         <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                                                     </div>
                                                 </div>
                                             </button>
@@ -124,7 +124,7 @@
                                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                         role="status">
                                                         <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                                                     </div>
                                                 </div>
                                             </button>
@@ -149,14 +149,14 @@
                     <div
                         class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                         <div class="pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                            <h6 class="dark:text-white">{{ $isAdd ? 'Add' : 'Edit' }} Technician</h6>
+                            <h6 class="dark:text-white">{{ $isAdd ? 'Tambah' : 'Edit' }} Teknisi</h6>
                         </div>
                     </div>
 
                     <div class="w-full p-6">
                         <form wire:submit.prevent="{{ $isAdd ? 'store' : 'update' }}">
                             <div class="relative mb-8">
-                                <x-ui.input-default wire:model="name" label="Name" />
+                                <x-ui.input-default wire:model="name" label="Nama" />
                                 @error('name')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
@@ -177,14 +177,14 @@
 
                             </div>
                             <div class="relative mb-8">
-                                <x-ui.input-default wire:model="percent_with_sparepart" label="% With Sparepart" />
+                                <x-ui.input-default wire:model="percent_with_sparepart" label="% Komisi + Bahan" />
                                 @error('percent_with_sparepart')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
 
                             </div>
 
-                            <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                            <x-ui.button type="submit" title="Simpan" color="primary" wireLoading
                                 formAction="{{ $isAdd ? 'store' : 'update' }}" />
                         </form>
                     </div>
@@ -202,10 +202,12 @@
 
             @this.on('triggerDelete', id => {
                 Swal.fire({
-                    title: 'Are You Sure?',
-                    html: "You won't be able to revert this!",
+                    title: 'Apakah Kamu Yakin?',
+                    html: "Kamu tidak bisa mengembalikan datanya lagi!",
                     icon: 'warning',
                     showCancelButton: true,
+                    cancelButtonText: 'Batal',
+                    confirmButtonText: 'Ya, Hapus'
                 }).then((result) => {
                     if (result.value) {
                         @this.call('delete', id)

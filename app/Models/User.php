@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
     ];
 
     /**
@@ -43,22 +44,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function permissions()
+    /**
+     * Dapatkan role user.
+     */
+    public function role()
     {
-        return $this->belongsToMany(Permission::class, 'user_permissions');
+        return $this->belongsTo(Role::class);
     }
 
     /**
      * Check if user has a specific permission by key.
-     * Owner role always has all permissions.
      */
     public function hasPermission(string $key): bool
     {
-        if ($this->role === 'owner') {
+        if ($this->isOwner()) {
             return true;
         }
 
-        return $this->permissions()->where('key', $key)->exists();
+        return $this->role && $this->role->permissions()->where('key', $key)->exists();
     }
 
     /**
@@ -66,7 +69,7 @@ class User extends Authenticatable
      */
     public function isOwner(): bool
     {
-        return $this->role === 'owner';
+        return $this->role && strtolower($this->role->name) === 'owner';
     }
 
     /**
@@ -74,7 +77,7 @@ class User extends Authenticatable
      */
     public function isManajer(): bool
     {
-        return $this->role === 'manajer';
+        return $this->role && strtolower($this->role->name) === 'manajer';
     }
 
     /**
@@ -82,7 +85,7 @@ class User extends Authenticatable
      */
     public function isKasir(): bool
     {
-        return $this->role === 'kasir';
+        return $this->role && strtolower($this->role->name) === 'kasir';
     }
 
     /**
@@ -90,15 +93,49 @@ class User extends Authenticatable
      */
     public function requiresVerification(): bool
     {
-        return in_array($this->role, ['kasir', 'manajer']);
+        return $this->role && in_array(strtolower($this->role->name), ['kasir', 'manajer']);
     }
 
-    public static function availableRoles(): array
+    /**
+     * Get transactions created by this user.
+     */
+    public function transactions()
     {
-        return [
-            'kasir' => 'Kasir',
-            'manajer' => 'Manajer',
-            'owner' => 'Owner',
-        ];
+        return $this->hasMany(Transaction::class, 'created_by');
+    }
+
+    /**
+     * Get stock updates by this user.
+     */
+    public function stockUpdates()
+    {
+        return $this->hasMany(StockUpdate::class);
+    }
+
+    /**
+     * Check if user has related data that prevents deletion.
+     * Returns array of relation names that have data, or empty array if safe to delete.
+     */
+    public function getRelatedDataInfo(): array
+    {
+        $relations = [];
+
+        if ($this->transactions()->exists()) {
+            $relations[] = 'Transaksi (' . $this->transactions()->count() . ')';
+        }
+
+        if ($this->stockUpdates()->exists()) {
+            $relations[] = 'Stock Update (' . $this->stockUpdates()->count() . ')';
+        }
+
+        return $relations;
+    }
+
+    /**
+     * Check if user has any related data.
+     */
+    public function hasRelatedData(): bool
+    {
+        return !empty($this->getRelatedDataInfo());
     }
 }

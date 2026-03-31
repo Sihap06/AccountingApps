@@ -43,32 +43,34 @@
 
        {{-- Stock Opname Notification (Kasir/Manajer) --}}
        @if($showStockOpnameNotif && $stockOpnameData)
-           <div class="mb-6 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-xl p-5 text-white">
+           <div class="mb-6 bg-white dark:bg-slate-850 border-l-4 border-blue-500 rounded-2xl shadow-xl p-5">
                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                    <div class="flex items-start gap-4">
-                       <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-white/20">
+                       <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500">
                            <i class="fas fa-clipboard-check text-xl"></i>
                        </div>
                        <div>
-                           <h6 class="text-base font-bold mb-1">Stok Opname Diperlukan!</h6>
-                           <p class="text-sm opacity-90">
-                               <span class="font-semibold">{{ $stockOpnameData['triggered_by'] }}</span> meminta Anda untuk melakukan stok opname pada {{ $stockOpnameData['created_at'] }}.
+                           <h6 class="text-base font-bold text-gray-800 dark:text-white mb-1">Stok Opname Diperlukan!</h6>
+                           <p class="text-sm text-gray-600 dark:text-gray-400">
+                               <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $stockOpnameData['triggered_by'] }}</span> meminta Anda untuk melakukan stok opname pada {{ \Carbon\Carbon::parse($stockOpnameData['created_at'])->format('d M Y H:i') }}.
                            </p>
                            @if($stockOpnameData['notes'])
-                               <p class="text-sm opacity-80 mt-1"><i class="fas fa-sticky-note mr-1"></i> {{ $stockOpnameData['notes'] }}</p>
+                               <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                   <i class="fas fa-sticky-note mr-1 text-gray-400 dark:text-gray-500"></i> {{ $stockOpnameData['notes'] }}
+                               </p>
                            @endif
-                           <p class="text-xs opacity-70 mt-1">
+                           <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-2">
                                Status: {{ $stockOpnameData['status'] === 'pending' ? 'Menunggu dimulai' : 'Sedang berjalan' }}
                            </p>
                        </div>
                    </div>
                    <div class="flex items-center gap-3">
                        <button wire:click="goToStockOpname"
-                           class="px-5 py-2.5 text-sm font-bold bg-white text-orange-600 rounded-lg hover:bg-orange-50 transition-all shadow-md whitespace-nowrap">
+                           class="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-tl from-blue-500 to-violet-500 rounded-lg hover:shadow-md hover:-translate-y-px transition-all whitespace-nowrap">
                            <i class="fas fa-arrow-right mr-1"></i> Mulai Stok Opname
                        </button>
                        <button wire:click="dismissStockOpnameNotif"
-                           class="px-3 py-2.5 text-sm font-bold bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all whitespace-nowrap">
+                           class="px-3 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-all whitespace-nowrap">
                            <i class="fas fa-times"></i>
                        </button>
                    </div>
@@ -99,7 +101,7 @@
                                <a href="{{ url('dashboard/reporting/transaction') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Transaction</p>
+                                       Transaksi Hari Ini</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        {{ number_format($todayTransaction) }}
                                    </h5>
@@ -126,7 +128,7 @@
                                <a href="{{ url('dashboard/reporting/income') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Omset</p>
+                                       Omset Hari Ini</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayIncome) }}
                                    </h5>
@@ -153,7 +155,7 @@
                                <a href="{{ url('dashboard/reporting/expenditure') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Expenditure</p>
+                                       Pengeluaran Hari Ini</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayExpenditure) }}
                                    </h5>
@@ -180,7 +182,7 @@
                    class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div
                        class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
-                       <h6 class="capitalize dark:text-white">Transactions Chart</h6>
+                       <h6 class="capitalize dark:text-white">Grafik Transaksi</h6>
                        <div class="flex gap-x-3 w-full md:w-5/12 items-center">
                            <select wire:model="selectedYear"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
@@ -191,18 +193,18 @@
 
                            <button wire:click='updateChart()'
                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                               Update
+                               Perbarui
                            </button>
                            
                            <button wire:click='exportExcel()' wire:loading.attr="disabled"
                                class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                                <span wire:loading.remove wire:target="exportExcel">
                                    <i class="fas fa-file-excel mr-1"></i>
-                                   Export
+                                   Ekspor
                                </span>
                                <span wire:loading wire:target="exportExcel">
                                    <i class="fas fa-spinner fa-spin mr-1"></i>
-                                   Exporting...
+                                   Mengekspor...
                                </span>
                            </button>
                        </div>
@@ -212,7 +214,7 @@
                            <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                role="status">
                                <span
-                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                            </div>
                        </div>
                    </div>
@@ -229,7 +231,7 @@
                <div
                    class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div class="p-4 pb-0 rounded-t-4">
-                       <h6 class="mb-0 dark:text-white">Latest Transactions</h6>
+                       <h6 class="mb-0 dark:text-white">Transaksi Terbaru</h6>
                    </div>
                    <div class="flex-auto p-4">
                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
@@ -302,7 +304,7 @@
                            <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                role="status">
                                <span
-                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
                            </div>
                            <span class="ml-2 text-sm text-gray-600">Memperbarui...</span>
                        </div>
@@ -322,7 +324,7 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Done</p>
+                                       Transaksi Selesai</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_done) }}
                                    </h4>
@@ -352,7 +354,7 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Cancel</p>
+                                       Transaksi Dibatalkan</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_cancel) }}
                                    </h4>
@@ -380,7 +382,7 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Process</p>
+                                       Transaksi Diproses</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_proses) }}
                                    </h4>

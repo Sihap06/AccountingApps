@@ -18,20 +18,20 @@
                    class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border p-6">
 
                    <div class="text-center mb-2">
-                       <p class="font-serif">Add Inventory</p>
+                       <p class="font-serif">Tambah Inventaris Baru</p>
                    </div>
 
                    <div class="flex-auto px-0 pt-0 pb-2">
                        <form wire:submit.prevent="store">
                            <!--E-mail input-->
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="name" label="Name" />
+                               <x-ui.input-default wire:model="name" label="Nama" />
                                @error('name')
                                    <div class="text-red-500 text-sm">{{ $message }}</div>
                                @enderror
                            </div>
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="harga" id="harga" label="Price"
+                               <x-ui.input-default wire:model="harga" id="harga" label="Harga Beli"
                                    x-data="{
                                        formatNumber: function(event) {
                                            const input = event.target;
@@ -44,7 +44,7 @@
                                @enderror
                            </div>
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="stok" id="stok" label="Stock"
+                               <x-ui.input-default wire:model="stok" id="stok" label="Stok"
                                    x-data="{
                                        formatNumber: function(event) {
                                            const input = event.target;
@@ -64,7 +64,7 @@
                                    Kembali
                                </a>
 
-                               <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                               <x-ui.button type="submit" title="Simpan" color="primary" wireLoading
                                    formAction="store" />
                            </div>
                        </form>

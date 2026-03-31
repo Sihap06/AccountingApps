@@ -261,7 +261,9 @@ class StockOpname extends Component
 
     public function render()
     {
-        $kasirList = User::whereIn('role', ['kasir'])->get();
+        $kasirList = User::whereHas('role', function ($query) {
+            $query->where('name', 'Kasir');
+        })->get();
 
         // Get items for active opname with filtering
         $activeItems = collect();

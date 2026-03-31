@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Dashboard;
 
 use App\Models\User;
-use App\Models\Permission;
+use App\Models\Role;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
@@ -20,15 +20,16 @@ class UserManagement extends Component
     public $email;
     public $password;
     public $password_confirmation;
-    public $role = 'kasir';
-    public $selectedPermissions = [];
-    public $allPermissions = [];
+    public $role_id;
+    public $roles = [];
+
+    protected $listeners = ['confirmDeleteUser'];
 
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
         'password' => 'required|min:8|confirmed',
-        'role' => 'required|in:kasir,manajer,owner',
+        'role_id' => 'required|exists:roles,id',
     ];
 
     protected $messages = [
@@ -39,17 +40,13 @@ class UserManagement extends Component
         'password.required' => 'Password wajib diisi.',
         'password.min' => 'Password minimal 8 karakter.',
         'password.confirmed' => 'Konfirmasi password tidak cocok.',
-        'role.required' => 'Role wajib dipilih.',
-        'role.in' => 'Role tidak valid.',
+        'role_id.required' => 'Role wajib dipilih.',
+        'role_id.exists' => 'Role tidak valid.',
     ];
 
     public function mount()
     {
-        if (!auth()->user()->hasPermission('user_management')) {
-            abort(403, 'Unauthorized access');
-        }
-
-        $this->allPermissions = Permission::orderBy('sort_order')->get()->groupBy('group')->toArray();
+        $this->roles = Role::orderBy('name')->get();
     }
 
     public function openModal()
@@ -65,8 +62,7 @@ class UserManagement extends Component
 
     public function resetField()
     {
-        $this->reset(['name', 'email', 'password', 'password_confirmation', 'userId', 'selectedPermissions']);
-        $this->role = 'kasir';
+        $this->reset(['name', 'email', 'password', 'password_confirmation', 'userId', 'role_id']);
         $this->resetValidation();
     }
 
@@ -81,17 +77,12 @@ class UserManagement extends Component
     {
         $this->validate();
 
-        $user = User::create([
+        User::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'role' => $this->role,
+            'role_id' => $this->role_id,
         ]);
-
-        // Sync permissions (owner gets all by default, no need to store)
-        if ($this->role !== 'owner') {
-            $user->permissions()->sync($this->selectedPermissions);
-        }
 
         $this->closeModal();
 
@@ -111,9 +102,8 @@ class UserManagement extends Component
 
         $this->name = $user->name;
         $this->email = $user->email;
-        $this->role = $user->role;
+        $this->role_id = $user->role_id;
         $this->userId = $id;
-        $this->selectedPermissions = $user->permissions->pluck('id')->toArray();
 
         $this->modalType = 'update';
         $this->openModal();
@@ -124,7 +114,7 @@ class UserManagement extends Component
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->userId,
-            'role' => 'required|in:kasir,manajer,owner',
+            'role_id' => 'required|exists:roles,id',
         ];
 
         if ($this->password) {
@@ -137,7 +127,7 @@ class UserManagement extends Component
         $userData = [
             'name' => $this->name,
             'email' => $this->email,
-            'role' => $this->role,
+            'role_id' => $this->role_id,
         ];
 
         if ($this->password) {
@@ -145,13 +135,6 @@ class UserManagement extends Component
         }
 
         $user->update($userData);
-
-        // Sync permissions
-        if ($this->role !== 'owner') {
-            $user->permissions()->sync($this->selectedPermissions);
-        } else {
-            $user->permissions()->detach();
-        }
 
         $this->closeModal();
 
@@ -189,7 +172,42 @@ class UserManagement extends Component
             return;
         }
 
-        $user->permissions()->detach();
+        // Check related data
+        $relatedData = $user->getRelatedDataInfo();
+        if (!empty($relatedData)) {
+            $dataList = implode(', ', $relatedData);
+            $this->dispatchBrowserEvent('swal-confirm-delete', [
+                'title' => 'User Memiliki Data Terkait',
+                'text' => "User ini memiliki data: {$dataList}. User akan dinonaktifkan (soft delete) dan datanya tetap tersimpan. Lanjutkan?",
+                'userId' => $id,
+            ]);
+            return;
+        }
+
+        // No related data — show simple confirmation via SweetAlert
+        $this->dispatchBrowserEvent('swal-confirm-delete', [
+            'title' => 'Hapus User?',
+            'text' => "Yakin ingin menghapus user \"{$user->name}\"? Tindakan ini dapat dibatalkan.",
+            'userId' => $id,
+        ]);
+    }
+
+    /**
+     * Called from SweetAlert confirmation event.
+     */
+    public function confirmDeleteUser($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Re-validate permissions
+        if ($user->id === auth()->id()) {
+            return;
+        }
+        if ($user->role && strtolower($user->role->name) === 'owner' && !auth()->user()->isOwner()) {
+            return;
+        }
+
+        // Soft delete (permissions persist in roles, so no need to detach user permissions)
         $user->delete();
 
         $this->dispatchBrowserEvent('swal', [

@@ -16,8 +16,8 @@ class Permission extends Model
         'sort_order',
     ];
 
-    public function users()
+    public function roles()
     {
-        return $this->belongsToMany(User::class, 'user_permissions');
+        return $this->belongsToMany(Role::class, 'role_permissions');
     }
 }

@@ -4,7 +4,7 @@
         <div class="mb-0 border-b-0 border-solid">
             <h5 class="mb-1 font-serif">
                 @if($tabActive === 'inventory')
-                    Inventory
+                    Inventaris
                 @else
                     Riwayat Update Stok
                 @endif
@@ -19,7 +19,7 @@
                     <button
                         class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out text-slate-700 {{ $tabActive === 'inventory' ? 'bg-primary text-white' : '' }}"
                         wire:click="changeActiveTab('inventory')">
-                        <span class="ml-1">Inventory</span>
+                        <span class="ml-1">Inventaris</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
