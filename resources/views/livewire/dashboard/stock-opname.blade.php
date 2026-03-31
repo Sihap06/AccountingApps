@@ -79,8 +79,7 @@
                             @endif
 
                             @if(auth()->user()->isOwner())
-                                <button wire:click="cancelOpname" wire:loading.attr="disabled"
-                                    onclick="return confirm('Yakin ingin membatalkan stok opname ini?') || event.stopImmediatePropagation()"
+                                <button type="button" onclick="confirmCancelOpname()" wire:loading.attr="disabled"
                                     class="px-4 py-2 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all whitespace-nowrap disabled:opacity-50 flex items-center gap-1.5">
                                     <div wire:loading wire:target="cancelOpname">
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
@@ -436,3 +435,24 @@
         </div>
     @endif
 </div>
+
+@push('script')
+<script>
+    function confirmCancelOpname() {
+        Swal.fire({
+            title: 'Batalkan Opname?',
+            text: "Data dan progres pengecekan stok saat ini akan dibatalkan sepenuhnya. Lanjutkan?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Batalkan!',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                @this.cancelOpname();
+            }
+        });
+    }
+</script>
+@endpush
