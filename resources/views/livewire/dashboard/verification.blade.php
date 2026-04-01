@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center ">
         <div class=" mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Verifikasi Perubahan</h5>
+            <h5 class="mb-1 font-serif">Change Verification</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -19,7 +19,7 @@
                 <div
                     class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                     <div class="pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                        <h6 class="dark:text-white">Daftar Perubahan</h6>
+                        <h6 class="dark:text-white">Changes List</h6>
                         @if ($pendingCount > 0)
                             <span
                                 class="inline-block px-3 py-1 text-xs font-bold text-white bg-yellow-600 rounded-full">
@@ -40,27 +40,27 @@
                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                     </div>
                                 </div>
-                                Setujui {{ count($selectedChanges) }} Item
+                                Approve {{ count($selectedChanges) }} Items
                             </button>
                         @endif
 
                         {{-- Filter Status --}}
                         <select wire:model="statusFilter"
                             class="mb-4 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                            <option value="">Semua Status</option>
+                            <option value="">All Status</option>
                             <option value="pending">Pending</option>
-                            <option value="approved">Disetujui</option>
-                            <option value="rejected">Ditolak</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
                         </select>
 
                         {{-- Filter Type --}}
                         <select wire:model="typeFilter"
                             class="mb-4 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                            <option value="">Semua Tipe</option>
-                            <option value="App\Models\Product">Produk</option>
-                            <option value="App\Models\Transaction">Transaksi</option>
-                            <option value="App\Models\TransactionItem">Item Transaksi</option>
-                            <option value="App\Models\Expenditure">Pengeluaran</option>
+                            <option value="">All Types</option>
+                            <option value="App\Models\Product">Product</option>
+                            <option value="App\Models\Transaction">Transaction</option>
+                            <option value="App\Models\TransactionItem">Transaction Item</option>
+                            <option value="App\Models\Expenditure">Expenditure</option>
                         </select>
                     </div>
                 </div>
@@ -94,19 +94,19 @@
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Tipe
+                                        Type
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Aksi
+                                        Action
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Diminta Oleh
+                                        Requested By
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Tanggal
+                                        Date
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -114,7 +114,7 @@
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Verifikator
+                                        Verifier
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -142,10 +142,10 @@
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             @php
                                                 $typeMap = [
-                                                    'App\Models\Product' => 'Produk',
-                                                    'App\Models\Transaction' => 'Transaksi',
-                                                    'App\Models\TransactionItem' => 'Transaksi Item',
-                                                    'App\Models\Expenditure' => 'Pengeluaran',
+                                                    'App\Models\Product' => 'Product',
+                                                    'App\Models\Transaction' => 'Transaction',
+                                                    'App\Models\TransactionItem' => 'Transaction Item',
+                                                    'App\Models\Expenditure' => 'Expenditure',
                                                 ];
                                             @endphp
                                             <span
@@ -180,7 +180,7 @@
                                             <span
                                                 class="text-xs font-semibold leading-tight px-2 py-1 rounded-md text-white
                                                 {{ $change->status == 'pending' ? 'bg-yellow-600' : ($change->status == 'approved' ? 'bg-green-600' : 'bg-red-600') }}">
-                                                {{ $change->status == 'pending' ? 'Pending' : ($change->status == 'approved' ? 'Disetujui' : 'Ditolak') }}
+                                                {{ $change->status == 'pending' ? 'Pending' : ($change->status == 'approved' ? 'Approved' : 'Rejected') }}
                                             </span>
                                         </td>
                                         <td
@@ -215,7 +215,7 @@
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                Tidak ada data perubahan
+                                                No change data found
                                             </span>
                                         </td>
                                     </tr>
@@ -244,27 +244,27 @@
                     class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                            Detail Perubahan #{{ $selectedChange->id }}
+                            Change Details #{{ $selectedChange->id }}
                         </h3>
 
                         {{-- Info Section --}}
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div>
-                                <p class="text-sm text-gray-500">Tipe Data:</p>
+                                <p class="text-sm text-gray-500">Data Type:</p>
                                 <p class="text-sm font-semibold">
                                     @php
                                         $typeMap = [
-                                            'App\Models\Product' => 'Produk',
-                                            'App\Models\Transaction' => 'Transaksi',
-                                            'App\Models\TransactionItem' => 'Item Transaksi',
-                                            'App\Models\Expenditure' => 'Pengeluaran',
+                                            'App\Models\Product' => 'Product',
+                                            'App\Models\Transaction' => 'Transaction',
+                                            'App\Models\TransactionItem' => 'Transaction Item',
+                                            'App\Models\Expenditure' => 'Expenditure',
                                         ];
                                     @endphp
                                     {{ $typeMap[$selectedChange->changeable_type] ?? $selectedChange->changeable_type }}
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Aksi:</p>
+                                <p class="text-sm text-gray-500">Action:</p>
                                 <p class="text-sm font-semibold">
                                     <span
                                         class="px-2 py-1 rounded-md text-white text-xs
@@ -274,11 +274,11 @@
                                 </p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Diminta Oleh:</p>
+                                <p class="text-sm text-gray-500">Requested By:</p>
                                 <p class="text-sm font-semibold">{{ $selectedChange->requestedBy->name ?? '-' }}</p>
                             </div>
                             <div>
-                                <p class="text-sm text-gray-500">Tanggal Permintaan:</p>
+                                <p class="text-sm text-gray-500">Request Date:</p>
                                 <p class="text-sm font-semibold">
                                     {{ $selectedChange->requested_at->format('d/m/Y H:i:s') }}</p>
                             </div>
@@ -287,7 +287,7 @@
                         {{-- Reason Section --}}
                         @if ($selectedChange->reason)
                             <div class="mb-6">
-                                <h4 class="text-md font-semibold mb-2">Alasan Perubahan</h4>
+                                <h4 class="text-md font-semibold mb-2">Change Reason</h4>
                                 <div class="bg-gray-50 p-4 rounded-lg">
                                     <p class="text-sm text-gray-700">{{ $selectedChange->reason }}</p>
                                 </div>
@@ -296,16 +296,16 @@
 
                         {{-- Data Comparison --}}
                         <div class="mb-6">
-                            <h4 class="text-md font-semibold mb-3">Perbandingan Data</h4>
+                            <h4 class="text-md font-semibold mb-3">Data Comparison</h4>
 
                             @if ($selectedChange->action == 'create')
                                 <div class="bg-green-50 p-4 rounded-lg">
-                                    <h5 class="text-sm font-semibold text-green-800 mb-2">Data Baru</h5>
+                                    <h5 class="text-sm font-semibold text-green-800 mb-2">New Data</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->new_data as $key => $value)
                                             @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                 <div class="col-span-2">
-                                                    <span class="text-xs text-gray-600">Gambar:</span>
+                                                    <span class="text-xs text-gray-600">Image:</span>
                                                     <div class="mt-2">
                                                         <img src="{{ asset('storage/' . $value) }}" alt="Expenditure Image"
                                                             class="w-48 h-48 object-cover rounded-lg border cursor-pointer"
@@ -326,12 +326,12 @@
                             @elseif($selectedChange->action == 'update')
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="bg-yellow-50 p-4 rounded-lg">
-                                        <h5 class="text-sm font-semibold text-yellow-800 mb-2">Data Lama</h5>
+                                        <h5 class="text-sm font-semibold text-yellow-800 mb-2">Old Data</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->old_data as $key => $value)
                                                 @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                     <div class="{{ isset($selectedChange->new_data[$key]) && $selectedChange->new_data[$key] != $value ? 'text-red-600' : '' }}">
-                                                        <span class="text-xs text-gray-600">Gambar:</span>
+                                                        <span class="text-xs text-gray-600">Image:</span>
                                                         <div class="mt-2">
                                                             <img src="{{ asset('storage/' . $value) }}" alt="Old Expenditure Image"
                                                                 class="w-32 h-32 object-cover rounded-lg border cursor-pointer"
@@ -351,12 +351,12 @@
                                         </div>
                                     </div>
                                     <div class="bg-green-50 p-4 rounded-lg">
-                                        <h5 class="text-sm font-semibold text-green-800 mb-2">Data Baru</h5>
+                                        <h5 class="text-sm font-semibold text-green-800 mb-2">New Data</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->new_data as $key => $value)
                                                 @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                     <div class="{{ isset($selectedChange->old_data[$key]) && $selectedChange->old_data[$key] != $value ? 'text-green-600' : '' }}">
-                                                        <span class="text-xs text-gray-600">Gambar:</span>
+                                                        <span class="text-xs text-gray-600">Image:</span>
                                                         <div class="mt-2">
                                                             <img src="{{ asset('storage/' . $value) }}" alt="New Expenditure Image"
                                                                 class="w-32 h-32 object-cover rounded-lg border cursor-pointer"
@@ -378,12 +378,12 @@
                                 </div>
                             @elseif($selectedChange->action == 'delete')
                                 <div class="bg-red-50 p-4 rounded-lg">
-                                    <h5 class="text-sm font-semibold text-red-800 mb-2">Data yang Akan Dihapus</h5>
+                                    <h5 class="text-sm font-semibold text-red-800 mb-2">Data to be Deleted</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->old_data as $key => $value)
                                             @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                 <div class="col-span-2">
-                                                    <span class="text-xs text-gray-600">Gambar:</span>
+                                                    <span class="text-xs text-gray-600">Image:</span>
                                                     <div class="mt-2">
                                                         <img src="{{ asset('storage/' . $value) }}" alt="Expenditure Image to Delete"
                                                             class="w-48 h-48 object-cover rounded-lg border cursor-pointer"
@@ -408,18 +408,18 @@
                         @if ($selectedChange->isPending())
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Catatan Persetujuan
-                                        (Opsional)</label>
+                                    <label class="text-sm font-medium text-gray-700">Approval Notes
+                                        (Optional)</label>
                                     <textarea wire:model="verificationNotes" rows="3"
                                         class="mt-1 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                        placeholder="Masukkan catatan jika diperlukan..."></textarea>
+                                        placeholder="Enter notes if needed..."></textarea>
                                 </div>
                                 <div>
-                                    <label class="text-sm font-medium text-gray-700">Alasan Penolakan <span
+                                    <label class="text-sm font-medium text-gray-700">Rejection Reason <span
                                             class="text-red-500">*</span></label>
                                     <textarea wire:model="rejectNotes" rows="3"
                                         class="mt-1 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                        placeholder="Masukkan alasan penolakan..."></textarea>
+                                        placeholder="Enter rejection reason..."></textarea>
                                 </div>
                             </div>
                         @endif
@@ -436,7 +436,7 @@
                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                     </div>
                                 </div>
-                                <span wire:loading.remove wire:target='approve'>Setujui</span>
+                                <span wire:loading.remove wire:target='approve'>Approve</span>
                             </button>
                             <button type="button" onclick="confirmReject()"
                                 class="mt-3 w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
@@ -447,12 +447,12 @@
                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                     </div>
                                 </div>
-                                <span wire:loading.remove wire:target='reject'>Tolak</span>
+                                <span wire:loading.remove wire:target='reject'>Reject</span>
                             </button>
                         @endif
                         <button wire:click="closeDetail"
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Tutup
+                            Close
                         </button>
                     </div>
                 </div>
@@ -475,14 +475,14 @@
 <script>
     function confirmApprove() {
         Swal.fire({
-            title: 'Konfirmasi Persetujuan',
-            text: "Apakah Anda yakin ingin menyetujui perubahan ini?",
+            title: 'Confirm Approval',
+            text: "Are you sure you want to approve this change?",
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#10b981',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Setujui!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: 'Yes, Approve!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 @this.approve();
@@ -495,8 +495,8 @@
 
         if (!rejectNotes.trim()) {
             Swal.fire({
-                title: 'Peringatan!',
-                text: 'Alasan penolakan harus diisi!',
+                title: 'Warning!',
+                text: 'Rejection reason is required!',
                 icon: 'warning',
                 confirmButtonColor: '#ef4444'
             });
@@ -504,14 +504,14 @@
         }
 
         Swal.fire({
-            title: 'Konfirmasi Penolakan',
-            text: "Apakah Anda yakin ingin menolak perubahan ini?",
+            title: 'Confirm Rejection',
+            text: "Are you sure you want to reject this change?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Tolak!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: 'Yes, Reject!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 @this.reject();
@@ -522,14 +522,14 @@
     function confirmBulkApprove() {
         const count = @this.selectedChanges.length;
         Swal.fire({
-            title: 'Konfirmasi Persetujuan Massal',
-            text: `Apakah Anda yakin ingin menyetujui ${count} perubahan yang dipilih?`,
+            title: 'Confirm Bulk Approval',
+            text: `Are you sure you want to approve ${count} selected changes?`,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#10b981',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: `Ya, Setujui ${count} Item!`,
-            cancelButtonText: 'Batal'
+            confirmButtonText: `Yes, Approve ${count} Items!`,
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 @this.bulkApprove();

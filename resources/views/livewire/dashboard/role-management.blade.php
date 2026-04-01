@@ -1,7 +1,7 @@
 <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
     <div class="flex justify-between items-center">
         <div class="mb-0 border-b-0 border-solid">
-            <h5 class="mb-1 font-serif">Manajemen Peran</h5>
+            <h5 class="mb-1 font-serif">Role Management</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -21,15 +21,15 @@
                             <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                 role="status">
                                 <span
-                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
                         </div>
-                        Tambah Role
+                        Add Role
                     </button>
                     <div class="flex w-full md:w-4/12 items-center gap-x-3">
                         <input type="text" wire:model.debounce.500ms="searchTerm"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                            placeholder="Cari nama role..." />
+                            placeholder="Search role name..." />
                     </div>
                 </div>
 
@@ -44,19 +44,19 @@
                                         No</th>
                                     <th
                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Nama Role</th>
+                                        Role Name</th>
                                     <th
                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Deskripsi</th>
+                                        Description</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Izin Diberikan</th>
+                                        Permissions Granted</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Digunakan</th>
+                                        Used By</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Aksi</th>
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,14 +94,14 @@
                                                 </span>
                                             @else
                                                 <span class="text-xs px-2 py-1 bg-gray-100 rounded-md text-gray-600 font-bold border border-gray-200">
-                                                    {{ $role->permissions->count() }} Modul
+                                                    {{ $role->permissions->count() }} Modules
                                                 </span>
                                             @endif
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-blue-500">
-                                                {{ $role->users()->count() }} User
+                                                {{ $role->users()->count() }} Users
                                             </span>
                                         </td>
                                         <td
@@ -110,8 +110,8 @@
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400 disabled:opacity-50"
                                                 wire:loading.attr="disabled"
                                                 wire:target="edit({{ $role->id }})">
-                                                <span wire:loading.remove wire:target="edit({{ $role->id }})">Edit Akses</span>
-                                                <span wire:loading wire:target="edit({{ $role->id }})">Memuat...</span>
+                                                <span wire:loading.remove wire:target="edit({{ $role->id }})">Edit Access</span>
+                                                <span wire:loading wire:target="edit({{ $role->id }})">Loading...</span>
                                             </button>
                                             
                                             @if(!in_array(strtolower($role->name), ['owner', 'manajer', 'kasir']))
@@ -120,8 +120,8 @@
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-red-500 disabled:opacity-50"
                                                     wire:loading.attr="disabled"
                                                     wire:target="delete({{ $role->id }})">
-                                                    <span wire:loading.remove wire:target="delete({{ $role->id }})">Hapus</span>
-                                                    <span wire:loading wire:target="delete({{ $role->id }})">Memproses...</span>
+                                                    <span wire:loading.remove wire:target="delete({{ $role->id }})">Delete</span>
+                                                    <span wire:loading wire:target="delete({{ $role->id }})">Processing...</span>
                                                 </button>
                                             @endif
                                         </td>
@@ -132,7 +132,7 @@
 
                         @if ($roles->isEmpty())
                             <div class="text-center py-8">
-                                <p class="text-gray-500">Data role kosong / tidak ditemukan</p>
+                                <p class="text-gray-500">No roles found</p>
                             </div>
                         @endif
                     </div>
@@ -158,28 +158,28 @@
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                                    {{ $modalType === 'store' ? 'Tambah Role Baru' : 'Pengaturan Akses Role' }}
+                                    {{ $modalType === 'store' ? 'Add New Role' : 'Role Access Settings' }}
                                 </h3>
 
                                 <form class="space-y-4">
                                     <div>
                                         <x-ui.input-default
-                                            label="Nama Spesifik Role"
+                                            label="Specific Role Name"
                                             name="name"
                                             type="text"
                                             wire:model="name"
-                                            placeholder="Contoh: Admin Gudang"
+                                            placeholder="Example: Warehouse Admin"
                                             :error="$errors->first('name')"
                                             :required="true" />
                                     </div>
 
                                     <div>
                                         <x-ui.input-default
-                                            label="Deskripsi / Tugas Singkat"
+                                            label="Description / Brief Tasks"
                                             name="description"
                                             type="text"
                                             wire:model="description"
-                                            placeholder="Memberikan akses full terhadap pendataan gudang"
+                                            placeholder="Grant full access to warehouse data management"
                                             :error="$errors->first('description')"
                                             :required="false" />
                                     </div>
@@ -188,7 +188,7 @@
                                     @if(strtolower($name) !== 'owner')
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-3 mt-4">
-                                                Set Perizinan Fitur
+                                                Set Feature Permissions
                                             </label>
                                             <div class="bg-gray-50 rounded-lg p-4 space-y-4 max-h-64 overflow-y-auto border border-gray-100">
                                                 @foreach($allPermissions as $group => $permissions)
@@ -209,14 +209,14 @@
                                                 @endforeach
                                             </div>
                                             <p class="text-xs text-gray-400 mt-2">
-                                                <i class="fas fa-info-circle mr-1"></i> User yang ditempatkan pada Role ini hanya akan memiliki akses terhadap fitur yang dicentang.
+                                                <i class="fas fa-info-circle mr-1"></i> Users assigned to this Role will only have access to the checked features.
                                             </p>
                                         </div>
                                     @else
                                         <div class="bg-purple-50 rounded-lg p-3 mt-4 border border-purple-100">
                                             <p class="text-sm text-purple-700">
                                                 <i class="fas fa-crown text-amber-400 mr-2 text-lg"></i>
-                                                Akses fitur otomatis terbuka <b>100% full</b> untuk Sistem Role tipe <b>Owner</b>!
+                                                Feature access is automatically <b>100% full</b> for the <b>Owner</b> Role type!
                                             </p>
                                         </div>
                                     @endif
@@ -230,15 +230,15 @@
                             wire:loading.attr="disabled"
                             wire:target="store, update">
                             <span wire:loading.remove wire:target="store, update">
-                                {{ $modalType === 'store' ? 'Simpan Baru' : 'Simpan Pembaharuan' }}
+                                {{ $modalType === 'store' ? 'Save New' : 'Save Changes' }}
                             </span>
                             <span wire:loading wire:target="store, update">
-                                Menyimpan...
+                                Saving...
                             </span>
                         </button>
                         <button type="button" wire:click='closeModal'
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Batal
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -256,8 +256,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus',
-                cancelButtonText: 'Batal',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
                 reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {

@@ -1,7 +1,7 @@
 <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
     <div class="flex justify-between items-center">
         <div class="mb-0 border-b-0 border-solid">
-            <h5 class="mb-1 font-serif">Manajemen Pengguna</h5>
+            <h5 class="mb-1 font-serif">User Management</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -21,15 +21,15 @@
                             <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                 role="status">
                                 <span
-                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
                         </div>
-                        Tambah Pengguna
+                        Add User
                     </button>
                     <div class="flex w-full md:w-4/12 items-center gap-x-3">
                         <input type="text" wire:model.debounce.500ms="searchTerm"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                            placeholder="Cari nama atau email" />
+                            placeholder="Search name or email" />
                     </div>
                 </div>
 
@@ -44,7 +44,7 @@
                                         No</th>
                                     <th
                                         class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Nama</th>
+                                        Name</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Email</th>
@@ -53,7 +53,7 @@
                                         Role</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Dibuat</th>
+                                        Created</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
@@ -114,7 +114,7 @@
                                                 wire:loading.attr="disabled"
                                                 wire:target="edit({{ $user->id }})">
                                                 <span wire:loading.remove wire:target="edit({{ $user->id }})">Edit</span>
-                                                <span wire:loading wire:target="edit({{ $user->id }})">Memuat...</span>
+                                                <span wire:loading wire:target="edit({{ $user->id }})">Loading...</span>
                                             </button>
                                             @if($user->id !== auth()->id())
                                                 <span class="mx-2">|</span>
@@ -122,8 +122,8 @@
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-red-500 disabled:opacity-50"
                                                     wire:loading.attr="disabled"
                                                     wire:target="delete({{ $user->id }})">
-                                                    <span wire:loading.remove wire:target="delete({{ $user->id }})">Hapus</span>
-                                                    <span wire:loading wire:target="delete({{ $user->id }})">Memproses...</span>
+                                                    <span wire:loading.remove wire:target="delete({{ $user->id }})">Delete</span>
+                                                    <span wire:loading wire:target="delete({{ $user->id }})">Processing...</span>
                                                 </button>
                                             @endif
                                         </td>
@@ -134,7 +134,7 @@
 
                         @if ($users->isEmpty())
                             <div class="text-center py-8">
-                                <p class="text-gray-500">Tidak ada user ditemukan</p>
+                                <p class="text-gray-500">No users found</p>
                             </div>
                         @endif
                     </div>
@@ -162,17 +162,17 @@
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">
-                                    {{ $modalType === 'store' ? 'Tambah User Baru' : 'Edit User' }}
+                                    {{ $modalType === 'store' ? 'Add New User' : 'Edit User' }}
                                 </h3>
 
                                 <form class="space-y-4">
                                     <div>
                                         <x-ui.input-default
-                                            label="Nama"
+                                            label="Name"
                                             name="name"
                                             type="text"
                                             wire:model="name"
-                                            placeholder="Masukkan nama user"
+                                            placeholder="Enter user name"
                                             :error="$errors->first('name')"
                                             :required="true" />
                                     </div>
@@ -190,7 +190,7 @@
 
                                     <div>
                                         <x-ui.input-default
-                                            label="Password{{ $modalType === 'update' ? ' (Kosongkan jika tidak diubah)' : '' }}"
+                                            label="Password{{ $modalType === 'update' ? ' (Leave blank if unchanged)' : '' }}"
                                             name="password"
                                             type="password"
                                             wire:model="password"
@@ -201,7 +201,7 @@
 
                                     <div>
                                         <x-ui.input-default
-                                            label="Konfirmasi Password"
+                                            label="Confirm Password"
                                             name="password_confirmation"
                                             type="password"
                                             wire:model="password_confirmation"
@@ -215,7 +215,7 @@
                                         </label>
                                         <select wire:model="role_id"
                                             class="focus:shadow-primary-outline text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
-                                            <option value="">Pilih Role...</option>
+                                            <option value="">Select Role...</option>
                                             @foreach($roles as $r)
                                                 <option value="{{ $r->id }}">{{ $r->name }}</option>
                                             @endforeach
@@ -235,20 +235,20 @@
                             <div wire:loading wire:target="{{ $modalType === 'store' ? 'store' : 'update' }}" class="mr-2">
                                 <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                     role="status">
-                                    <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                    <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                 </div>
                             </div>
                             <span wire:loading.remove wire:target="{{ $modalType === 'store' ? 'store' : 'update' }}">
-                                {{ $modalType === 'store' ? 'Buat User' : 'Perbarui User' }}
+                                {{ $modalType === 'store' ? 'Create User' : 'Update User' }}
                             </span>
                             <span wire:loading wire:target="{{ $modalType === 'store' ? 'store' : 'update' }}">
-                                Menyimpan...
+                                Saving...
                             </span>
                         </button>
                         <button type="button" wire:click='closeModal'
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                             wire:loading.attr="disabled" wire:target="{{ $modalType === 'store' ? 'store' : 'update' }}">
-                            Batal
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -266,8 +266,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: 'Ya, Hapus',
-                cancelButtonText: 'Batal',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
                 reverseButtons: true,
             }).then((result) => {
                 if (result.isConfirmed) {

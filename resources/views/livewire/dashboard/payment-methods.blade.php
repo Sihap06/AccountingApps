@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center">
         <div class="mb-0 border-b-0 border-solid">
-            <h5 class="mb-1 font-serif">Metode Pembayaran</h5>
+            <h5 class="mb-1 font-serif">Payment Methods</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -19,18 +19,18 @@
                 <div
                     class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                     <div class="pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                        <h6 class="dark:text-white">Daftar Metode Pembayaran</h6>
+                        <h6 class="dark:text-white">Payment Methods List</h6>
                     </div>
                     <div class="flex items-center gap-x-3">
                         {{-- Add Button --}}
                         <button type="button" wire:click="create()"
                             class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-gradient-to-tl from-blue-500 to-violet-500 bg-150 hover:shadow-xs hover:-translate-y-px">
                             <i class="fas fa-plus mr-2"></i>
-                            Tambah Metode
+                            Add Method
                         </button>
 
                         {{-- Search Input --}}
-                        <input type="text" wire:model="search" placeholder="Cari kode atau nama..."
+                        <input type="text" wire:model="search" placeholder="Search code or name..."
                             class="mb-4 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                     </div>
                 </div>
@@ -63,19 +63,19 @@
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Kode
+                                        Code
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Nama
+                                        Name
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Tanggal Dibuat
+                                        Created Date
                                     </th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Aksi
+                                        Actions
                                     </th>
                                 </tr>
                             </thead>
@@ -120,7 +120,7 @@
                                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                         role="status">
                                                         <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
                                             </button>
@@ -132,7 +132,7 @@
                                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                         role="status">
                                                         <span
-                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
                                             </button>
@@ -144,7 +144,7 @@
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                Tidak ada data metode pembayaran
+                                                No payment methods found
                                             </span>
                                         </td>
                                     </tr>
@@ -174,26 +174,26 @@
                     <form>
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                                {{ $paymentMethodId ? 'Edit' : 'Tambah' }} Metode Pembayaran
+                                {{ $paymentMethodId ? 'Edit' : 'Add' }} Payment Method
                             </h3>
                             <div class="mb-4">
                                 <label for="code" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Kode <span class="text-red-500">*</span>
+                                    Code <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="code" id="code"
                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                    placeholder="Masukkan kode metode pembayaran">
+                                    placeholder="Enter payment method code">
                                 @error('code')
                                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="mb-4">
                                 <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Nama <span class="text-red-500">*</span>
+                                    Name <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" wire:model="name" id="name"
                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                    placeholder="Masukkan nama metode pembayaran">
+                                    placeholder="Enter payment method name">
                                 @error('name')
                                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                                 @enderror
@@ -207,15 +207,15 @@
                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                         role="status">
                                         <span
-                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                            class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                     </div>
                                 </div>
                                 <span wire:loading.remove
-                                    wire:target="{{ $paymentMethodId ? 'update' : 'store' }}">{{ $paymentMethodId ? 'Perbarui' : 'Simpan' }}</span>
+                                    wire:target="{{ $paymentMethodId ? 'update' : 'store' }}">{{ $paymentMethodId ? 'Update' : 'Save' }}</span>
                             </button>
                             <button type="button" wire:click="closeModal()"
                                 class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                                Batal
+                                Cancel
                             </button>
                         </div>
                     </form>
@@ -228,14 +228,14 @@
 <script>
     function confirmDelete(id) {
         Swal.fire({
-            title: 'Konfirmasi Hapus',
-            text: "Apakah Anda yakin ingin menghapus metode pembayaran ini?",
+            title: 'Confirm Delete',
+            text: "Are you sure you want to delete this payment method?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal'
+            confirmButtonText: 'Yes, Delete!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 @this.delete(id);

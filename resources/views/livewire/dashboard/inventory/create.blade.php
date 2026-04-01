@@ -18,20 +18,20 @@
                    class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border p-6">
 
                    <div class="text-center mb-2">
-                       <p class="font-serif">Tambah Inventaris Baru</p>
+                       <p class="font-serif">Add New Inventory</p>
                    </div>
 
                    <div class="flex-auto px-0 pt-0 pb-2">
                        <form wire:submit.prevent="store">
                            <!--E-mail input-->
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="name" label="Nama" />
+                               <x-ui.input-default wire:model="name" label="Name" />
                                @error('name')
                                    <div class="text-red-500 text-sm">{{ $message }}</div>
                                @enderror
                            </div>
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="harga" id="harga" label="Harga Beli"
+                               <x-ui.input-default wire:model="harga" id="harga" label="Purchase Price"
                                    x-data="{
                                        formatNumber: function(event) {
                                            const input = event.target;
@@ -44,7 +44,7 @@
                                @enderror
                            </div>
                            <div class="relative mb-8">
-                               <x-ui.input-default wire:model="stok" id="stok" label="Stok"
+                               <x-ui.input-default wire:model="stok" id="stok" label="Stock"
                                    x-data="{
                                        formatNumber: function(event) {
                                            const input = event.target;
@@ -61,10 +61,10 @@
                                <a href="{{ route('dashboard.inventory.index') }}"
                                    class="flex w-full justify-center gap-x-2 items-center rounded bg-gray-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-gray-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
 
-                                   Kembali
+                                   Back
                                </a>
 
-                               <x-ui.button type="submit" title="Simpan" color="primary" wireLoading
+                               <x-ui.button type="submit" title="Save" color="primary" wireLoading
                                    formAction="store" />
                            </div>
                        </form>

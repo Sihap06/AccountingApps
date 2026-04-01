@@ -36,7 +36,7 @@
                                 class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                         </div>
                     </div>
-                    {{ $isAdd || $isEdit ? 'Batal' : 'Tambah' }}
+                    {{ $isAdd || $isEdit ? 'Cancel' : 'Add' }}
                 </button>
             </div>
         </div>
@@ -47,11 +47,11 @@
                         <tr>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                Tanggal
+                                Date
                             </th>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                Jenis
+                                Type
                             </th>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -59,7 +59,7 @@
                             </th>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                Gambar
+                                Image
                             </th>
                             <th
                                 class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-collapse border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -162,7 +162,7 @@
             <div class="w-full p-6">
                 <form wire:submit.prevent="{{ $isAdd ? 'store' : 'update' }}">
                     <div class="relative mb-8">
-                        <x-ui.input-default wire:model="tanggal" label="Tanggal" type="date" />
+                        <x-ui.input-default wire:model="tanggal" label="Date" type="date" />
 
                         @error('tanggal')
                             <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -170,7 +170,7 @@
 
                     </div>
                     <div class="relative mb-8">
-                        <x-ui.input-default wire:model="jenis" label="Jenis" />
+                        <x-ui.input-default wire:model="jenis" label="Type" />
                         @error('jenis')
                             <div class="text-red-500 text-sm">{{ $message }}</div>
                         @enderror
@@ -194,10 +194,10 @@
                     {{-- Image Upload Field --}}
                     <div class="relative mb-8">
                         <label class="block text-gray-700 dark:text-white text-sm font-bold mb-2">
-                            Gambar (Opsional)
+                            Image (Optional)
                         </label>
                         <p class="text-xs text-gray-500 mb-2">
-                            Max 10MB. Gambar akan dikompres otomatis untuk menghemat ruang penyimpanan.
+                            Max 10MB. Image will be automatically compressed to save storage space.
                         </p>
 
                         {{-- Show existing image if editing --}}
@@ -207,7 +207,7 @@
                                     class="w-full h-32 object-cover rounded-lg border">
                                 <button type="button" wire:click="removeImage"
                                     class="mt-2 px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600">
-                                    Hapus Gambar
+                                    Remove Image
                                 </button>
                             </div>
                         @endif
@@ -222,7 +222,7 @@
                             <div class="flex items-center text-blue-500">
                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                     role="status"></div>
-                                <span class="ml-2 text-xs">Mengupload dan mengkompres gambar...</span>
+                                <span class="ml-2 text-xs">Uploading and compressing image...</span>
                             </div>
                         </div>
 
@@ -261,17 +261,17 @@
                     <div>
                         <div class="mt-3 sm:mt-5">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Alasan Perubahan
+                                Change Reason
                             </h3>
                             <div class="flex-auto px-0 pt-0 pb-2">
                                 <form wire:submit.prevent="submitReason">
                                     <div class="relative mb-8 mt-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2">
-                                            Masukkan alasan perubahan <span class="text-red-500">*</span>
+                                            Enter change reason <span class="text-red-500">*</span>
                                         </label>
                                         <textarea wire:model="reason" rows="4"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                            placeholder="Jelaskan mengapa perubahan ini diperlukan..."></textarea>
+                                            placeholder="Explain why this change is needed..."></textarea>
                                         @error('reason')
                                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                                         @enderror
@@ -287,7 +287,7 @@
                                                         class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                 </div>
                                             </div>
-                                            Batal
+                                            Cancel
                                         </button>
 
                                         <x-ui.button type="submit" title="Submit" color="primary" wireLoading

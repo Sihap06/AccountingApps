@@ -2,7 +2,7 @@
     <div
         class="flex items-center justify-between rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Laporan</h5>
+            <h5 class="mb-1 font-serif">Reports</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -14,7 +14,7 @@
                     <button
                         class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'transaction' ? 'bg-primary text-white' : '' }}"
                         nav-link wire:click="changeActiveTab('transaction')">
-                        <span class="ml-1">Transaksi</span>
+                        <span class="ml-1">Transaction</span>
                     </button>
                 </li>
                 @endif
@@ -23,7 +23,7 @@
                     <button
                         class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'expenditure' ? 'bg-primary text-white' : '' }}"
                         nav-link wire:click="changeActiveTab('expenditure')">
-                        <span class="ml-1">Pengeluaran</span>
+                        <span class="ml-1">Expenditure</span>
                     </button>
                 </li>
                 @endif
@@ -32,7 +32,7 @@
                         <button
                             class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'income' ? 'bg-primary text-white' : '' }}"
                             nav-link wire:click="changeActiveTab('income')">
-                            <span class="ml-1">Pendapatan & Fee</span>
+                            <span class="ml-1">Income & Fee</span>
                         </button>
                     </li>
                 @endif
@@ -41,7 +41,7 @@
                         <button
                             class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'export' ? 'bg-primary text-white' : '' }}"
                             nav-link wire:click="changeActiveTab('export')">
-                            <span class="ml-1">Ekspor Data</span>
+                            <span class="ml-1">Export Data</span>
                         </button>
                     </li>
                 @endif
@@ -55,7 +55,7 @@
             <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                 role="status">
                 <span
-                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
             </div>
         </div>
 
@@ -81,8 +81,8 @@
         @else
             <div class="w-full text-center py-10 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center h-64">
                 <i class="fas fa-lock text-gray-300 text-4xl mb-4"></i>
-                <h3 class="text-gray-500 font-bold mb-2">Akses Laporan Dibatasi</h3>
-                <p class="text-gray-400 text-sm">Anda tidak memiliki izin untuk melihat modul laporan ini.</p>
+                <h3 class="text-gray-500 font-bold mb-2">Report Access Restricted</h3>
+                <p class="text-gray-400 text-sm">You do not have permission to view this reporting module.</p>
             </div>
         @endif
 

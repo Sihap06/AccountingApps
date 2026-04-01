@@ -57,10 +57,10 @@ class Inventory extends Component
     ];
 
     protected $messages = [
-        'name.required' => 'Nama produk harus diisi',
-        'harga.required' => 'Harga produk harus diisi',
-        'harga_jual.required' => 'Harga jual produk harus diisi',
-        'stok.required' => 'Stok produk harus diisi'
+        'name.required' => 'Product name is required',
+        'harga.required' => 'Product capital price is required',
+        'harga_jual.required' => 'Product selling price is required',
+        'stok.required' => 'Product stock is required'
     ];
 
     public function updated($propertyName)
@@ -119,7 +119,7 @@ class Inventory extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => "Perubahan berhasil disimpan dan menunggu verifikasi.",
+                'text' => "Changes saved successfully and awaiting verification.",
                 'icon' => 'info'
             ]);
         } else {
@@ -328,8 +328,8 @@ class Inventory extends Component
         $this->validate([
             'reason' => 'required|min:5'
         ], [
-            'reason.required' => 'Alasan harus diisi',
-            'reason.min' => 'Alasan minimal 5 karakter'
+            'reason.required' => 'Reason is required',
+            'reason.min' => 'Reason must be at least 5 characters'
         ]);
 
         if ($this->pendingAction === 'update') {
@@ -350,7 +350,7 @@ class Inventory extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => "Perubahan berhasil disimpan dan menunggu verifikasi.",
+                'text' => "Changes saved successfully and awaiting verification.",
                 'icon' => 'info'
             ]);
         } elseif ($this->pendingAction === 'delete') {
@@ -371,7 +371,7 @@ class Inventory extends Component
 
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Success',
-                'text' => "Permintaan penghapusan berhasil disimpan dan menunggu verifikasi.",
+                'text' => "Delete request saved successfully and awaiting verification.",
                 'icon' => 'info'
             ]);
         }
@@ -443,8 +443,8 @@ class Inventory extends Component
         }
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Stok Dikembalikan',
-            'text' => "Stok produk berhasil ditambah {$return->quantity} unit.",
+            'title' => 'Stock Restored',
+            'text' => "Product stock successfully increased by {$return->quantity} units.",
             'icon' => 'success'
         ]);
     }
@@ -468,8 +468,8 @@ class Inventory extends Component
         }
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Return Dihapus',
-            'text' => 'Data return berhasil dihapus.',
+            'title' => 'Return Deleted',
+            'text' => 'Return data successfully deleted.',
             'icon' => 'success'
         ]);
     }
@@ -542,15 +542,15 @@ class Inventory extends Component
         ];
 
         $messages = [
-            'stockUpdateItems.required' => 'Pilih minimal 1 produk.',
-            'stockUpdateItems.min' => 'Pilih minimal 1 produk.',
-            'stockUpdateItems.*.qty_added.required' => 'Jumlah wajib diisi.',
-            'stockUpdateItems.*.qty_added.integer' => 'Jumlah harus angka.',
-            'stockUpdateItems.*.qty_added.min' => 'Jumlah minimal 1.',
-            'stockUpdateItems.*.purchase_price.required' => 'Harga beli wajib diisi.',
-            'stockUpdateNota.required' => 'Upload nota wajib diisi.',
-            'stockUpdateNota.image' => 'File harus berupa gambar.',
-            'stockUpdateNota.max' => 'Ukuran file maksimal 5MB.',
+            'stockUpdateItems.required' => 'Select at least 1 product.',
+            'stockUpdateItems.min' => 'Select at least 1 product.',
+            'stockUpdateItems.*.qty_added.required' => 'Quantity is required.',
+            'stockUpdateItems.*.qty_added.integer' => 'Quantity must be a number.',
+            'stockUpdateItems.*.qty_added.min' => 'Minimum quantity is 1.',
+            'stockUpdateItems.*.purchase_price.required' => 'Purchase price is required.',
+            'stockUpdateNota.required' => 'Receipt upload is required.',
+            'stockUpdateNota.image' => 'File must be an image.',
+            'stockUpdateNota.max' => 'Max file size is 5MB.',
         ];
 
         $this->validate($rules, $messages);
@@ -620,8 +620,8 @@ class Inventory extends Component
         }
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Stok Diperbarui',
-            'text' => 'Stok produk berhasil ditambahkan.',
+            'title' => 'Stock Updated',
+            'text' => 'Product stock successfully added.',
             'icon' => 'success'
         ]);
     }

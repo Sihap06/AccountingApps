@@ -98,7 +98,7 @@ class StockUpdateHistory extends Component
         }
 
         $monthName = \Carbon\Carbon::createFromFormat('m', $this->filterMonth)->translatedFormat('F');
-        $filename = "riwayat-update-stok-{$monthName}-{$this->filterYear}.xlsx";
+        $filename = "stock-update-history-{$monthName}-{$this->filterYear}.xlsx";
 
         return Excel::download(new StockUpdateExport($rows, $this->filterMonth, $this->filterYear), $filename);
     }

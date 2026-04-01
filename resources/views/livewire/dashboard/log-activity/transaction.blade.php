@@ -13,7 +13,7 @@
                                     No</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Tanggal</th>
+                                    Date</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     User</th>
@@ -65,78 +65,78 @@
                                             <ul>
                                                 @if ($item->old_customer !== null && $item->new_customer !== null)
                                                     <li>
-                                                        Mengganti customer dari <span
+                                                        Changed customer from <span
                                                             class="uppercase font-semibold">{{ $item->old_customer }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_customer }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_payment_method !== null && $item->new_payment_method !== null)
                                                     <li>
-                                                        Mengganti metode pembayaran dari <span
+                                                        Changed payment method from <span
                                                             class="uppercase font-semibold">{{ $item->old_payment_method }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_payment_method }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
                                                     <li>
-                                                        Mengubah tanggal transaksi dari <span
+                                                        Changed transaction date from <span
                                                             class="uppercase font-semibold">{{ $item->old_tanggal }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_tanggal }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_service !== null && $item->new_service !== null)
                                                     <li>
-                                                        Mengubah service dari <span
+                                                        Changed service from <span
                                                             class="uppercase font-semibold">{{ $item->old_service }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_service }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_biaya !== null && $item->new_biaya !== null)
                                                     <li>
-                                                        Mengubah biaya dari <span
+                                                        Changed cost from <span
                                                             class="uppercase font-semibold">{{ number_format($item->old_biaya) }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ number_format($item->new_biaya) }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_teknisi !== null && $item->new_teknisi !== null)
                                                     <li>
-                                                        Mengubah teknisi dari <span
+                                                        Changed technician from <span
                                                             class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_teknisi !== null && $item->new_teknisi === null)
                                                     <li>
-                                                        Menghapus teknisi <span
+                                                        Removed technician <span
                                                             class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_sparepart !== null && $item->new_sparepart !== null)
                                                     <li>
-                                                        Mengubah sparepart dari <span
+                                                        Changed sparepart from <span
                                                             class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
-                                                        menjadi
+                                                        to
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
                                                     </li>
                                                 @endif
                                                 @if ($item->old_teknisi !== null && $item->new_sparepart !== null)
                                                     <li>
-                                                        Menghapus teknisi <span
+                                                        Removed technician <span
                                                             class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
-                                                        dan menambahkan
+                                                        and added
                                                         sparepart
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
@@ -144,10 +144,10 @@
                                                 @endif
                                                 @if ($item->new_teknisi !== null && $item->old_sparepart !== null)
                                                     <li>
-                                                        Menghapus sparepart <span
+                                                        Removed sparepart <span
                                                             class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
-                                                        dan menambahkan
-                                                        teknisi
+                                                        and added
+                                                        technician
                                                         <span
                                                             class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
                                                     </li>

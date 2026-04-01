@@ -11,10 +11,10 @@
                             <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                 role="status">
                                 <span
-                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                    class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
                         </div>
-                        <span>Inventaris Baru</span>
+                        <span>New Inventory</span>
                     </button>
                     <button wire:click='openStockUpdateModal' type="button"
                         class="px-6 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-green-600 hover:shadow-xs hover:-translate-y-px flex items-center gap-x-2">
@@ -23,20 +23,20 @@
                                 role="status"></div>
                         </div>
                         <i class="fas fa-boxes" wire:loading.remove wire:target='openStockUpdateModal'></i>
-                        <span>Update Stok</span>
+                        <span>Update Stock</span>
                     </button>
                 </div>
                 <div class="flex w-full md:w-4/12 items-center gap-x-3">
                     <input type="text" wire:model.debounce.500ms="searchTerm"
                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                        placeholder="Masukkan nama atau kode" />
+                        placeholder="Enter name or code" />
                 </div>
             </div>
 
             @if($readyToLoad && count($data) > 0)
                 <div class="px-6 pt-4">
                     <div class="inline-flex items-center gap-2 bg-blue-50 rounded-lg px-4 py-2">
-                        <span class="text-xs font-semibold text-blue-700">Total Modal:</span>
+                        <span class="text-xs font-semibold text-blue-700">Total Capital:</span>
                         <span class="text-sm font-bold text-blue-800">Rp {{ number_format($data->sum(function($item) { return ($item['harga'] ?? 0) * ($item['stok'] ?? 0); })) }}</span>
                     </div>
                 </div>
@@ -53,22 +53,22 @@
                                     No</th>
                                 <th
                                     class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Nama</th>
+                                    Name</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Kode</th>
+                                    Code</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Harga Beli</th>
+                                    Capital Price</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Harga Jual</th>
+                                    Selling Price</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Stok</th>
+                                    Stock</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Total Modal</th>
+                                    Total Capital</th>
                                 <th
                                     class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     Return Stock</th>
@@ -229,7 +229,7 @@
                                             class="p-4 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <span
                                                 class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                Tidak ada data inventory
+                                                No inventory data
                                             </span>
                                         </td>
                                     </tr>
@@ -259,8 +259,8 @@
                             <span
                                 class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                         </div>
-                        <span wire:loading.remove wire:target="loadMore" class="text-sm text-gray-500">Scroll untuk
-                            melihat lebih banyak...</span>
+                        <span wire:loading.remove wire:target="loadMore" class="text-sm text-gray-500">Scroll to
+                            see more...</span>
                     </div>
                 @endif
             </div>
@@ -280,7 +280,7 @@
                     <div>
                         <div class="mt-3 sm:mt-5">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                {{ $action === 'add' ? 'Tambah Inventaris Baru' : 'Edit Inventaris' }}
+                                {{ $action === 'add' ? 'Add New Inventory' : 'Edit Inventory' }}
                             </h3>
                             <div class="flex-auto px-0 pt-0 pb-2">
                                 <form wire:submit.prevent="{{ $action === 'add' ? 'store' : 'update' }}">
@@ -293,7 +293,7 @@
                                     </div>
                                     @if($action === 'add')
                                     <div class="relative mb-8">
-                                        <x-ui.input-default wire:model="harga" id="harga" label="Harga Beli"
+                                        <x-ui.input-default wire:model="harga" id="harga" label="Capital Price"
                                             x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
@@ -307,15 +307,15 @@
                                     </div>
                                     @else
                                     <div class="relative mb-8">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Harga Beli</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Capital Price</label>
                                         <input type="text" value="Rp {{ number_format($harga) }}" disabled
                                             class="text-sm block w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 cursor-not-allowed" />
-                                        <p class="text-xs text-gray-400 mt-1">Harga beli hanya bisa diubah melalui fitur Update Stok.</p>
+                                        <p class="text-xs text-gray-400 mt-1">Capital price can only be changed via Update Stock feature.</p>
                                     </div>
                                     @endif
                                     <div class="relative mb-8">
                                         <x-ui.input-default wire:model="harga_jual" id="harga_jual"
-                                            label="Harga Jual" x-data="{
+                                            label="Selling Price" x-data="{
                                                 formatNumber: function(event) {
                                                     const input = event.target;
                                                     const value = input.value.replace(/\D/g, ''); // Remove non-numeric characters
@@ -346,7 +346,7 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                         <input type="text" value="{{ number_format($stok) }}" disabled
                                             class="text-sm block w-full rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 cursor-not-allowed" />
-                                        <p class="text-xs text-gray-400 mt-1">Stok hanya bisa diubah melalui fitur Update Stok.</p>
+                                        <p class="text-xs text-gray-400 mt-1">Stock can only be changed via Update Stock feature.</p>
                                     </div>
                                     @endif
 
@@ -357,13 +357,13 @@
                                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                     role="status">
                                                     <span
-                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                 </div>
                                             </div>
-                                            Kembali
+                                            Back
                                         </button>
 
-                                        <x-ui.button type="submit" title="Simpan" color="primary" wireLoading
+                                        <x-ui.button type="submit" title="Save" color="primary" wireLoading
                                             formAction="{{ $action === 'add' ? 'store' : 'update' }}" />
                                     </div>
                                 </form>
@@ -391,19 +391,19 @@
                     <div>
                         <div class="mt-3 sm:mt-5">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Alasan {{ $pendingAction === 'update' ? 'Perubahan' : 'Penghapusan' }}
+                                Reason for {{ $pendingAction === 'update' ? 'Update' : 'Deletion' }}
                             </h3>
                             <div class="flex-auto px-0 pt-0 pb-2">
                                 <form wire:submit.prevent="submitReason">
                                     <div class="relative mb-8 mt-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2">
-                                            Masukkan alasan
-                                            {{ $pendingAction === 'update' ? 'perubahan' : 'penghapusan' }} <span
+                                            Enter reason for
+                                            {{ $pendingAction === 'update' ? 'update' : 'deletion' }} <span
                                                 class="text-red-500">*</span>
                                         </label>
                                         <textarea wire:model="reason" rows="4"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                            placeholder="Jelaskan mengapa {{ $pendingAction === 'update' ? 'perubahan' : 'penghapusan' }} ini diperlukan..."></textarea>
+                                            placeholder="Explain why this {{ $pendingAction === 'update' ? 'update' : 'deletion' }} is needed..."></textarea>
                                         @error('reason')
                                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                                         @enderror
@@ -419,7 +419,7 @@
                                                         class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                 </div>
                                             </div>
-                                            Batal
+                                            Cancel
                                         </button>
 
                                         <x-ui.button type="submit" title="Submit" color="primary" wireLoading
@@ -449,7 +449,7 @@
                     class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
                     <div class="border-b-2 flex justify-between items-center mb-4">
                         <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                            Pengembalian Produk
+                            Product Return
                         </h3>
                         <button wire:click='closeReturnModal' type="button">
                             <svg width="20px" height="20px" viewBox="-0.5 0 25 25" fill="none"
@@ -467,25 +467,25 @@
                             <thead class="align-bottom">
                                 <tr>
                                     <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Aksi
+                                        Action
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Tanggal
+                                        Date
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Order Transaksi
+                                        Transaction Order
                                     </th>
                                     <th class="px-4 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Kuantitas
+                                        Quantity
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Alasan Retur
+                                        Return Reason
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Diretur Oleh
+                                        Returned By
                                     </th>
                                     <th class="px-4 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Catatan
+                                        Notes
                                     </th>
                                 </tr>
                             </thead>
@@ -496,13 +496,13 @@
                                         <div class="flex items-center justify-center gap-2">
                                             <button wire:click="$emit('triggerRestoreReturn', {{ $return['id'] }}, {{ $return['quantity'] }})" wire:loading.attr="disabled"
                                                 class="px-2.5 py-1 text-xs font-bold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all disabled:opacity-50"
-                                                title="Kembalikan ke stok">
+                                                title="Restore to stock">
                                                 <div wire:loading wire:target="restoreReturnToStock({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                                 <span wire:loading.remove wire:target="restoreReturnToStock({{ $return['id'] }})"><i class="fas fa-undo-alt"></i></span>
                                             </button>
                                             <button wire:click="$emit('triggerDeleteReturn', {{ $return['id'] }})" wire:loading.attr="disabled"
                                                 class="px-2.5 py-1 text-xs font-bold text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all disabled:opacity-50"
-                                                title="Hapus return">
+                                                title="Delete return">
                                                 <div wire:loading wire:target="deleteReturn({{ $return['id'] }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                                 <span wire:loading.remove wire:target="deleteReturn({{ $return['id'] }})"><i class="fas fa-trash-alt"></i></span>
                                             </button>
@@ -543,7 +543,7 @@
                                 <tr>
                                     <td colspan="7" class="p-4 text-center align-middle bg-transparent border-b whitespace-nowrap shadow-transparent">
                                         <span class="text-xs font-semibold leading-tight text-slate-400">
-                                            Tidak ada data return untuk produk ini
+                                            No return data for this product
                                         </span>
                                     </td>
                                 </tr>
@@ -568,15 +568,15 @@
                 <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full sm:p-6">
                     <div>
                         <div class="mt-3 sm:mt-0">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Update Stok Produk</h3>
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Update Product Stock</h3>
 
                             {{-- Product Search --}}
                             <div class="relative mb-4" x-data="{ open: false }" @click.away="open = false">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Cari & Pilih Produk</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Search & Select Product</label>
                                 <input type="text" wire:model.debounce.300ms="stockUpdateSearch"
                                     @focus="open = true" @input="open = true"
                                     class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                    placeholder="Ketik nama atau kode produk..." />
+                                    placeholder="Type product name or code..." />
 
                                 {{-- Search Results Dropdown --}}
                                 @if(strlen($stockUpdateSearch) >= 2)
@@ -590,10 +590,10 @@
                                                     <span class="font-semibold text-gray-800">{{ $product->name }}</span>
                                                     <span class="text-gray-400 text-xs ml-2">({{ $product->kode }})</span>
                                                 </div>
-                                                <span class="text-xs text-gray-500">Stok: {{ $product->stok }}</span>
+                                                <span class="text-xs text-gray-500">Stock: {{ $product->stok }}</span>
                                             </button>
                                         @empty
-                                            <div class="px-4 py-3 text-sm text-gray-500 text-center">Produk tidak ditemukan</div>
+                                            <div class="px-4 py-3 text-sm text-gray-500 text-center">Product not found</div>
                                         @endforelse
                                     </div>
                                 @endif
@@ -605,12 +605,12 @@
                                     <table class="w-full text-sm">
                                         <thead class="bg-gray-50">
                                             <tr>
-                                                <th class="px-3 py-2 text-left text-xs font-bold uppercase text-gray-500">Produk</th>
-                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Stok</th>
-                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Beli Saat Ini</th>
-                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Qty Tambah</th>
-                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Beli Baru</th>
-                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Harga Rata-rata</th>
+                                                <th class="px-3 py-2 text-left text-xs font-bold uppercase text-gray-500">Product</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Stock</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Current Capital Price</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Add Qty</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">New Capital Price</th>
+                                                <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500">Average Price</th>
                                                 <th class="px-3 py-2 text-center text-xs font-bold uppercase text-gray-500"></th>
                                             </tr>
                                         </thead>
@@ -670,7 +670,7 @@
                             @else
                                 <div class="mb-4 border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
                                     <i class="fas fa-box-open text-3xl text-gray-300 mb-2"></i>
-                                    <p class="text-sm text-gray-400">Belum ada produk dipilih. Cari dan pilih produk di atas.</p>
+                                    <p class="text-sm text-gray-400">No product selected. Search and select a product above.</p>
                                 </div>
                             @endif
                             @error('stockUpdateItems')
@@ -679,12 +679,12 @@
 
                             {{-- Upload Nota --}}
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Nota <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Receipt <span class="text-red-500">*</span></label>
                                 <input type="file" wire:model="stockUpdateNota" accept="image/*"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all" />
                                 <div wire:loading wire:target="stockUpdateNota" class="mt-2 flex items-center gap-2 text-sm text-gray-500">
                                     <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-blue-500 border-r-transparent" role="status"></div>
-                                    Mengupload...
+                                    Uploading...
                                 </div>
                                 @if($stockUpdateNota)
                                     <div class="mt-2">
@@ -698,10 +698,10 @@
 
                             {{-- Notes --}}
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
                                 <textarea wire:model.defer="stockUpdateNotes" rows="2"
                                     class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                    placeholder="Contoh: Restock dari supplier X"></textarea>
+                                    placeholder="Example: Restock from supplier X"></textarea>
                             </div>
 
                             {{-- Buttons --}}
@@ -711,15 +711,15 @@
                                     <div wire:loading wire:target='closeStockUpdateModal'>
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                     </div>
-                                    Batal
+                                    Cancel
                                 </button>
                                 <button type="button" wire:click='submitStockUpdate' wire:loading.attr="disabled"
                                     class="flex w-full justify-center gap-x-2 items-center rounded-lg bg-green-600 px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white transition duration-150 ease-in-out hover:bg-green-700 disabled:opacity-50">
                                     <div wire:loading wire:target='submitStockUpdate'>
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                     </div>
-                                    <span wire:loading.remove wire:target="submitStockUpdate">Simpan Update Stok</span>
-                                    <span wire:loading wire:target="submitStockUpdate">Menyimpan...</span>
+                                    <span wire:loading.remove wire:target="submitStockUpdate">Save Stock Update</span>
+                                    <span wire:loading wire:target="submitStockUpdate">Saving...</span>
                                 </button>
                             </div>
                         </div>
@@ -734,12 +734,12 @@
 
             @this.on('triggerDelete', id => {
                 Swal.fire({
-                    title: 'Apakah Anda yakin?',
-                    html: "Data ini tidak bisa dikembalikan!",
+                    title: 'Are you sure?',
+                    html: "This data cannot be recovered!",
                     icon: 'warning',
                     showCancelButton: true,
-                    cancelButtonText: 'Batal',
-                    confirmButtonText: 'Ya, Hapus'
+                    cancelButtonText: 'Cancel',
+                    confirmButtonText: 'Yes, Delete'
                 }).then((result) => {
                     if (result.value) {
                         @this.call('delete', id)
@@ -749,13 +749,13 @@
 
             @this.on('triggerRestoreReturn', (id, qty) => {
                 Swal.fire({
-                    title: 'Kembalikan ke Stok?',
-                    html: `<b>${qty}</b> unit akan dikembalikan ke stok inventory.`,
+                    title: 'Restore to Stock?',
+                    html: `<b>${qty}</b> units will be returned to inventory stock.`,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonColor: '#16a34a',
-                    confirmButtonText: 'Ya, Kembalikan',
-                    cancelButtonText: 'Batal',
+                    confirmButtonText: 'Yes, Restore',
+                    cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.value) {
                         @this.call('restoreReturnToStock', id)
@@ -765,13 +765,13 @@
 
             @this.on('triggerDeleteReturn', id => {
                 Swal.fire({
-                    title: 'Hapus Data Return?',
-                    html: "Data return akan dihapus tanpa mengembalikan stok.",
+                    title: 'Delete Return Data?',
+                    html: "Return data will be deleted without restoring stock.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#dc2626',
-                    confirmButtonText: 'Ya, Hapus',
-                    cancelButtonText: 'Batal',
+                    confirmButtonText: 'Yes, Delete',
+                    cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.value) {
                         @this.call('deleteReturn', id)

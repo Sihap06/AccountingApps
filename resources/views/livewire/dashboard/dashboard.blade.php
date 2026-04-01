@@ -18,14 +18,14 @@
                                </div>
                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                       Verifikasi Pending
+                                       Pending Verification
                                    </h3>
                                    <div class="mt-2">
                                        <p class="text-sm text-gray-500">
-                                           Terdapat <span class="font-bold text-yellow-600">{{ $pendingCount }}</span> perubahan yang menunggu verifikasi Anda.
+                                           There are <span class="font-bold text-yellow-600">{{ $pendingCount }}</span> changes awaiting your verification.
                                        </p>
                                        <p class="text-sm text-gray-500 mt-2">
-                                           Silakan verifikasi perubahan tersebut untuk melanjutkan operasional sistem.
+                                           Please verify the changes to continue system operations.
                                        </p>
                                    </div>
                                </div>
@@ -33,7 +33,7 @@
                        </div>
                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                            <button wire:click="goToVerification" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
-                               Ke Halaman Verifikasi
+                               Go to Verification Page
                            </button>
                        </div>
                    </div>
@@ -50,9 +50,9 @@
                            <i class="fas fa-clipboard-check text-xl"></i>
                        </div>
                        <div>
-                           <h6 class="text-base font-bold text-gray-800 dark:text-white mb-1">Stok Opname Diperlukan!</h6>
+                           <h6 class="text-base font-bold text-gray-800 dark:text-white mb-1">Stock Opname Required!</h6>
                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                               <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $stockOpnameData['triggered_by'] }}</span> meminta Anda untuk melakukan stok opname pada {{ \Carbon\Carbon::parse($stockOpnameData['created_at'])->format('d M Y H:i') }}.
+                               <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $stockOpnameData['triggered_by'] }}</span> requested you to perform a stock opname on {{ \Carbon\Carbon::parse($stockOpnameData['created_at'])->format('d M Y H:i') }}.
                            </p>
                            @if($stockOpnameData['notes'])
                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
@@ -60,14 +60,14 @@
                                </p>
                            @endif
                            <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-2">
-                               Status: {{ $stockOpnameData['status'] === 'pending' ? 'Menunggu dimulai' : 'Sedang berjalan' }}
+                               Status: {{ $stockOpnameData['status'] === 'pending' ? 'Waiting to start' : 'In progress' }}
                            </p>
                        </div>
                    </div>
                    <div class="flex items-center gap-3">
                        <button wire:click="goToStockOpname"
                            class="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-tl from-blue-500 to-violet-500 rounded-lg hover:shadow-md hover:-translate-y-px transition-all whitespace-nowrap">
-                           <i class="fas fa-arrow-right mr-1"></i> Mulai Stok Opname
+                           <i class="fas fa-arrow-right mr-1"></i> Start Stock Opname
                        </button>
                        <button wire:click="dismissStockOpnameNotif"
                            class="px-3 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-all whitespace-nowrap">
@@ -80,7 +80,7 @@
 
        <div class="flex justify-between items-center ">
            <div class=" mb-0 border-b-0 border-solid ">
-               <h5 class="mb-1 font-serif">Dashboard Statistik</h5>
+               <h5 class="mb-1 font-serif">Statistics Dashboard</h5>
                <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                    {{ \Carbon\Carbon::now()->format('l, d M Y') }}
                </p>
@@ -101,7 +101,7 @@
                                <a href="{{ url('dashboard/reporting/transaction') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaksi Hari Ini</p>
+                                       Today's Transactions</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        {{ number_format($todayTransaction) }}
                                    </h5>
@@ -128,7 +128,7 @@
                                <a href="{{ url('dashboard/reporting/income') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Omset Hari Ini</p>
+                                       Today's Revenue</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayIncome) }}
                                    </h5>
@@ -155,7 +155,7 @@
                                <a href="{{ url('dashboard/reporting/expenditure') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Pengeluaran Hari Ini</p>
+                                       Today's Expenditure</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayExpenditure) }}
                                    </h5>
@@ -182,7 +182,7 @@
                    class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div
                        class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
-                       <h6 class="capitalize dark:text-white">Grafik Transaksi</h6>
+                       <h6 class="capitalize dark:text-white">Transaction Chart</h6>
                        <div class="flex gap-x-3 w-full md:w-5/12 items-center">
                            <select wire:model="selectedYear"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
@@ -193,18 +193,18 @@
 
                            <button wire:click='updateChart()'
                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
-                               Perbarui
+                               Update
                            </button>
                            
                            <button wire:click='exportExcel()' wire:loading.attr="disabled"
                                class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                                <span wire:loading.remove wire:target="exportExcel">
                                    <i class="fas fa-file-excel mr-1"></i>
-                                   Ekspor
+                                   Export
                                </span>
                                <span wire:loading wire:target="exportExcel">
                                    <i class="fas fa-spinner fa-spin mr-1"></i>
-                                   Mengekspor...
+                                   Exporting...
                                </span>
                            </button>
                        </div>
@@ -214,7 +214,7 @@
                            <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                role="status">
                                <span
-                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                            </div>
                        </div>
                    </div>
@@ -231,7 +231,7 @@
                <div
                    class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div class="p-4 pb-0 rounded-t-4">
-                       <h6 class="mb-0 dark:text-white">Transaksi Terbaru</h6>
+                       <h6 class="mb-0 dark:text-white">Recent Transactions</h6>
                    </div>
                    <div class="flex-auto p-4">
                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
@@ -274,23 +274,23 @@
                <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-850 p-4 rounded-lg shadow-lg">
                    <h6 class="text-base font-semibold dark:text-white flex items-center">
                        <i class="fas fa-filter mr-2 text-blue-500"></i>
-                       Filter Statistik Transaksi
+                       Transaction Statistics Filter
                    </h6>
                    <div class="flex flex-col sm:flex-row gap-3 items-center w-full md:w-auto">
                        <select wire:model="selectedMonthFilter" wire:change="updateTransactionStats"
                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                           <option value="01">Januari</option>
-                           <option value="02">Februari</option>
-                           <option value="03">Maret</option>
+                           <option value="01">January</option>
+                           <option value="02">February</option>
+                           <option value="03">March</option>
                            <option value="04">April</option>
-                           <option value="05">Mei</option>
-                           <option value="06">Juni</option>
-                           <option value="07">Juli</option>
-                           <option value="08">Agustus</option>
+                           <option value="05">May</option>
+                           <option value="06">June</option>
+                           <option value="07">July</option>
+                           <option value="08">August</option>
                            <option value="09">September</option>
-                           <option value="10">Oktober</option>
+                           <option value="10">October</option>
                            <option value="11">November</option>
-                           <option value="12">Desember</option>
+                           <option value="12">December</option>
                        </select>
                        
                        <select wire:model="selectedYearFilter" wire:change="updateTransactionStats"
@@ -304,9 +304,9 @@
                            <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                role="status">
                                <span
-                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Memuat...</span>
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                            </div>
-                           <span class="ml-2 text-sm text-gray-600">Memperbarui...</span>
+                           <span class="ml-2 text-sm text-gray-600">Updating...</span>
                        </div>
                    </div>
                </div>
@@ -324,12 +324,12 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaksi Selesai</p>
+                                       Completed Transactions</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_done) }}
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
                                    </p>
                                </div>
                            </div>
@@ -354,12 +354,12 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaksi Dibatalkan</p>
+                                       Cancelled Transactions</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_cancel) }}
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
                                    </p>
                                </div>
                            </div>
@@ -382,12 +382,12 @@
                                <div>
                                    <p
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaksi Diproses</p>
+                                       Transactions In Process</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_proses) }}
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('id')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
                                    </p>
                                </div>
                            </div>

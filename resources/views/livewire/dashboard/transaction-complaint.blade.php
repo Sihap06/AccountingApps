@@ -5,7 +5,7 @@
         <div class="flex gap-x-3 w-full md:w-5/12 items-center justify-end">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                placeholder="Masukkan order id" />
+                placeholder="Enter order id" />
             <button wire:click='exportExcel()' wire:loading.attr="disabled"
                 class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
                 <span wire:loading.remove wire:target="exportExcel">
@@ -30,7 +30,7 @@
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                            Tanggal
+                            Date
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -200,7 +200,7 @@
                         <div class="flex gap-x-2">
                             <div>
                                 <p class="mb-0 text-neutral-900 leading-6 text-sm">Customer</p>
-                                <p class="mb-0 text-neutral-900 leading-6 text-sm">No Handphone</p>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">Phone Number</p>
                             </div>
                             <div>
                                 <p class="mb-0 text-neutral-900 leading-6 text-sm">:</p>
@@ -307,10 +307,10 @@
                                         Service</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Biaya</th>
+                                        Cost</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Teknisi</th>
+                                        Technician</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Sparepart</th>

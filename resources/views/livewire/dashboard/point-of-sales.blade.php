@@ -6,7 +6,7 @@
                 <!-- Customer Selection -->
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Informasi Pelanggan</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Customer Information</h3>
                         <div class="flex items-center space-x-2">
                             <span class="text-sm text-gray-600 dark:text-gray-400">ID Order:</span>
                             <span
@@ -15,7 +15,7 @@
                     </div>
                     <div class="flex space-x-3">
                         <div class="flex-1">
-                            @livewire('searchable-select', ['list' => $customers, 'selectedOption' => $customer_id, 'name' => 'customer_id', 'label' => 'Pilih Pelanggan'])
+                            @livewire('searchable-select', ['list' => $customers, 'selectedOption' => $customer_id, 'name' => 'customer_id', 'label' => 'Select Customer'])
                             @error('customer_id')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                             @enderror
@@ -29,7 +29,7 @@
                                     </div>
                                 </div>
                                 <span wire:loading.remove wire:target='create'>
-                                    <i class="fas fa-plus mr-1"></i>Baru
+                                    <i class="fas fa-plus mr-1"></i>New
                                 </span>
                             </button>
                         </div>
@@ -38,7 +38,7 @@
 
                 <!-- Transaction Items Table -->
                 <div class="p-6">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Daftar Layanan</h3>
+                    <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-white">Service List</h3>
 
                     @if (count($serviceItems) > 0)
                         <div class="overflow-x-auto">
@@ -47,25 +47,25 @@
                                     <tr class="bg-gray-50 dark:bg-gray-800">
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Layanan</th>
+                                            Service</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Biaya</th>
+                                            Cost</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Teknisi</th>
+                                            Technician</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Bahan/Sparepart</th>
+                                            Parts/Sparepart</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Garansi</th>
+                                            Warranty</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Info HP</th>
+                                            Phone Info</th>
                                         <th
                                             class="px-4 py-3 text-center text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                            Aksi</th>
+                                            Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -93,7 +93,7 @@
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
                                                 @if ($item['warranty'])
                                                     {{ $item['warranty'] }}
-                                                    {{ $item['warranty_type'] == 'daily' ? 'Hari' : ($item['warranty_type'] == 'weekly' ? 'Minggu' : 'Bulan') }}
+                                                    {{ $item['warranty_type'] == 'daily' ? 'Days' : ($item['warranty_type'] == 'weekly' ? 'Weeks' : 'Months') }}
                                                 @else
                                                     -
                                                 @endif
@@ -170,7 +170,7 @@
                     @else
                         <div class="text-center py-12">
                             <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
-                            <p class="text-gray-500">Belum ada layanan yang ditambahkan</p>
+                            <p class="text-gray-500">No services added yet</p>
                         </div>
                     @endif
 
@@ -183,8 +183,8 @@
                                 <div wire:loading wire:target='submit'
                                     class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
                                 </div>
-                                <span wire:loading.remove wire:target='submit'>Proses Transaksi</span>
-                                <span wire:loading wire:target='submit'>Memproses...</span>
+                                <span wire:loading.remove wire:target='submit'>Process Transaction</span>
+                                <span wire:loading wire:target='submit'>Processing...</span>
                             </button>
                         </form>
                     </div>
@@ -197,23 +197,23 @@
             <div
                 class="bg-white dark:bg-slate-850 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 sticky top-4">
                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Tambah Layanan</h3>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Add Service</h3>
                 </div>
 
                 <form wire:submit.prevent="addServiceItems" class="p-6">
                     <div class="space-y-4">
                         <!-- Service & Cost Group -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
-                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Detail Layanan</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Service Details</h4>
 
                             <div>
-                                <x-ui.input-default wire:model.lazy="service" label="Layanan"
-                                    placeholder="Masukkan nama layanan" required="true" :error="$errors->first('service')" />
+                                <x-ui.input-default wire:model.lazy="service" label="Service"
+                                    placeholder="Enter service name" required="true" :error="$errors->first('service')" />
                             </div>
 
                             <div>
                                 <div class="relative">
-                                    <x-ui.input-default wire:model="biaya" id="biaya" label="Biaya (Rp)"
+                                    <x-ui.input-default wire:model="biaya" id="biaya" label="Cost (Rp)"
                                         placeholder="0" required="true" :error="$errors->first('biaya')" :disabled="$product_id ? true : false"
                                         x-data="{
                                             formatNumber: function(event) {
@@ -234,7 +234,7 @@
 
                             <div>
                                 <div class="relative">
-                                    <x-ui.input-default wire:model="potongan" id="potongan" label="Diskon (Rp)"
+                                    <x-ui.input-default wire:model="potongan" id="potongan" label="Discount (Rp)"
                                         placeholder="0" :error="$errors->first('potongan')" x-data="{
                                             formatNumber: function(event) {
                                                 const input = event.target;
@@ -256,17 +256,17 @@
 
                         <!-- Technician & Spare Part Group -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
-                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Penugasan</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Assignment</h4>
 
                             <div>
-                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical_id, 'name' => 'technical_id', 'label' => 'Teknisi (Opsional)'])
+                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical_id, 'name' => 'technical_id', 'label' => 'Technician (Optional)'])
                                 @error('technical_id')
                                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                                 @enderror
                             </div>
 
                             <div>
-                                @livewire('searchable-select', ['list' => $inventory, 'selectedOption' => $product_id, 'name' => 'product_id', 'label' => 'Bahan/Sparepart (Opsional)'])
+                                @livewire('searchable-select', ['list' => $inventory, 'selectedOption' => $product_id, 'name' => 'product_id', 'label' => 'Parts/Sparepart (Optional)'])
                                 @error('product_id')
                                     <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
                                 @enderror
@@ -275,7 +275,7 @@
                             <div>
                                 <label
                                     class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">
-                                    Garansi (Opsional)
+                                    Warranty (Optional)
                                 </label>
                                 <div class="flex space-x-2">
                                     <input type="text" wire:model.lazy='warranty' id="warranty" placeholder="0"
@@ -289,9 +289,9 @@
                                         }" x-on:input="formatNumber($event)">
                                     <select wire:model.lazy="warranty_type"
                                         class="w-32 focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                        <option value="daily">Hari</option>
-                                        <option value="weekly">Minggu</option>
-                                        <option value="monthly">Bulan</option>
+                                        <option value="daily">Days</option>
+                                        <option value="weekly">Weeks</option>
+                                        <option value="monthly">Months</option>
                                     </select>
                                 </div>
                                 @error('warranty')
@@ -302,21 +302,21 @@
 
                         <!-- Phone Details Group -->
                         <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
-                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Detail Handphone
-                                (Opsional)</h4>
+                            <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Phone Details
+                                (Optional)</h4>
 
                             <div class="grid grid-cols-2 gap-x-3">
                                 <div>
-                                    <x-ui.input-default wire:model.lazy="phone_brand" label="Merek" value="iPhone"
+                                    <x-ui.input-default wire:model.lazy="phone_brand" label="Brand" value="iPhone"
                                         disabled="true" />
                                 </div>
 
                                 <div>
                                     <label
-                                        class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Penyimpanan / Storage</label>
+                                        class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Storage</label>
                                     <select wire:model.lazy="phone_internal"
                                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                        <option value="">Pilih</option>
+                                        <option value="">Select</option>
                                         <option value="16">16 GB</option>
                                         <option value="32">32 GB</option>
                                         <option value="64">64 GB</option>
@@ -334,7 +334,7 @@
                                     class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Model</label>
                                 <select wire:model.lazy="phone_type"
                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                    <option value="">Pilih Model iPhone</option>
+                                    <option value="">Select iPhone Model</option>
                                     <optgroup label="iPhone 15 Series">
                                         <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
                                         <option value="iPhone 15 Pro">iPhone 15 Pro</option>
@@ -368,7 +368,7 @@
                                         <option value="iPhone SE 3">iPhone SE 3</option>
                                         <option value="iPhone SE 2">iPhone SE 2</option>
                                     </optgroup>
-                                    <optgroup label="Model Lainnya">
+                                    <optgroup label="Other Models">
                                         <option value="iPhone XS Max">iPhone XS Max</option>
                                         <option value="iPhone XS">iPhone XS</option>
                                         <option value="iPhone XR">iPhone XR</option>
@@ -387,25 +387,25 @@
 
                             <div>
                                 <label
-                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Warna</label>
+                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Color</label>
                                 <select wire:model.lazy="phone_color"
                                     class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                    <option value="">Pilih Warna</option>
-                                    <optgroup label="Warna Umum">
+                                    <option value="">Select Color</option>
+                                    <optgroup label="Common Colors">
                                         <option value="Black">Black</option>
                                         <option value="White">White</option>
                                         <option value="Silver">Silver</option>
                                         <option value="Gold">Gold</option>
                                         <option value="Space Gray">Space Gray</option>
                                     </optgroup>
-                                    <optgroup label="Warna Pro">
+                                    <optgroup label="Pro Colors">
                                         <option value="Graphite">Graphite</option>
                                         <option value="Pacific Blue">Pacific Blue</option>
                                         <option value="Sierra Blue">Sierra Blue</option>
                                         <option value="Alpine Green">Alpine Green</option>
                                         <option value="Deep Purple">Deep Purple</option>
                                     </optgroup>
-                                    <optgroup label="Warna Standar">
+                                    <optgroup label="Standard Colors">
                                         <option value="Blue">Blue</option>
                                         <option value="Midnight">Midnight</option>
                                         <option value="Starlight">Starlight</option>
@@ -415,7 +415,7 @@
                                         <option value="Yellow">Yellow</option>
                                         <option value="Purple">Purple</option>
                                     </optgroup>
-                                    <optgroup label="Edisi Spesial">
+                                    <optgroup label="Special Edition">
                                         <option value="Rose Gold">Rose Gold</option>
                                         <option value="Coral">Coral</option>
                                         <option value="Lavender">Lavender</option>
@@ -426,7 +426,7 @@
 
                             <div>
                                 <x-ui.input-default wire:model.lazy="phone_imei" label="IMEI"
-                                    placeholder="Masukkan nomor IMEI" />
+                                    placeholder="Enter IMEI number" />
                             </div>
                         </div>
 
@@ -437,9 +437,9 @@
                                 class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
                             </div>
                             <span wire:loading.remove wire:target='addServiceItems'>
-                                <i class="fas fa-plus mr-2"></i>Tambah Layanan
+                                <i class="fas fa-plus mr-2"></i>Add Service
                             </span>
-                            <span wire:loading wire:target='addServiceItems'>Menambahkan...</span>
+                            <span wire:loading wire:target='addServiceItems'>Adding...</span>
                         </button>
                     </div>
                 </form>
@@ -460,27 +460,27 @@
                         </button>
                     </div>
 
-                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Tambah Pelanggan Baru</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Add New Customer</h3>
 
                     <div class="space-y-4">
                         <div>
-                            <x-ui.input-default wire:model.lazy="name" label="Nama"
-                                placeholder="Masukkan nama pelanggan" required="true" :error="$errors->first('name')" />
+                            <x-ui.input-default wire:model.lazy="name" label="Name"
+                                placeholder="Enter customer name" required="true" :error="$errors->first('name')" />
                         </div>
 
                         <div>
-                            <x-ui.input-default wire:model.lazy="no_telp" label="Nomor Handphone"
-                                placeholder="Masukkan nomor HP" required="true" :error="$errors->first('no_telp')" />
+                            <x-ui.input-default wire:model.lazy="no_telp" label="Phone Number"
+                                placeholder="Enter phone number" required="true" :error="$errors->first('no_telp')" />
                         </div>
 
                         <div>
                             <label for="alamat"
                                 class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">
-                                Alamat <span class="text-gray-400">(Opsional)</span>
+                                Address <span class="text-gray-400">(Optional)</span>
                             </label>
                             <textarea wire:model.lazy="alamat" id="alamat" rows="3"
                                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                placeholder="Masukkan alamat pelanggan"></textarea>
+                                placeholder="Enter customer address"></textarea>
                             @error('alamat')
                                 <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span>
                             @enderror
@@ -494,12 +494,12 @@
                             <div wire:loading wire:target='storeNewCustomer'
                                 class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-2">
                             </div>
-                            <span wire:loading.remove wire:target='storeNewCustomer'>Simpan Pelanggan</span>
-                            <span wire:loading wire:target='storeNewCustomer'>Menyimpan...</span>
+                            <span wire:loading.remove wire:target='storeNewCustomer'>Save Customer</span>
+                            <span wire:loading wire:target='storeNewCustomer'>Saving...</span>
                         </button>
                         <button wire:click="closeModal" wire:loading.attr="disabled" wire:target="closeModal"
                             class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-medium py-2 rounded-lg transition-colors duration-200">
-                            Batal
+                            Cancel
                         </button>
                     </div>
                 </div>

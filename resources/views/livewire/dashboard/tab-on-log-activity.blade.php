@@ -2,7 +2,7 @@
     <div
         class="flex items-center justify-between bg-white rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Catatan Aktivitas </h5>
+            <h5 class="mb-1 font-serif">Activity Log </h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>

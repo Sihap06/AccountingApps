@@ -1,7 +1,7 @@
 <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
     <div class="flex justify-between items-center">
         <div class="mb-0 border-b-0 border-solid">
-            <h5 class="mb-1 font-serif">Stok Opname</h5>
+            <h5 class="mb-1 font-serif">Stock Opname</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -14,7 +14,7 @@
                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                     </div>
                     <i class="fas fa-clipboard-check"></i>
-                    Buat Stok Opname
+                    Create Stock Opname
                 </button>
             @endif
         </div>
@@ -29,18 +29,18 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
                             <div class="flex items-center gap-3 mb-2">
-                                <h6 class="mb-0 text-base font-semibold">Stok Opname Aktif</h6>
+                                <h6 class="mb-0 text-base font-semibold">Active Stock Opname</h6>
                                 @if($activeOpname->status === 'pending')
-                                    <span class="px-2.5 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">Menunggu</span>
+                                    <span class="px-2.5 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">Pending</span>
                                 @else
-                                    <span class="px-2.5 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">Sedang Berjalan</span>
+                                    <span class="px-2.5 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">In Progress</span>
                                 @endif
                             </div>
                             <p class="text-xs text-gray-500">
-                                Dibuat oleh <span class="font-semibold">{{ $activeOpname->triggeredBy->name }}</span>
-                                pada {{ $activeOpname->created_at->format('d M Y H:i') }}
+                                Created by <span class="font-semibold">{{ $activeOpname->triggeredBy->name }}</span>
+                                on {{ $activeOpname->created_at->format('d M Y H:i') }}
                                 @if($activeOpname->assignedTo)
-                                    &mdash; Ditugaskan ke <span class="font-semibold">{{ $activeOpname->assignedTo->name }}</span>
+                                    &mdash; Assigned to <span class="font-semibold">{{ $activeOpname->assignedTo->name }}</span>
                                 @endif
                             </p>
                             @if($activeOpname->notes)
@@ -63,7 +63,7 @@
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                     </div>
                                     <span wire:loading.remove wire:target="startOpname"><i class="fas fa-play mr-1"></i></span>
-                                    Mulai Opname
+                                    Start Opname
                                 </button>
                             @endif
 
@@ -74,7 +74,7 @@
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                     </div>
                                     <span wire:loading.remove wire:target="completeOpname"><i class="fas fa-check mr-1"></i></span>
-                                    Selesai
+                                    Complete
                                 </button>
                             @endif
 
@@ -85,7 +85,7 @@
                                         <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                                     </div>
                                     <span wire:loading.remove wire:target="cancelOpname"><i class="fas fa-times mr-1"></i></span>
-                                    Batalkan
+                                    Cancel
                                 </button>
                             @endif
                         </div>
@@ -97,12 +97,12 @@
                 <div class="px-6 pt-4 flex flex-col md:flex-row gap-3">
                     <input type="text" wire:model.debounce.300ms="searchProduct"
                         class="text-sm leading-5.6 ease block w-full md:w-1/3 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                        placeholder="Cari produk..." />
+                        placeholder="Search product..." />
                     <select wire:model="filterStatus"
                         class="text-sm leading-5.6 ease block w-full md:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
-                        <option value="all">Semua</option>
-                        <option value="unchecked">Belum Dicek</option>
-                        <option value="checked">Sudah Dicek</option>
+                        <option value="all">All</option>
+                        <option value="unchecked">Unchecked</option>
+                        <option value="checked">Checked</option>
                     </select>
                 </div>
                 @endif
@@ -113,11 +113,11 @@
                         <thead class="align-bottom">
                             <tr>
                                 <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">No</th>
-                                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Produk</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Stok Sistem</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Stok Aktual</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Selisih</th>
-                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Catatan</th>
+                                <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Product</th>
+                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">System Stock</th>
+                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Actual Stock</th>
+                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Difference</th>
+                                <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Notes</th>
                                 <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Status</th>
                                 @if($activeOpname->status === 'in_progress')
                                 <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70"></th>
@@ -153,7 +153,7 @@
                                         <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
                                             <input type="text" wire:model.defer="itemNotes"
                                                 class="w-32 text-sm rounded-lg border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none"
-                                                placeholder="Opsional" />
+                                                placeholder="Optional" />
                                         </td>
                                         <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
                                             <span class="text-xs text-gray-400">-</span>
@@ -198,10 +198,10 @@
                                         <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
                                             @if($item->checked)
                                                 <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">
-                                                    <i class="fas fa-check text-xxs mr-0.5"></i> Sudah
+                                                    <i class="fas fa-check text-xxs mr-0.5"></i> Done
                                                 </span>
                                             @else
-                                                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Belum</span>
+                                                <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Pending</span>
                                             @endif
                                         </td>
                                         @if($activeOpname->status === 'in_progress')
@@ -209,7 +209,7 @@
                                             <button wire:click="editItem({{ $item->id }})" wire:loading.attr="disabled"
                                                 class="text-xs font-semibold text-blue-600 hover:text-blue-800 disabled:opacity-50">
                                                 <div wire:loading wire:target="editItem({{ $item->id }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-blue-600 border-r-transparent" role="status"></div>
-                                                <span wire:loading.remove wire:target="editItem({{ $item->id }})">{{ $item->checked ? 'Edit' : 'Cek' }}</span>
+                                                <span wire:loading.remove wire:target="editItem({{ $item->id }})">{{ $item->checked ? 'Edit' : 'Check' }}</span>
                                             </button>
                                         </td>
                                         @endif
@@ -219,9 +219,9 @@
                                 <tr>
                                     <td colspan="8" class="p-4 text-center text-gray-500 text-sm">
                                         @if($searchProduct)
-                                            Produk tidak ditemukan.
+                                            Product not found.
                                         @else
-                                            Tidak ada item.
+                                            No item.
                                         @endif
                                     </td>
                                 </tr>
@@ -237,18 +237,18 @@
     <div class="mt-6 flex-1">
         <div class="relative flex flex-col min-w-0 break-words bg-white border-0 shadow-xl rounded-2xl bg-clip-border h-full">
             <div class="p-6 pb-3 border-b border-gray-100">
-                <h6 class="mb-0 text-base font-semibold">Riwayat Stok Opname</h6>
+                <h6 class="mb-0 text-base font-semibold">Stock Opname History</h6>
             </div>
             <div class="flex-auto px-0 pt-0 pb-4 overflow-auto">
                 <table class="items-center w-full mb-0 align-top border-collapse text-slate-500">
                     <thead class="align-bottom">
                         <tr>
                             <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">No</th>
-                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Tanggal</th>
-                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Dibuat Oleh</th>
-                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Diselesaikan Oleh</th>
-                            <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Jumlah Item</th>
-                            <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Selisih</th>
+                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Date</th>
+                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Created By</th>
+                            <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Completed By</th>
+                            <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Total Items</th>
+                            <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Difference</th>
                             <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70">Status</th>
                             <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b text-xxs tracking-none whitespace-nowrap text-slate-400 opacity-70"></th>
                         </tr>
@@ -277,7 +277,7 @@
                                     @endphp
                                     @if($opname->status === 'completed')
                                         @if($totalDiff == 0)
-                                            <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Sesuai</span>
+                                            <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Match</span>
                                         @else
                                             <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700 font-semibold">{{ $totalDiff > 0 ? '+' : '' }}{{ $totalDiff }}</span>
                                         @endif
@@ -287,9 +287,9 @@
                                 </td>
                                 <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
                                     @if($opname->status === 'completed')
-                                        <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Selesai</span>
+                                        <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Completed</span>
                                     @else
-                                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Dibatalkan</span>
+                                        <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Cancelled</span>
                                     @endif
                                 </td>
                                 <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
@@ -302,7 +302,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="p-4 text-center text-gray-500 text-sm">Belum ada riwayat stok opname.</td>
+                                <td colspan="8" class="p-4 text-center text-gray-500 text-sm">No stock opname history.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -329,23 +329,23 @@
                                 <i class="fas fa-clipboard-check text-blue-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Buat Stok Opname Baru</h3>
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Create New Stock Opname</h3>
                                 <form class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Tugaskan ke Kasir (Opsional)</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Assign to Cashier (Optional)</label>
                                         <select wire:model="selectedKasir"
                                             class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
-                                            <option value="">Semua Kasir</option>
+                                            <option value="">All Cashiers</option>
                                             @foreach($kasirList as $kasir)
                                                 <option value="{{ $kasir->id }}">{{ $kasir->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
                                         <textarea wire:model="triggerNotes" rows="3"
                                             class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none"
-                                            placeholder="Contoh: Lakukan pengecekan stok semua sparepart HP"></textarea>
+                                            placeholder="Example: Check all stock for phone spare parts"></textarea>
                                     </div>
                                 </form>
                             </div>
@@ -357,11 +357,11 @@
                             <div wire:loading wire:target="triggerStockOpname" class="mr-2">
                                 <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
                             </div>
-                            Buat & Kirim Notifikasi
+                            Create & Send Notification
                         </button>
                         <button wire:click="closeTriggerModal"
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                            Batal
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -378,12 +378,12 @@
 
                 <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Detail Stok Opname</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Stock Opname Detail</h3>
                         <div class="text-xs text-gray-500 mb-4 space-y-1">
-                            <p>Tanggal: {{ $detailOpname->created_at->format('d M Y H:i') }}</p>
-                            <p>Dibuat oleh: {{ $detailOpname->triggeredBy->name ?? '-' }}</p>
+                            <p>Date: {{ $detailOpname->created_at->format('d M Y H:i') }}</p>
+                            <p>Created by: {{ $detailOpname->triggeredBy->name ?? '-' }}</p>
                             @if($detailOpname->completedBy)
-                                <p>Diselesaikan oleh: {{ $detailOpname->completedBy->name }} pada {{ $detailOpname->completed_at?->format('d M Y H:i') }}</p>
+                                <p>Completed by: {{ $detailOpname->completedBy->name }} on {{ $detailOpname->completed_at?->format('d M Y H:i') }}</p>
                             @endif
                         </div>
 
@@ -391,11 +391,11 @@
                             <table class="items-center w-full mb-0 align-top border-collapse text-slate-500">
                                 <thead class="align-bottom sticky top-0 bg-white">
                                     <tr>
-                                        <th class="px-4 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Produk</th>
-                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Stok Sistem</th>
-                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Stok Aktual</th>
-                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Selisih</th>
-                                        <th class="px-4 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Catatan</th>
+                                        <th class="px-4 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Product</th>
+                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">System Stock</th>
+                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Actual Stock</th>
+                                        <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Difference</th>
+                                        <th class="px-4 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -427,7 +427,7 @@
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button wire:click="closeDetailModal"
                             class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm">
-                            Tutup
+                            Close
                         </button>
                     </div>
                 </div>
@@ -440,14 +440,14 @@
 <script>
     function confirmCancelOpname() {
         Swal.fire({
-            title: 'Batalkan Opname?',
-            text: "Data dan progres pengecekan stok saat ini akan dibatalkan sepenuhnya. Lanjutkan?",
+            title: 'Cancel Opname?',
+            text: "The current stock checking progress will be completely cancelled. Continue?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ef4444',
             cancelButtonColor: '#6b7280',
-            confirmButtonText: 'Ya, Batalkan!',
-            cancelButtonText: 'Tidak'
+            confirmButtonText: 'Yes, Cancel!',
+            cancelButtonText: 'No'
         }).then((result) => {
             if (result.isConfirmed) {
                 @this.cancelOpname();

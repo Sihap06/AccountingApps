@@ -40,7 +40,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-orange-500 ni ni-calendar-grid-58"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Inventaris</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Inventory</span>
                 </a>
             </li>
             @endif
@@ -53,7 +53,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-amber-500 fas fa-clipboard-check"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Stok Opname</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Stock Opname</span>
                 </a>
             </li>
             @endif
@@ -66,7 +66,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center fill-current stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-emerald-500 ni ni-credit-card"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Kasir (POS)</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Point of Sales (POS)</span>
                 </a>
             </li>
             @endif
@@ -79,7 +79,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-cyan-500 ni ni-app"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Laporan</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Reports</span>
                 </a>
             </li>
             @endif
@@ -92,7 +92,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-emerald-500 fas fa-chart-pie"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Ringkasan Keuangan</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Financial Summary</span>
                 </a>
             </li>
             @endif
@@ -105,7 +105,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-yellow-500 ni ni-planet"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Teknisi</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Technicians</span>
                 </a>
             </li>
             @endif
@@ -118,7 +118,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-neutral-800 ni ni-user-run"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Pelanggan</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Customers</span>
                 </a>
             </li>
             @endif
@@ -131,7 +131,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-green-500 ni ni-money-coins"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Metode Pembayaran</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Payment Methods</span>
                 </a>
             </li>
             @endif
@@ -144,7 +144,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-purple-500 ni ni-check-bold"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Verifikasi</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Verification</span>
                 </a>
             </li>
             @endif
@@ -157,7 +157,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-indigo-500 ni ni-single-02"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Manajemen Pengguna</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">User Management</span>
                 </a>
             </li>
             <li class="mt-0.5 w-full">
@@ -167,7 +167,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-rose-500 fas fa-user-tag focus:outline-none"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Manajemen Peran (Role)</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Role Management</span>
                 </a>
             </li>
             @endif
@@ -180,7 +180,7 @@
                         class="mr-2 flex h-8 w-8 items-center justify-center rounded-lg bg-center stroke-0 text-center xl:p-2.5">
                         <i class="relative top-0 text-sm leading-normal text-orange-600 ni ni-briefcase-24"></i>
                     </div>
-                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Catatan Aktivitas</span>
+                    <span class="ml-1 duration-300 opacity-100 pointer-events-none ease">Activity Log</span>
                 </a>
             </li>
             @endif
@@ -193,7 +193,7 @@
             @csrf
             <button type="submit"
                 class="relative inline-block w-full py-2 text-xs font-bold leading-normal text-center text-white align-middle transition-all ease-in bg-red-600 border-0 rounded-lg shadow-md select-none hover:bg-red-700 hover:shadow-xs hover:-translate-y-px">
-                <i class="fas fa-sign-out-alt mr-2"></i>Keluar
+                <i class="fas fa-sign-out-alt mr-2"></i>Logout
             </button>
         </form>
     </div>

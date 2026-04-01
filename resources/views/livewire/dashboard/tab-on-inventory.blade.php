@@ -4,9 +4,9 @@
         <div class="mb-0 border-b-0 border-solid">
             <h5 class="mb-1 font-serif">
                 @if($tabActive === 'inventory')
-                    Inventaris
+                    Inventory
                 @else
-                    Riwayat Update Stok
+                    Stock Update History
                 @endif
             </h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
@@ -19,14 +19,14 @@
                     <button
                         class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out text-slate-700 {{ $tabActive === 'inventory' ? 'bg-primary text-white' : '' }}"
                         wire:click="changeActiveTab('inventory')">
-                        <span class="ml-1">Inventaris</span>
+                        <span class="ml-1">Inventory</span>
                     </button>
                 </li>
                 <li class="z-90 flex-auto text-center transition-all">
                     <button
                         class="z-90 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out text-slate-700 {{ $tabActive === 'stock_update_history' ? 'bg-primary text-white' : '' }}"
                         wire:click="changeActiveTab('stock_update_history')">
-                        <span class="ml-1">Riwayat Update Stok</span>
+                        <span class="ml-1">Stock Update History</span>
                     </button>
                 </li>
             </ul>

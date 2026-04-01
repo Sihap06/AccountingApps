@@ -36,7 +36,7 @@
                             <div class="mb-8 w-full">
                                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
                                     <div wire:ignore>
-                                        <x-ui.select label="Metode Pembayaran" wire:model="paymentMethod"
+                                        <x-ui.select label="Payment Method" wire:model="paymentMethod"
                                             id="paymentMethod" search size="lg">
                                             <option value="cash">CASH</option>
                                             <option value="qris">QRIS</option>
@@ -73,16 +73,16 @@
                                                 Service</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Biaya</th>
+                                                Cost</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Teknisi</th>
+                                                Technician</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                                 Sparepart</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Garansi</th>
+                                                Warranty</th>
                                             <th
                                                 class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                             </th>
@@ -128,11 +128,11 @@
                                                     @if ($transaction['warranty'] != '')
                                                         {{ $transaction['warranty'] }}
                                                         @if ($transaction['warranty_type'] == 'daily')
-                                                            Hari
+                                                            Days
                                                         @elseif ($transaction['warranty_type'] == 'weekly')
-                                                            Minggu
+                                                            Weeks
                                                         @else
-                                                            Bulan
+                                                            Months
                                                         @endif
                                                     @else
                                                         -
@@ -200,11 +200,11 @@
                                                         @if ($item['warranty'] != '')
                                                             {{ $item['warranty'] }}
                                                             @if ($item['warranty_type'] == 'daily')
-                                                                Hari
+                                                                Days
                                                             @elseif ($item['warranty_type'] == 'weekly')
-                                                                Minggu
+                                                                Weeks
                                                             @else
-                                                                Bulan
+                                                                Months
                                                             @endif
                                                         @else
                                                             -
@@ -311,7 +311,7 @@
                                 @enderror
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <label for="biaya" class="text-sm">Biaya</label>
+                                <label for="biaya" class="text-sm">Cost</label>
                                 <input type="text" wire:model.lazy='biaya' id="biaya" x-data="{
                                     formatNumber: function(event) {
                                         const input = event.target;
@@ -326,7 +326,7 @@
                                 @enderror
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical, 'name' => 'technical', 'label' => 'Teknisi'])
+                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical, 'name' => 'technical', 'label' => 'Technician'])
 
                                 @error('technical')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -339,7 +339,7 @@
                                 @enderror
                             </div>
                             <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <label for="warranty" class="text-sm">Garansi</label>
+                                <label for="warranty" class="text-sm">Warranty</label>
                                 <div class="flex flex-row gap-2">
                                     <input type="text" wire:model.lazy='warranty' id="warranty"
                                         x-data="{
@@ -352,9 +352,9 @@
                                         class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                     <select wire:model.lazy="warranty_type"
                                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                        <option value="daily">Hari</option>
-                                        <option value="weekly">Minggu</option>
-                                        <option value="monthly">Bulan</option>
+                                        <option value="daily">Days</option>
+                                        <option value="weekly">Weeks</option>
+                                        <option value="monthly">Months</option>
                                     </select>
                                 </div>
                                 @error('warranty')
@@ -413,7 +413,7 @@
                                 @enderror
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <label for="editBiaya" class="text-sm">Biaya</label>
+                                <label for="editBiaya" class="text-sm">Cost</label>
                                 <input type="text" wire:model.lazy='editBiaya' id="editBiaya"
                                     x-data="{
                                         formatNumber: function(event) {
@@ -428,7 +428,7 @@
                                 @enderror
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $editTechnical, 'name' => 'editTechnical', 'label' => 'Teknisi'])
+                                @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $editTechnical, 'name' => 'editTechnical', 'label' => 'Technician'])
 
                                 @error('editTechnical')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -441,7 +441,7 @@
                                 @enderror
                             </div>
                             <div class="mb-4 w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <label for="warranty" class="text-sm">Garansi</label>
+                                <label for="warranty" class="text-sm">Warranty</label>
                                 <div class="flex flex-row gap-2">
                                     <input type="text" wire:model.lazy='warranty' id="warranty"
                                         x-data="{
@@ -454,9 +454,9 @@
                                         class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                     <select wire:model.lazy="warranty_type"
                                         class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-2/5 appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                        <option value="daily">Hari</option>
-                                        <option value="weekly">Minggu</option>
-                                        <option value="monthly">Bulan</option>
+                                        <option value="daily">Days</option>
+                                        <option value="weekly">Weeks</option>
+                                        <option value="monthly">Months</option>
                                     </select>
                                 </div>
                                 @error('warranty')
@@ -499,17 +499,17 @@
                     <div>
                         <div class="mt-3 sm:mt-5">
                             <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                Alasan {{ $pendingAction === 'removeItem' ? 'Penghapusan' : 'Perubahan' }}
+                                Reason for {{ $pendingAction === 'removeItem' ? 'Deletion' : 'Change' }}
                             </h3>
                             <div class="flex-auto px-0 pt-0 pb-2">
                                 <form wire:submit.prevent="submitReason">
                                     <div class="relative mb-8 mt-4">
                                         <label class="block text-gray-700 text-sm font-bold mb-2">
-                                            Masukkan alasan {{ $pendingAction === 'removeItem' ? 'penghapusan' : 'perubahan' }} <span class="text-red-500">*</span>
+                                            Enter reason for {{ $pendingAction === 'removeItem' ? 'deletion' : 'change' }} <span class="text-red-500">*</span>
                                         </label>
                                         <textarea wire:model="reason" rows="4"
                                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                                            placeholder="Jelaskan mengapa {{ $pendingAction === 'removeItem' ? 'penghapusan' : 'perubahan' }} ini diperlukan..."></textarea>
+                                            placeholder="Explain why this {{ $pendingAction === 'removeItem' ? 'deletion' : 'change' }} is needed..."></textarea>
                                         @error('reason')
                                             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                                         @enderror
@@ -525,7 +525,7 @@
                                                         class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                 </div>
                                             </div>
-                                            Batal
+                                            Cancel
                                         </button>
 
                                         <x-ui.button type="submit" title="Submit" color="primary" wireLoading

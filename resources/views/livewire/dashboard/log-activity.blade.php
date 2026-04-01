@@ -2,7 +2,7 @@
     <div
         class="flex items-center justify-between bg-white rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Catatan Aktivitas</h5>
+            <h5 class="mb-1 font-serif">Activity Log</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -30,13 +30,13 @@
                                                 No</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Pengguna</th>
+                                                User</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Produk</th>
+                                                Product</th>
                                             <th
                                                 class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                Aktivitas</th>
+                                                Activity</th>
 
                                         </tr>
                                     </thead>
@@ -70,29 +70,29 @@
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                         @if ($item->activity === 'store')
-                                                            Menambahkan produk baru
+                                                            Added new product
                                                         @elseif($item->activity === 'delete')
-                                                            Menghapus produk
+                                                            Deleted product
                                                         @else
                                                             <ul>
                                                                 @if ($item->old_name !== null && $item->new_name !== null)
                                                                     <li>
-                                                                        Mengubah nama produk dari {{ $item->old_name }}
-                                                                        menjadi
+                                                                        Changed product name from {{ $item->old_name }}
+                                                                        to
                                                                         {{ $item->new_name }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_price !== null && $item->new_price !== null)
                                                                     <li>
-                                                                        Mengubah harga produk dari {{ $item->old_price }}
-                                                                        menjadi
+                                                                        Changed product price from {{ $item->old_price }}
+                                                                        to
                                                                         {{ $item->new_price }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_stok !== null && $item->new_stok !== null)
                                                                     <li>
-                                                                        Memperbarui stok produk dari {{ $item->old_stok }}
-                                                                        menjadi
+                                                                        Updated product stock from {{ $item->old_stok }}
+                                                                        to
                                                                         {{ $item->new_stok }}
                                                                     </li>
                                                                 @endif

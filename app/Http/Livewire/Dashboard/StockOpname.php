@@ -84,8 +84,8 @@ class StockOpname extends Component
         $existing = StockOpnameModel::active()->first();
         if ($existing) {
             $this->dispatchBrowserEvent('swal', [
-                'title' => 'Tidak Bisa Membuat',
-                'text' => 'Masih ada stok opname yang aktif. Selesaikan terlebih dahulu.',
+                'title' => 'Cannot Create',
+                'text' => 'There is still an active stock opname. Please complete it first.',
                 'icon' => 'warning'
             ]);
             return;
@@ -114,8 +114,8 @@ class StockOpname extends Component
 
         if ($products->isEmpty()) {
             $this->dispatchBrowserEvent('swal', [
-                'title' => 'Tidak Ada Produk',
-                'text' => 'Tidak ada produk untuk dilakukan stok opname.',
+                'title' => 'No Products',
+                'text' => 'There are no products to perform a stock opname.',
                 'icon' => 'warning'
             ]);
             return;
@@ -142,8 +142,8 @@ class StockOpname extends Component
         $this->loadActiveOpname();
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Stok Opname Dibuat',
-            'text' => 'Notifikasi telah dikirim ke kasir untuk melakukan pengecekan stok.',
+            'title' => 'Stock Opname Created',
+            'text' => 'Notification has been sent to the cashier to perform stock checking.',
             'icon' => 'success'
         ]);
     }
@@ -180,9 +180,9 @@ class StockOpname extends Component
         $this->validate([
             'actualStock' => 'required|integer|min:0',
         ], [
-            'actualStock.required' => 'Stok aktual wajib diisi.',
-            'actualStock.integer' => 'Stok aktual harus berupa angka.',
-            'actualStock.min' => 'Stok aktual tidak boleh negatif.',
+            'actualStock.required' => 'Actual stock is required.',
+            'actualStock.integer' => 'Actual stock must be an integer.',
+            'actualStock.min' => 'Actual stock cannot be negative.',
         ]);
 
         $item = StockOpnameItem::find($this->editingItemId);
@@ -207,8 +207,8 @@ class StockOpname extends Component
         $unchecked = $this->activeOpname->items()->where('checked', false)->count();
         if ($unchecked > 0) {
             $this->dispatchBrowserEvent('swal', [
-                'title' => 'Belum Lengkap',
-                'text' => "Masih ada {$unchecked} produk yang belum dicek.",
+                'title' => 'Incomplete',
+                'text' => "There are still {$unchecked} products that haven't been checked.",
                 'icon' => 'warning'
             ]);
             return;
@@ -223,8 +223,8 @@ class StockOpname extends Component
         $this->activeOpname = null;
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Stok Opname Selesai',
-            'text' => 'Stok opname telah selesai dilakukan.',
+            'title' => 'Stock Opname Completed',
+            'text' => 'Stock opname has been successfully completed.',
             'icon' => 'success'
         ]);
     }
@@ -237,8 +237,8 @@ class StockOpname extends Component
         $this->activeOpname = null;
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Stok Opname Dibatalkan',
-            'text' => 'Stok opname telah dibatalkan.',
+            'title' => 'Stock Opname Cancelled',
+            'text' => 'Stock opname has been cancelled.',
             'icon' => 'info'
         ]);
     }

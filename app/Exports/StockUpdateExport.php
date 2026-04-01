@@ -37,16 +37,16 @@ class StockUpdateExport implements FromCollection, WithHeadings, WithMapping, Wi
     {
         return [
             'No',
-            'Tanggal',
+            'Date',
             'User',
-            'Produk',
-            'Qty Tambah',
-            'Harga Beli',
-            'Stok Sebelum',
-            'Stok Sesudah',
-            'Harga Sebelum',
-            'Harga Sesudah',
-            'Catatan',
+            'Product',
+            'Add Qty',
+            'Capital Price',
+            'Stock Before',
+            'Stock After',
+            'Price Before',
+            'Price After',
+            'Notes',
         ];
     }
 
