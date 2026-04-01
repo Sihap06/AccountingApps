@@ -5,12 +5,15 @@ namespace App\Http\Livewire\Dashboard;
 use App\Http\Controllers\ProductController;
 use App\Models\Customer;
 use App\Models\LogActivityTransaction;
+use App\Models\LogActivityProduct;
 use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\PendingChange;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class UpdateTransaction extends Component
@@ -36,6 +39,11 @@ class UpdateTransaction extends Component
     public $technical;
     public $product;
 
+    public $reason = '';
+    public $showReasonModal = false;
+    public $pendingAction = null;
+    public $pendingActionData = null;
+
     public $editAction = 'updateItemTransaction';
     public $formAction = '';
 
@@ -44,11 +52,27 @@ class UpdateTransaction extends Component
     public function setSelected($value, $name)
     {
         $this->$name = $value;
+        
+        // If product is selected, set biaya to harga_jual
+        if ($name === 'product' && $value) {
+            $product = Product::find($value);
+            if ($product && $product->harga_jual) {
+                $this->biaya = number_format($product->harga_jual, 0, ',', '.');
+            }
+        }
     }
 
     public function setProduct($value)
     {
         $this->editProduct = $value;
+        
+        // If product is selected in edit mode, set editBiaya to harga_jual
+        if ($value) {
+            $product = Product::find($value);
+            if ($product && $product->harga_jual) {
+                $this->editBiaya = number_format($product->harga_jual, 0, ',', '.');
+            }
+        }
     }
 
     public function updateIsEdit()
@@ -156,7 +180,10 @@ class UpdateTransaction extends Component
         $validateData['technical_id'] = $this->technical;
         $validateData['product_id'] = $this->product;
 
+        // All users can add transaction items directly without verification
+
         $newTransactionItem = new TransactionItem();
+        $newTransactionItem->bypassVerification = true; // Bypass verification for all users
         $newTransactionItem->transaction_id = $this->transactionId;
 
         $validateData['modal'] = 0;
@@ -193,6 +220,27 @@ class UpdateTransaction extends Component
 
         $newTransactionItem->save();
 
+        // Deduct stock if product was used
+        if ($validateData['product_id'] !== null) {
+            $product = Product::findOrFail($validateData['product_id']);
+            $oldStock = $product->stok;
+
+            // Set bypass flag to skip verification for transaction stock updates
+            $product->bypassVerification = true;
+
+            $product->stok = $product->stok - 1;
+            $product->save();
+
+            // Log stock usage
+            $log = new LogActivityProduct();
+            $log->user = Auth::user()->name;
+            $log->activity = 'update';
+            $log->product = $product->name;
+            $log->old_stok = $oldStock;
+            $log->new_stok = $product->stok;
+            $log->save();
+        }
+
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',
             'text' => 'Successfully add item transaction',
@@ -205,6 +253,32 @@ class UpdateTransaction extends Component
     public function removeItem($itemId)
     {
         $transactionItem = TransactionItem::find($itemId);
+
+        // All users can delete transaction items directly without verification
+        $transactionItem->bypassVerification = true; // Bypass verification for all users
+        // Return stock if product was used
+        if ($transactionItem->product_id) {
+            $product = Product::find($transactionItem->product_id);
+            if ($product) {
+                $oldStock = $product->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $product->bypassVerification = true;
+
+                $product->stok = $product->stok + 1;
+                $product->save();
+
+                // Log stock return
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'update';
+                $log->product = $product->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $product->stok;
+                $log->save();
+            }
+        }
+
         $transactionItem->delete();
 
         $this->dispatchBrowserEvent('swal', [
@@ -269,6 +343,23 @@ class UpdateTransaction extends Component
 
         $transaction = Transaction::findOrFail($this->editId);
 
+        // Check if user is sysadmin (operator) - needs verification
+        if (Auth::user()->requiresVerification()) {
+            // Store data and show reason modal
+            $this->pendingAction = 'updateItemTransaction';
+            $this->pendingActionData = [
+                'transaction' => $transaction->toArray(),
+                'validateData' => $validateData,
+                'editService' => $this->editService,
+                'warranty' => $this->warranty,
+                'warranty_type' => $this->warranty_type
+            ];
+            $this->showReasonModal = true;
+            $this->formAction = ''; // Close edit form
+            return; // Return early
+        }
+
+        // Master admin can update directly
         if ($this->editService != $transaction->service || $validateData['biaya'] != $transaction->biaya || $validateData['technical_id'] != $transaction->technical_id || $validateData['product_id'] != $transaction->product_id) {
             $log = new LogActivityTransaction();
             $log->user = auth()->user()->name;
@@ -307,8 +398,22 @@ class UpdateTransaction extends Component
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::findOrFail($transaction->product_id);
+                $oldStock = $currentProduct->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $currentProduct->bypassVerification = true;
+
                 $currentProduct->stok = $currentProduct->stok + 1;
                 $currentProduct->save();
+
+                // Log stock return
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'transaction stock return';
+                $log->product = $currentProduct->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $currentProduct->stok;
+                $log->save();
             }
 
             if ($validateData['product_id'] !== null) {
@@ -321,8 +426,23 @@ class UpdateTransaction extends Component
                         'icon' => 'error'
                     ]);
                 }
+
+                $oldStock = $newProduct->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $newProduct->bypassVerification = true;
+
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
+
+                // Log stock usage
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'transaction stock update';
+                $log->product = $newProduct->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $newProduct->stok;
+                $log->save();
 
                 $validateData['modal'] = $newProduct->harga;
             }
@@ -373,6 +493,23 @@ class UpdateTransaction extends Component
 
         $transaction = TransactionItem::findOrFail($this->editId);
 
+        // Check if user is sysadmin (operator) - needs verification for updates
+        if (Auth::user()->requiresVerification()) {
+            // Store data and show reason modal
+            $this->pendingAction = 'updateItem';
+            $this->pendingActionData = [
+                'transactionItem' => $transaction->toArray(),
+                'validateData' => $validateData,
+                'editService' => $this->editService,
+                'warranty' => $this->warranty,
+                'warranty_type' => $this->warranty_type
+            ];
+            $this->showReasonModal = true;
+            $this->formAction = ''; // Close edit form
+            return; // Return early
+        }
+
+        // Master admin can update directly
         if ($this->editService != $transaction->service || $validateData['biaya'] != $transaction->biaya || $validateData['technical_id'] != $transaction->technical_id || $validateData['product_id'] != $transaction->product_id) {
             $log = new LogActivityTransaction();
             $log->user = auth()->user()->name;
@@ -411,8 +548,22 @@ class UpdateTransaction extends Component
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::findOrFail($transaction->product_id);
+                $oldStock = $currentProduct->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $currentProduct->bypassVerification = true;
+
                 $currentProduct->stok = $currentProduct->stok + 1;
                 $currentProduct->save();
+
+                // Log stock return
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'transaction stock return';
+                $log->product = $currentProduct->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $currentProduct->stok;
+                $log->save();
             }
 
             if ($validateData['product_id'] !== null) {
@@ -425,8 +576,23 @@ class UpdateTransaction extends Component
                         'icon' => 'error'
                     ]);
                 }
+
+                $oldStock = $newProduct->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $newProduct->bypassVerification = true;
+
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
+
+                // Log stock usage
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'transaction stock update';
+                $log->product = $newProduct->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $newProduct->stok;
+                $log->save();
 
                 $validateData['modal'] = $newProduct->harga;
             }
@@ -473,42 +639,165 @@ class UpdateTransaction extends Component
 
         $transaction = Transaction::findOrFail($this->transactionId);
 
+        // Check if user is sysadmin (operator) - needs verification
+        if (Auth::user()->requiresVerification()) {
+            // Store data and show reason modal
+            $this->pendingAction = 'updateTransaction';
+            $this->pendingActionData = [
+                'transaction' => $transaction->toArray(),
+                'newData' => [
+                    'customer_id' => $this->customer_id,
+                    'payment_method' => $validateData['payment_method'],
+                    'created_at' => $order_date . ' ' . $time,
+                ]
+            ];
+            $this->showReasonModal = true;
+            return; // Return early to prevent redirect
+        } else {
+            // Master admin can update directly
+            if ($transaction->customer_id != $validateData['customer_id'] || $transaction->payment_method != $validateData['payment_method'] || Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
+                $log = new LogActivityTransaction();
+                $log->user = auth()->user()->name;
+                $log->order_transaction = $transaction->order_transaction;
+                $log->activity = 'update';
 
-        if ($transaction->customer_id != $validateData['customer_id'] || $transaction->payment_method != $validateData['payment_method'] || Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
-            $log = new LogActivityTransaction();
-            $log->user = auth()->user()->name;
-            $log->order_transaction = $transaction->order_transaction;
-            $log->activity = 'update';
+                if ($transaction->customer_id != $validateData['customer_id']) {
+                    $log->old_customer = Customer::findOrFail($transaction->customer_id)->name;
+                    $log->new_customer = Customer::findOrFail($validateData['customer_id'])->name;
+                }
 
-            if ($transaction->customer_id != $validateData['customer_id']) {
-                $log->old_customer = Customer::findOrFail($transaction->customer_id)->name;
-                $log->new_customer = Customer::findOrFail($validateData['customer_id'])->name;
+                if ($transaction->payment_method != $validateData['payment_method']) {
+                    $log->old_payment_method = $transaction->payment_method;
+                    $log->new_payment_method = $validateData['payment_method'];
+                }
+
+                if (Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
+                    $log->old_tanggal = Carbon::parse($transaction->created_at)->format('Y-m-d');
+                    $log->new_tanggal = $order_date;
+                }
+
+                $log->save();
             }
 
-            if ($transaction->payment_method != $validateData['payment_method']) {
-                $log->old_payment_method = $transaction->payment_method;
-                $log->new_payment_method = $validateData['payment_method'];
-            }
+            $transaction->customer_id = $this->customer_id;
+            $transaction->payment_method = $validateData['payment_method'];
+            $transaction->created_at = $order_date . ' ' . $time;
+            $transaction->save();
 
-            if (Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date) {
-                $log->old_tanggal = Carbon::parse($transaction->created_at)->format('Y-m-d');
-                $log->new_tanggal = $order_date;
-            }
-
-            $log->save();
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Successfully updated transaction',
+                'icon' => 'success'
+            ]);
         }
 
-        $transaction->customer_id = $this->customer_id;
-        $transaction->payment_method = $validateData['payment_method'];
-        $transaction->created_at = $order_date . ' ' . $time;
-        $transaction->save();
+        return redirect()->route('dashboard.reporting');
+    }
 
-        $this->dispatchBrowserEvent('swal', [
-            'title' => 'Success',
-            'text' => 'Successfully update transaction',
-            'icon' => 'success'
+    public function submitReason()
+    {
+        $this->validate([
+            'reason' => 'required|min:10'
+        ], [
+            'reason.required' => 'Alasan harus diisi',
+            'reason.min' => 'Alasan minimal 10 karakter'
         ]);
 
-        return redirect()->route('dashboard.reporting');
+        if ($this->pendingAction === 'updateTransaction') {
+            $transaction = $this->pendingActionData['transaction'];
+            $newData = array_merge($transaction, $this->pendingActionData['newData']);
+
+            // Create pending change with reason
+            PendingChange::create([
+                'changeable_type' => Transaction::class,
+                'changeable_id' => $this->transactionId,
+                'action' => 'update',
+                'old_data' => $transaction,
+                'new_data' => $newData,
+                'reason' => $this->reason,
+                'requested_by' => Auth::user()->id,
+                'requested_at' => now(),
+            ]);
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Perubahan berhasil disimpan dan menunggu verifikasi.',
+                'icon' => 'info'
+            ]);
+
+            // Redirect after submission
+            return redirect()->route('dashboard.reporting');
+        } elseif ($this->pendingAction === 'updateItemTransaction') {
+            $transaction = $this->pendingActionData['transaction'];
+            $validateData = $this->pendingActionData['validateData'];
+
+            // Prepare new data
+            $newData = $transaction;
+            $newData['service'] = $this->pendingActionData['editService'];
+            $newData['biaya'] = $validateData['biaya'];
+            $newData['technical_id'] = $validateData['technical_id'];
+            $newData['product_id'] = $validateData['product_id'];
+            $newData['warranty'] = $this->pendingActionData['warranty'];
+            $newData['warranty_type'] = $this->pendingActionData['warranty_type'];
+
+            // Create pending change with reason
+            PendingChange::create([
+                'changeable_type' => Transaction::class,
+                'changeable_id' => $this->editId,
+                'action' => 'update',
+                'old_data' => $transaction,
+                'new_data' => $newData,
+                'reason' => $this->reason,
+                'requested_by' => Auth::user()->id,
+                'requested_at' => now(),
+            ]);
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Perubahan berhasil disimpan dan menunggu verifikasi.',
+                'icon' => 'info'
+            ]);
+        } elseif ($this->pendingAction === 'updateItem') {
+            $transactionItem = $this->pendingActionData['transactionItem'];
+            $validateData = $this->pendingActionData['validateData'];
+
+            // Prepare new data
+            $newData = $transactionItem;
+            $newData['service'] = $this->pendingActionData['editService'];
+            $newData['biaya'] = $validateData['biaya'];
+            $newData['technical_id'] = $validateData['technical_id'];
+            $newData['product_id'] = $validateData['product_id'];
+            $newData['warranty'] = $this->pendingActionData['warranty'];
+            $newData['warranty_type'] = $this->pendingActionData['warranty_type'];
+
+            // Create pending change with reason
+            PendingChange::create([
+                'changeable_type' => TransactionItem::class,
+                'changeable_id' => $this->editId,
+                'action' => 'update',
+                'old_data' => $transactionItem,
+                'new_data' => $newData,
+                'reason' => $this->reason,
+                'requested_by' => Auth::user()->id,
+                'requested_at' => now(),
+            ]);
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Perubahan berhasil disimpan dan menunggu verifikasi.',
+                'icon' => 'info'
+            ]);
+        }
+
+        $this->closeReasonModal();
+        $this->resetFieldValue();
+    }
+
+    public function closeReasonModal()
+    {
+        $this->showReasonModal = false;
+        $this->reason = '';
+        $this->pendingAction = null;
+        $this->pendingActionData = null;
     }
 }

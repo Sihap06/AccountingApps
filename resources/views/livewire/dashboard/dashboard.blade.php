@@ -1,8 +1,86 @@
    <div class="w-full px-6 py-4 mx-auto flex flex-col">
 
+       @if (auth()->user()->hasPermission('verification') && $showPendingModal)
+           <!-- Pending Verification Modal -->
+           <div class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+               <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                   <!-- Background overlay -->
+                   <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+                   <!-- Modal panel -->
+                   <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                       <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                           <div class="sm:flex sm:items-start">
+                               <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+                                   <svg class="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                   </svg>
+                               </div>
+                               <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                   <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                       Pending Verification
+                                   </h3>
+                                   <div class="mt-2">
+                                       <p class="text-sm text-gray-500">
+                                           There are <span class="font-bold text-yellow-600">{{ $pendingCount }}</span> changes awaiting your verification.
+                                       </p>
+                                       <p class="text-sm text-gray-500 mt-2">
+                                           Please verify the changes to continue system operations.
+                                       </p>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                           <button wire:click="goToVerification" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
+                               Go to Verification Page
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       @endif
+
+       {{-- Stock Opname Notification (Kasir/Manajer) --}}
+       @if($showStockOpnameNotif && $stockOpnameData)
+           <div class="mb-6 bg-white dark:bg-slate-850 border-l-4 border-blue-500 rounded-2xl shadow-xl p-5">
+               <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                   <div class="flex items-start gap-4">
+                       <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500">
+                           <i class="fas fa-clipboard-check text-xl"></i>
+                       </div>
+                       <div>
+                           <h6 class="text-base font-bold text-gray-800 dark:text-white mb-1">Stock Opname Required!</h6>
+                           <p class="text-sm text-gray-600 dark:text-gray-400">
+                               <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $stockOpnameData['triggered_by'] }}</span> requested you to perform a stock opname on {{ \Carbon\Carbon::parse($stockOpnameData['created_at'])->format('d M Y H:i') }}.
+                           </p>
+                           @if($stockOpnameData['notes'])
+                               <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                   <i class="fas fa-sticky-note mr-1 text-gray-400 dark:text-gray-500"></i> {{ $stockOpnameData['notes'] }}
+                               </p>
+                           @endif
+                           <p class="text-xs text-blue-600 dark:text-blue-400 font-semibold mt-2">
+                               Status: {{ $stockOpnameData['status'] === 'pending' ? 'Waiting to start' : 'In progress' }}
+                           </p>
+                       </div>
+                   </div>
+                   <div class="flex items-center gap-3">
+                       <button wire:click="goToStockOpname"
+                           class="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-tl from-blue-500 to-violet-500 rounded-lg hover:shadow-md hover:-translate-y-px transition-all whitespace-nowrap">
+                           <i class="fas fa-arrow-right mr-1"></i> Start Stock Opname
+                       </button>
+                       <button wire:click="dismissStockOpnameNotif"
+                           class="px-3 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-all whitespace-nowrap">
+                           <i class="fas fa-times"></i>
+                       </button>
+                   </div>
+               </div>
+           </div>
+       @endif
+
        <div class="flex justify-between items-center ">
            <div class=" mb-0 border-b-0 border-solid ">
-               <h5 class="mb-1 font-serif">Dashboard Statistik</h5>
+               <h5 class="mb-1 font-serif">Statistics Dashboard</h5>
                <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                    {{ \Carbon\Carbon::now()->format('l, d M Y') }}
                </p>
@@ -23,7 +101,7 @@
                                <a href="{{ url('dashboard/reporting/transaction') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Transaction</p>
+                                       Today's Transactions</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        {{ number_format($todayTransaction) }}
                                    </h5>
@@ -50,7 +128,7 @@
                                <a href="{{ url('dashboard/reporting/income') }}">
                                    <p
                                        class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Today's Omset</p>
+                                       Today's Revenue</p>
                                    <h5 class="mb-0 font-bold dark:text-white">
                                        Rp {{ number_format($todayIncome) }}
                                    </h5>
@@ -98,13 +176,14 @@
 
        <!-- cards row 2 -->
        <div class="flex flex-grow mt-8 -mx-3">
+           @if (auth()->user()->hasPermission('verification'))
            <div class="w-full max-w-full px-3 mt-0 lg:w-7/12 lg:flex-none">
                <div
                    class="border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl relative z-20 break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div
                        class="flex items-center justify-between border-black/12.5 mb-0 rounded-t-2xl border-b-0 border-solid p-6 pt-4 pb-0">
-                       <h6 class="capitalize dark:text-white">Transactions Chart</h6>
-                       <div class="flex gap-x-3 w-full md:w-3/12 items-center">
+                       <h6 class="capitalize dark:text-white">Transaction Chart</h6>
+                       <div class="flex gap-x-3 w-full md:w-5/12 items-center">
                            <select wire:model="selectedYear"
                                class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
                                @foreach ($years as $year)
@@ -115,6 +194,18 @@
                            <button wire:click='updateChart()'
                                class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                Update
+                           </button>
+                           
+                           <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                               class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                               <span wire:loading.remove wire:target="exportExcel">
+                                   <i class="fas fa-file-excel mr-1"></i>
+                                   Export
+                               </span>
+                               <span wire:loading wire:target="exportExcel">
+                                   <i class="fas fa-spinner fa-spin mr-1"></i>
+                                   Exporting...
+                               </span>
                            </button>
                        </div>
                    </div>
@@ -134,12 +225,13 @@
                    </div>
                </div>
            </div>
+           @endif
 
-           <div class="w-full max-w-full px-3 lg:w-5/12 lg:flex-none ">
+           <div class="w-full max-w-full px-3 {{ auth()->user()->hasPermission('verification') ? 'lg:w-5/12' : 'lg:w-full' }} lg:flex-none ">
                <div
                    class="border-black/12.5 shadow-xl dark:bg-slate-850 dark:shadow-dark-xl relative flex min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border h-full">
                    <div class="p-4 pb-0 rounded-t-4">
-                       <h6 class="mb-0 dark:text-white">Latest Transactions</h6>
+                       <h6 class="mb-0 dark:text-white">Recent Transactions</h6>
                    </div>
                    <div class="flex-auto p-4">
                        <ul class="flex flex-col pl-0 mb-0 rounded-lg">
@@ -176,7 +268,52 @@
            </div>
        </div>
 
+       <!-- Transaction Statistics Filter Section -->
        <div class="flex flex-wrap -mx-3 mt-8">
+           <div class="w-full px-3 mb-4">
+               <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-850 p-4 rounded-lg shadow-lg">
+                   <h6 class="text-base font-semibold dark:text-white flex items-center">
+                       <i class="fas fa-filter mr-2 text-blue-500"></i>
+                       Transaction Statistics Filter
+                   </h6>
+                   <div class="flex flex-col sm:flex-row gap-3 items-center w-full md:w-auto">
+                       <select wire:model="selectedMonthFilter" wire:change="updateTransactionStats"
+                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                           <option value="01">January</option>
+                           <option value="02">February</option>
+                           <option value="03">March</option>
+                           <option value="04">April</option>
+                           <option value="05">May</option>
+                           <option value="06">June</option>
+                           <option value="07">July</option>
+                           <option value="08">August</option>
+                           <option value="09">September</option>
+                           <option value="10">October</option>
+                           <option value="11">November</option>
+                           <option value="12">December</option>
+                       </select>
+                       
+                       <select wire:model="selectedYearFilter" wire:change="updateTransactionStats"
+                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                           @foreach ($years as $year)
+                               <option value="{{ $year }}">{{ $year }}</option>
+                           @endforeach
+                       </select>
+                       
+                       <div wire:loading wire:target="updateTransactionStats" class="flex items-center">
+                           <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                               role="status">
+                               <span
+                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                           </div>
+                           <span class="ml-2 text-sm text-gray-600">Updating...</span>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+       <div class="flex flex-wrap -mx-3">
            <!-- card1 -->
            <div class="w-full max-w-full px-3 mb-6 sm:w-full sm:flex-none xl:mb-0 xl:w-4/12">
                <div
@@ -186,11 +323,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Done</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       Completed Transactions</p>
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_done) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -213,11 +353,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Cancel</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       Cancelled Transactions</p>
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_cancel) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -238,11 +381,14 @@
                            <div class="flex-none w-2/3 max-w-full px-3">
                                <div>
                                    <p
-                                       class="mb-8 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
-                                       Transaction Process</p>
-                                   <h4 class="mb-4 font-bold text-neutral-700 dark:text-white">
+                                       class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
+                                       Transactions In Process</p>
+                                   <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
                                        {{ number_format($transactionsMonthly[0]->total_transaksi_proses) }}
                                    </h4>
+                                   <p class="text-xs text-gray-500 dark:text-gray-400">
+                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                   </p>
                                </div>
                            </div>
                            <div class="px-3 text-right basis-1/3">
@@ -276,6 +422,7 @@
            let transactionChart; // Declare chart instance globally
 
            document.addEventListener('DOMContentLoaded', () => {
+               @if (auth()->user()->hasPermission('verification'))
                const data = @json($dataChart);
                const label = @json($labelChart);
 
@@ -375,6 +522,7 @@
                    // Recreate the chart with updated data
                    transactionChart = createChart(labelChart, dataChart);
                });
+               @endif
            });
        </script>
    @endpush

@@ -7,6 +7,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TransactionProcessExport;
+use App\Models\PaymentMethod;
+use App\Models\Product;
+use App\Models\TransactionItem;
 
 class TransactionProcess extends Component
 {
@@ -17,7 +22,7 @@ class TransactionProcess extends Component
     public $payment_method;
     public $transaction_id;
     public $is_dashboard;
-    public $cetak_nota;
+    public $cetak_nota = 'word';
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -63,6 +68,11 @@ class TransactionProcess extends Component
                 'transactions.warranty_type as transaction_warranty_type',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
+                'transactions.phone_brand as transaction_phone_brand',
+                'transactions.phone_type as transaction_phone_type',
+                'transactions.phone_color as transaction_phone_color',
+                'transactions.phone_imei as transaction_phone_imei',
+                'transactions.phone_internal as transaction_phone_internal',
                 'customers.name as customer_name',
                 'customers.no_telp as customer_no_telp',
                 'transaction_items.id as item_id',
@@ -77,7 +87,12 @@ class TransactionProcess extends Component
                 'transaction_items.untung as item_untung',
                 'transaction_items.warranty as item_warranty',
                 'transaction_items.warranty_type as item_warranty_type',
-                'transaction_items.updated_at as item_updated_at'
+                'transaction_items.updated_at as item_updated_at',
+                'transaction_items.phone_brand as item_phone_brand',
+                'transaction_items.phone_type as item_phone_type',
+                'transaction_items.phone_color as item_phone_color',
+                'transaction_items.phone_imei as item_phone_imei',
+                'transaction_items.phone_internal as item_phone_internal'
             )
             ->where('transactions.id', $id)
             ->get()
@@ -106,6 +121,11 @@ class TransactionProcess extends Component
                 'untung' => $transaction->transaction_untung,
                 'warranty' => $transaction->transaction_warranty,
                 'warranty_type' => $transaction->transaction_warranty_type,
+                'phone_brand' => $transaction->transaction_phone_brand,
+                'phone_type' => $transaction->transaction_phone_type,
+                'phone_color' => $transaction->transaction_phone_color,
+                'phone_imei' => $transaction->transaction_phone_imei,
+                'phone_internal' => $transaction->transaction_phone_internal,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     $total += $item->item_biaya;
@@ -120,7 +140,12 @@ class TransactionProcess extends Component
                         'technical_id' => $item->item_technical_id,
                         'untung' => $item->item_untung,
                         'warranty' => $item->item_warranty,
-                        'warranty_type' => $item->item_warranty_type
+                        'warranty_type' => $item->item_warranty_type,
+                        'phone_brand' => $item->item_phone_brand,
+                        'phone_type' => $item->item_phone_type,
+                        'phone_color' => $item->item_phone_color,
+                        'phone_imei' => $item->item_phone_imei,
+                        'phone_internal' => $item->item_phone_internal
                     ];
                 })->toArray() : [],
                 'total' => $total
@@ -147,6 +172,7 @@ class TransactionProcess extends Component
         ]);
 
         $data = Transaction::findOrFail($this->transaction_id);
+        $data->bypassVerification = true;
         $data->status = 'done';
         $data->payment_method = $this->payment_method;
         $data->created_at = Carbon::now();
@@ -167,16 +193,88 @@ class TransactionProcess extends Component
 
     public function handleCancelTransaction($id)
     {
-        $data = Transaction::findOrFail($id);
-        $data->status = 'cancel';
-        $data->save();
+        $transaction = Transaction::findOrFail($id);
+
+        // Return sparepart quantities to inventory if used
+        if ($transaction->product_id !== null) {
+            $product = Product::findOrFail($transaction->product_id);
+            $product->bypassVerification = true;
+            $product->stok = $product->stok + 1;
+            $product->save();
+        }
+
+        // Return transaction items sparepart quantities to inventory
+        $transactionItems = TransactionItem::where('transaction_id', $id)->get();
+        foreach ($transactionItems as $item) {
+            if ($item->product_id !== null) {
+                $product = Product::findOrFail($item->product_id);
+                $product->bypassVerification = true;
+                $product->stok = $product->stok + 1;
+                $product->save();
+            }
+        }
+
+        // Cancel the transaction
+        $transaction->bypassVerification = true;
+        $transaction->status = 'cancel';
+        $transaction->save();
         $this->closeModal();
 
         $this->dispatchBrowserEvent('swal', [
-            'title' => 'Transaction Cancel',
-            'text' => '',
-            'icon' => 'error'
+            'title' => 'Transaction Cancelled',
+            'text' => 'Sparepart quantities have been returned to inventory',
+            'icon' => 'success'
         ]);
+    }
+
+    public function exportExcel()
+    {
+        $data = Transaction::leftJoin('transaction_items', function ($join) {
+            $join->on('transactions.id', '=', 'transaction_items.transaction_id')
+                ->whereNull('transaction_items.deleted_at');
+        })
+            ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('technicians', 'transactions.technical_id', '=', 'technicians.id')
+            ->select(
+                'transactions.id',
+                'transactions.created_at',
+                'customers.name as customer_name',
+                'customers.no_telp as customer_phone',
+                'transactions.order_transaction',
+                'transactions.service',
+                DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
+                DB::raw('transactions.biaya as first_item_biaya'),
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'),
+                DB::raw('transactions.modal as first_item_modal'),
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'),
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name as technician_name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )
+            ->where('transactions.status', 'proses')
+            ->whereNull('transactions.deleted_at')
+            ->groupBy(
+                'transactions.created_at',
+                'customers.name',
+                'customers.no_telp',
+                'transactions.id',
+                'transactions.order_transaction',
+                'transactions.service',
+                'transactions.biaya',
+                'transactions.modal',
+                'transactions.payment_method',
+                'transactions.status',
+                'technicians.name',
+                'transactions.warranty',
+                'transactions.warranty_type'
+            )->get();
+
+        $export = new TransactionProcessExport($data);
+
+        return Excel::download($export, 'transaction-process-' . Carbon::now()->format('Y-m-d') . '.xlsx');
     }
 
     public function render()
@@ -217,15 +315,7 @@ class TransactionProcess extends Component
                 'transactions.payment_method'
             )->get();
 
-        $paymentMethods = [
-            'bca',
-            'mandiri',
-            'transfer',
-            'debit',
-            'qris',
-            'cash',
-            'kartu kredit'
-        ];
+        $paymentMethods = PaymentMethod::select('code', 'name')->get()->toArray();
 
         return view('livewire.dashboard.transaction-process', compact('data', 'paymentMethods'))->layout('components.layouts.dashboard');
     }

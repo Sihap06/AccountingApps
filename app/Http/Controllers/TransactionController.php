@@ -6,11 +6,11 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Models\LogActivityProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -36,13 +36,11 @@ class TransactionController extends Controller
                 $product = app(ProductController::class)->detailProduct((int)$value['product_id'])->getData(true)['data'];
                 $value['modal'] = $product['harga'];
                 $value['product_id'] = (int)$value['product_id'];
-                $value['technical_id'] = null;
-            } elseif ($value['technical_id'] !== null) {
-                $value['modal'] = 0;
-                $value['product_id'] = null;
             }
 
-            $perhitungan = $this->getPerhitungan($value['technical_id'], $value['biaya'], $value['modal']);
+            // Calculate effective price after discount
+            $effectiveBiaya = $value['biaya'] - (isset($value['potongan']) ? (int)$value['potongan'] : 0);
+            $perhitungan = $this->getPerhitungan($value['technical_id'], $effectiveBiaya, $value['modal']);
 
             if ($value['product_id'] != null) {
                 $product = Product::find($value['product_id']);
@@ -52,16 +50,38 @@ class TransactionController extends Controller
                         'message' => 'out of stock!',
                     ], 400);
                 }
+
+                // Store old stock value for logging
+                $oldStock = $product->stok;
+
+                // Set bypass flag to skip verification for transaction stock updates
+                $product->bypassVerification = true;
+
+                // Update stock
                 $product->stok = $product->stok - 1;
                 $product->save();
+
+                // Create activity log for stock change during transaction
+                $log = new LogActivityProduct();
+                $log->user = Auth::user()->name;
+                $log->activity = 'update';
+                $log->product = $product->name;
+                $log->old_stok = $oldStock;
+                $log->new_stok = $product->stok;
+                $log->save();
             }
 
             if ($key === 0) {
                 $data = new Transaction();
+                
+                // Set bypass flag to skip verification for transaction creation
+                $data->bypassVerification = true;
+                
                 $data->product_id = $value['product_id'];
                 $data->technical_id = $value['technical_id'];
                 $data->service = $value['service'];
                 $data->biaya = $value['biaya'];
+                $data->potongan = isset($value['potongan']) ? (int)$value['potongan'] : 0;
                 $data->modal = $perhitungan['modal'];
                 $data->fee_teknisi  = $perhitungan['fee_teknisi'];
                 $data->untung = $perhitungan['untung'];
@@ -71,6 +91,24 @@ class TransactionController extends Controller
                 $data->status = 'proses';
                 $data->warranty = (int)$value['warranty'];
                 $data->warranty_type = $value['warranty_type'];
+                
+                // Add phone fields if they exist
+                if (isset($value['phone_brand'])) {
+                    $data->phone_brand = $value['phone_brand'];
+                }
+                if (isset($value['phone_type'])) {
+                    $data->phone_type = $value['phone_type'];
+                }
+                if (isset($value['phone_color'])) {
+                    $data->phone_color = $value['phone_color'];
+                }
+                if (isset($value['phone_imei'])) {
+                    $data->phone_imei = $value['phone_imei'];
+                }
+                if (isset($value['phone_internal'])) {
+                    $data->phone_internal = $value['phone_internal'];
+                }
+                
                 $data->save();
 
                 $transaction_id = $data->id;
@@ -81,11 +119,30 @@ class TransactionController extends Controller
                 $transactionItems->technical_id = $value['technical_id'];
                 $transactionItems->service = $value['service'];
                 $transactionItems->biaya = $value['biaya'];
+                $transactionItems->potongan = isset($value['potongan']) ? (int)$value['potongan'] : 0;
                 $transactionItems->modal = $perhitungan['modal'];
                 $transactionItems->fee_teknisi  = $perhitungan['fee_teknisi'];
                 $transactionItems->untung = $perhitungan['untung'];
                 $transactionItems->warranty = (int)$value['warranty'];
                 $transactionItems->warranty_type = $value['warranty_type'];
+                
+                // Add phone fields if they exist
+                if (isset($value['phone_brand'])) {
+                    $transactionItems->phone_brand = $value['phone_brand'];
+                }
+                if (isset($value['phone_type'])) {
+                    $transactionItems->phone_type = $value['phone_type'];
+                }
+                if (isset($value['phone_color'])) {
+                    $transactionItems->phone_color = $value['phone_color'];
+                }
+                if (isset($value['phone_imei'])) {
+                    $transactionItems->phone_imei = $value['phone_imei'];
+                }
+                if (isset($value['phone_internal'])) {
+                    $transactionItems->phone_internal = $value['phone_internal'];
+                }
+                
                 $transactionItems->save();
             }
         }
@@ -175,14 +232,24 @@ class TransactionController extends Controller
     {
         if ($technical_id != null) {
             $tecnician = Technician::findOrFail($technical_id);
-            $percentModal = $tecnician->percent_fee;
+            
+            // Check if using sparepart (modal > 0) to determine which percentage to use
+            if ($modal > 0) {
+                // Using sparepart, use percent_with_sparepart
+                $percentModal = $tecnician->percent_with_sparepart;
+            } else {
+                // Not using sparepart, use normal percent_fee
+                $percentModal = $tecnician->percent_fee;
+            }
+            
             $percentUntung = 100 - $percentModal;
             $countModal = $biaya * $percentModal / 100;
             $countUntung = $biaya * $percentUntung / 100;
+            
             return [
                 'fee_teknisi' => $countModal,
-                'modal' => $countModal,
-                'untung' => $countUntung
+                'modal' => $modal > 0 ? $modal + $countModal : $countModal,
+                'untung' => $modal > 0 ? $biaya - $modal - $countModal : $countUntung
             ];
         } else {
             return [

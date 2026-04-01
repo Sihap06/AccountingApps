@@ -2,19 +2,33 @@
 
 namespace App\Models;
 
+use App\Traits\RequiresVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, RequiresVerification;
 
     protected $guarded = [];
+    
+    // Flag to bypass verification for transaction creation
+    public $bypassVerification = false;
 
     public function products()
     {
         return $this->belongsToMany(Product::class);
+    }
+    
+    public function transactionItems()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public static function generateOrderId()

@@ -36,7 +36,7 @@
                                 class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                         </div>
                     </div>
-                    {{ $isAdd || $isEdit ? 'Batal' : 'Tambah' }}
+                    {{ $isAdd || $isEdit ? 'Cancel' : 'Add' }}
                 </button>
             </div>
         </div>
@@ -47,15 +47,19 @@
                         <tr>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                Tanggal
+                                Date
                             </th>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                Jenis
+                                Type
                             </th>
                             <th
                                 class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                 Total
+                            </th>
+                            <th
+                                class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                Image
                             </th>
                             <th
                                 class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-collapse border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -86,6 +90,16 @@
                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                         Rp {{ number_format($item->total) }}
                                     </span>
+                                </td>
+                                <td
+                                    class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                    @if ($item->image)
+                                        <img src="{{ asset('storage/' . $item->image) }}" alt="Expenditure Image"
+                                            class="w-12 h-12 object-cover rounded-lg mx-auto cursor-pointer"
+                                            onclick="showImageModal('{{ asset('storage/' . $item->image) }}')">
+                                    @else
+                                        <span class="text-xs text-gray-400">No Image</span>
+                                    @endif
                                 </td>
                                 <td
                                     class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
@@ -148,7 +162,7 @@
             <div class="w-full p-6">
                 <form wire:submit.prevent="{{ $isAdd ? 'store' : 'update' }}">
                     <div class="relative mb-8">
-                        <x-ui.input-default wire:model="tanggal" label="Tanggal" type="date" />
+                        <x-ui.input-default wire:model="tanggal" label="Date" type="date" />
 
                         @error('tanggal')
                             <div class="text-red-500 text-sm">{{ $message }}</div>
@@ -156,7 +170,7 @@
 
                     </div>
                     <div class="relative mb-8">
-                        <x-ui.input-default wire:model="jenis" label="Jenis" />
+                        <x-ui.input-default wire:model="jenis" label="Type" />
                         @error('jenis')
                             <div class="text-red-500 text-sm">{{ $message }}</div>
                         @enderror
@@ -177,10 +191,163 @@
                         @enderror
                     </div>
 
+                    {{-- Image Upload Field --}}
+                    <div class="relative mb-8">
+                        <label class="block text-gray-700 dark:text-white text-sm font-bold mb-2">
+                            Image (Optional)
+                        </label>
+                        <p class="text-xs text-gray-500 mb-2">
+                            Max 10MB. Image will be automatically compressed to save storage space.
+                        </p>
+
+                        {{-- Show existing image if editing --}}
+                        @if ($isEdit && $existingImage)
+                            <div class="mb-4">
+                                <img src="{{ asset('storage/' . $existingImage) }}" alt="Current Image"
+                                    class="w-full h-32 object-cover rounded-lg border">
+                                <button type="button" wire:click="removeImage"
+                                    class="mt-2 px-3 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600">
+                                    Remove Image
+                                </button>
+                            </div>
+                        @endif
+
+                        {{-- File input --}}
+                        <input type="file" wire:model="image"
+                            accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+
+                        {{-- Loading indicator for image upload --}}
+                        <div wire:loading wire:target="image" class="mt-2">
+                            <div class="flex items-center text-blue-500">
+                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                    role="status"></div>
+                                <span class="ml-2 text-xs">Uploading and compressing image...</span>
+                            </div>
+                        </div>
+
+                        {{-- Preview new image --}}
+                        @if ($image)
+                            <div class="mt-4">
+                                <img src="{{ $image->temporaryUrl() }}" alt="Preview"
+                                    class="w-full h-32 object-cover rounded-lg border">
+                            </div>
+                        @endif
+
+                        @error('image')
+                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <x-ui.button type="submit" title="Submit" color="primary" wireLoading
                         formAction="{{ $isAdd ? 'store' : 'update' }}" />
                 </form>
             </div>
         </div>
     @endif
+
+    {{-- Reason Modal --}}
+    @if ($showReasonModal)
+        <div class="fixed z-10 inset-0 overflow-y-auto">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                </div>
+
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                    <div>
+                        <div class="mt-3 sm:mt-5">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                Change Reason
+                            </h3>
+                            <div class="flex-auto px-0 pt-0 pb-2">
+                                <form wire:submit.prevent="submitReason">
+                                    <div class="relative mb-8 mt-4">
+                                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                                            Enter change reason <span class="text-red-500">*</span>
+                                        </label>
+                                        <textarea wire:model="reason" rows="4"
+                                            class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                                            placeholder="Explain why this change is needed..."></textarea>
+                                        @error('reason')
+                                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="flex gap-x-2">
+                                        <button type="button" wire:click='closeReasonModal'
+                                            class="flex w-full justify-center gap-x-2 items-center rounded bg-gray-600 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-gray-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-gray-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-gray-800 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+                                            <div wire:loading wire:target='closeReasonModal'>
+                                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                                                    role="status">
+                                                    <span
+                                                        class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                                                </div>
+                                            </div>
+                                            Cancel
+                                        </button>
+
+                                        <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                                            formAction="submitReason" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Image Modal --}}
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden items-center justify-center">
+        <div class="relative max-w-4xl max-h-full">
+            <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white text-2xl font-bold z-10">
+                &times;
+            </button>
+            <img id="modalImage" src="" alt="Full Size Image" class="max-w-full max-h-full object-contain">
+        </div>
+    </div>
 </div>
+
+<script>
+    // Define functions immediately to avoid reference errors
+    window.showImageModal = function(imageSrc) {
+        const modalImage = document.getElementById('modalImage');
+        const imageModal = document.getElementById('imageModal');
+        if (modalImage && imageModal) {
+            modalImage.src = imageSrc;
+            imageModal.classList.remove('hidden');
+            imageModal.classList.add('flex');
+        }
+    }
+
+    window.closeImageModal = function() {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal) {
+            imageModal.classList.add('hidden');
+            imageModal.classList.remove('flex');
+        }
+    }
+
+    // Setup event listeners when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupImageModalListeners);
+    } else {
+        setupImageModalListeners();
+    }
+
+    function setupImageModalListeners() {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal) {
+            imageModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    window.closeImageModal();
+                }
+            });
+        }
+    }
+</script>

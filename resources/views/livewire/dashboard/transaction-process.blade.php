@@ -3,10 +3,21 @@
     <div class="flex flex-row md:flex-row justify-between p-6 pb-0 ">
         <h6 class="dark:text-white">Transactions Process</h6>
         <a data-target="print" style="display: none" href="{{ asset('storage/nota/receipt.pdf') }}" target="_blank"></a>
-        <div class="flex w-full md:w-3/12 items-center">
+        <div class="flex gap-x-3 w-full md:w-5/12 items-center justify-end">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                placeholder="Masukkan order id" />
+                placeholder="Enter order id" />
+            <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                class="inline-block px-3 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+                <span wire:loading.remove wire:target="exportExcel">
+                    <i class="fas fa-file-excel mr-1"></i>
+                    Export
+                </span>
+                <span wire:loading wire:target="exportExcel">
+                    <i class="fas fa-spinner fa-spin mr-1"></i>
+                    Exporting...
+                </span>
+            </button>
         </div>
     </div>
     <div class="flex-auto p-6 h-full">
@@ -20,7 +31,7 @@
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                            Tanggal
+                            Date
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -203,7 +214,7 @@
                         <div class="flex gap-x-2">
                             <div>
                                 <p class="mb-0 text-neutral-900 leading-6 text-sm">Customer</p>
-                                <p class="mb-0 text-neutral-900 leading-6 text-sm">No Handphone</p>
+                                <p class="mb-0 text-neutral-900 leading-6 text-sm">Phone Number</p>
                             </div>
                             <div>
                                 <p class="mb-0 text-neutral-900 leading-6 text-sm">:</p>
@@ -244,6 +255,62 @@
                         </div>
                     </div>
 
+                    {{-- Phone Details Section --}}
+                    @if ($detailItem['phone_type'] || (isset($detailItem['items']) && count($detailItem['items']) > 0 && collect($detailItem['items'])->contains(function($item) {
+                        return !empty($item['phone_type']);
+                    })))
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Phone Details</h4>
+                            @if ($detailItem['phone_type'])
+                                <div class="mb-2">
+                                    <div class="flex gap-x-2 text-sm">
+                                        <span class="text-gray-600">Main Transaction:</span>
+                                        <span class="text-gray-900 font-medium">
+                                            {{ $detailItem['phone_brand'] ?? 'iPhone' }} {{ $detailItem['phone_type'] }}
+                                            @if ($detailItem['phone_internal'])
+                                                - {{ $detailItem['phone_internal'] }}@if (in_array($detailItem['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                            @endif
+                                            @if ($detailItem['phone_color'])
+                                                - {{ $detailItem['phone_color'] }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if ($detailItem['phone_imei'])
+                                        <div class="flex gap-x-2 text-sm mt-1">
+                                            <span class="text-gray-600">IMEI:</span>
+                                            <span class="text-gray-900">{{ $detailItem['phone_imei'] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            @foreach ($detailItem['items'] as $index => $item)
+                                @if (!empty($item['phone_type']))
+                                    <div class="mb-2 @if ($detailItem['phone_type']) border-t pt-2 @endif">
+                                        <div class="flex gap-x-2 text-sm">
+                                            <span class="text-gray-600">{{ $item['service'] }}:</span>
+                                            <span class="text-gray-900 font-medium">
+                                                {{ $item['phone_brand'] ?? 'iPhone' }} {{ $item['phone_type'] }}
+                                                @if ($item['phone_internal'])
+                                                    - {{ $item['phone_internal'] }}@if (in_array($item['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                                @endif
+                                                @if ($item['phone_color'])
+                                                    - {{ $item['phone_color'] }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        @if ($item['phone_imei'])
+                                            <div class="flex gap-x-2 text-sm mt-1">
+                                                <span class="text-gray-600">IMEI:</span>
+                                                <span class="text-gray-900">{{ $item['phone_imei'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="mt-3">
                         <table
                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
@@ -254,16 +321,16 @@
                                         Service</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Biaya</th>
+                                        Cost</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Teknisi</th>
+                                        Technician</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Sparepart</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Garansi</th>
+                                        Warranty</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -304,11 +371,11 @@
                                             @if ($detailItem['warranty'] != null)
                                                 {{ $detailItem['warranty'] }}
                                                 @if ($detailItem['warranty_type'] == 'daily')
-                                                    Hari
+                                                    Days
                                                 @elseif ($detailItem['warranty_type'] == 'weekly')
-                                                    Minggu
+                                                    Weeks
                                                 @else
-                                                    Bulan
+                                                    Months
                                                 @endif
                                             @else
                                                 -
@@ -354,11 +421,11 @@
                                                 @if ($item['warranty'] != null)
                                                     {{ $item['warranty'] }}
                                                     @if ($item['warranty_type'] == 'daily')
-                                                        Hari
+                                                        Days
                                                     @elseif ($item['warranty_type'] == 'weekly')
-                                                        Minggu
+                                                        Weeks
                                                     @else
-                                                        Bulan
+                                                        Months
                                                     @endif
                                                 @else
                                                     -
@@ -373,14 +440,14 @@
 
                     <form wire:submit.prevent='handleDoneTransaction'>
                         <div class="my-4 w-full max-w-full shrink-0 md:flex-0">
-                            <span class="text-neutral-900 leading-6 text-sm">Metode Pembayaran</span>
+                            <span class="text-neutral-900 leading-6 text-sm">Payment Method</span>
                             <div class="relative inline-block w-full">
                                 <select wire:model='payment_method'
                                     class="block w-full px-4 py-2 pr-8 text-sm leading-tight text-gray-700 bg-white border border-gray-300 rounded appearance-none hover:border-gray-500 focus:outline-none focus:shadow-outline uppercase">
                                     <option value=""></option>
                                     @foreach ($paymentMethods as $item)
-                                        <option value="{{ $item }}"
-                                            class="uppercase text-neutral-900 leading-6 text-sm">{{ $item }}
+                                        <option value="{{ $item['code'] }}"
+                                            class="uppercase text-neutral-900 leading-6 text-sm">{{ $item['name'] }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -398,7 +465,7 @@
                         </div>
 
                         <div class="my-4 w-full max-w-full shrink-0 md:flex-0">
-                            <span class="text-neutral-900 leading-6 text-sm">Cetak Nota</span>
+                            <span class="text-neutral-900 leading-6 text-sm">Print Receipt</span>
                             <div class="relative inline-block w-full">
                                 <select wire:model='cetak_nota'
                                     class="block w-full text-sm px-4 py-2 pr-8 leading-tight text-gray-700 bg-white border border-gray-300 rounded appearance-none hover:border-gray-500 focus:outline-none focus:shadow-outline uppercase">

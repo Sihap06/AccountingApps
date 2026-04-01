@@ -2,13 +2,14 @@
     <div
         class="flex items-center justify-between rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Reporting</h5>
+            <h5 class="mb-1 font-serif">Reports</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
         </div>
         <div class="relative w-6/12">
             <ul class="relative flex flex-wrap gap-x-3 p-1 list-none bg-transparent rounded-xl">
+                @if (auth()->user()->hasPermission('reporting_transaction'))
                 <li class="z-30 flex-auto text-center transition-all">
                     <button
                         class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'transaction' ? 'bg-primary text-white' : '' }}"
@@ -16,6 +17,8 @@
                         <span class="ml-1">Transaction</span>
                     </button>
                 </li>
+                @endif
+                @if (auth()->user()->hasPermission('reporting_expenditure'))
                 <li class="z-30 flex-auto text-center transition-all">
                     <button
                         class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'expenditure' ? 'bg-primary text-white' : '' }}"
@@ -23,7 +26,8 @@
                         <span class="ml-1">Expenditure</span>
                     </button>
                 </li>
-                @if (auth()->user()->role !== 'sysadmin')
+                @endif
+                @if (auth()->user()->hasPermission('reporting_income_fee'))
                     <li class="z-30 flex-auto text-center transition-all">
                         <button
                             class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'income' ? 'bg-primary text-white' : '' }}"
@@ -31,11 +35,13 @@
                             <span class="ml-1">Income & Fee</span>
                         </button>
                     </li>
+                @endif
+                @if (auth()->user()->hasPermission('reporting_export'))
                     <li class="z-30 flex-auto text-center transition-all">
                         <button
                             class="z-30 block w-full px-0 py-1 mb-0 transition-all border-0 rounded-lg ease-in-out bg-inherit text-slate-700 {{ $tabActive === 'export' ? 'bg-primary text-white' : '' }}"
                             nav-link wire:click="changeActiveTab('export')">
-                            <span class="ml-1">Export</span>
+                            <span class="ml-1">Export Data</span>
                         </button>
                     </li>
                 @endif
@@ -56,21 +62,27 @@
     </div>
 
     <div wire:loading.remove wire:target='changeActiveTab' class="flex flex-grow mt-6">
-        @if ($tabActive === 'transaction')
+        @if ($tabActive === 'transaction' && auth()->user()->hasPermission('reporting_transaction'))
             <div class="w-full">
                 @livewire('dashboard.reporting.transaction', key('transaction'), ['id' => $selectedId])
             </div>
-        @elseif ($tabActive === 'expenditure')
+        @elseif ($tabActive === 'expenditure' && auth()->user()->hasPermission('reporting_expenditure'))
             <div class=" w-full">
                 @livewire('dashboard.reporting.expenditure', key('expenditure'))
             </div>
-        @elseif($tabActive === 'income')
+        @elseif($tabActive === 'income' && auth()->user()->hasPermission('reporting_income_fee'))
             <div class="w-full">
                 @livewire('dashboard.reporting.income', key('income'))
             </div>
-        @else
+        @elseif($tabActive === 'export' && auth()->user()->hasPermission('reporting_export'))
             <div class="w-full">
                 @livewire('dashboard.reporting.export', key('export'))
+            </div>
+        @else
+            <div class="w-full text-center py-10 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center h-64">
+                <i class="fas fa-lock text-gray-300 text-4xl mb-4"></i>
+                <h3 class="text-gray-500 font-bold mb-2">Report Access Restricted</h3>
+                <p class="text-gray-400 text-sm">You do not have permission to view this reporting module.</p>
             </div>
         @endif
 

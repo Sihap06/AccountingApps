@@ -14,7 +14,7 @@
                                     No</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Tanggal</th>
+                                    Date</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     User</th>
@@ -54,28 +54,28 @@
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                             @if ($item->activity === 'store')
-                                                Menambahkan pengeluaran berupa {{ $item->new_jenis }} sebesar
+                                                Added expenditure for {{ $item->new_jenis }} amounting to
                                                 {{ number_format($item->new_total) }}
                                             @else
                                                 <ul>
                                                     @if ($item->old_jenis !== null && $item->new_jenis !== null)
                                                         <li>
-                                                            Mengganti {{ $item->old_jenis }} menjadi
+                                                            Changed {{ $item->old_jenis }} to
                                                             {{ $item->new_jenis }}
                                                         </li>
                                                     @endif
                                                     @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
                                                         <li>
-                                                            Mengganti tanggal pengeluran dari
+                                                            Changed expenditure date from
                                                             {{ \Carbon\Carbon::parse($item->old_tanggal)->format('d/m/Y') }}
-                                                            menjadi
+                                                            to
                                                             {{ \Carbon\Carbon::parse($item->new_tanggal)->format('d/m/Y') }}
                                                         </li>
                                                     @endif
                                                     @if ($item->old_total !== null && $item->new_total !== null)
                                                         <li>
-                                                            Mengganti total pengeluran dari {{ $item->old_total }}
-                                                            menjadi {{ $item->new_total }}
+                                                            Changed expenditure total from {{ $item->old_total }}
+                                                            to {{ $item->new_total }}
                                                         </li>
                                                     @endif
                                                 </ul>

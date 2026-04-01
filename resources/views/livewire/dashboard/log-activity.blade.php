@@ -2,7 +2,7 @@
     <div
         class="flex items-center justify-between bg-white rounded-2xl border-o border-transparent border-solid p-6 shadow-xl bg-clip-border">
         <div class="mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Catatan Aktivitas</h5>
+            <h5 class="mb-1 font-serif">Activity Log</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -70,28 +70,28 @@
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                                         @if ($item->activity === 'store')
-                                                            Add new product
+                                                            Added new product
                                                         @elseif($item->activity === 'delete')
-                                                            Delete product
+                                                            Deleted product
                                                         @else
                                                             <ul>
                                                                 @if ($item->old_name !== null && $item->new_name !== null)
                                                                     <li>
-                                                                        Change product name from {{ $item->old_name }}
+                                                                        Changed product name from {{ $item->old_name }}
                                                                         to
                                                                         {{ $item->new_name }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_price !== null && $item->new_price !== null)
                                                                     <li>
-                                                                        Change product price from {{ $item->old_price }}
+                                                                        Changed product price from {{ $item->old_price }}
                                                                         to
                                                                         {{ $item->new_price }}
                                                                     </li>
                                                                 @endif
                                                                 @if ($item->old_stok !== null && $item->new_stok !== null)
                                                                     <li>
-                                                                        Update product stok from {{ $item->old_stok }}
+                                                                        Updated product stock from {{ $item->old_stok }}
                                                                         to
                                                                         {{ $item->new_stok }}
                                                                     </li>

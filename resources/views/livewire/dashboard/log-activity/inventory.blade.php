@@ -13,7 +13,7 @@
                                     No</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                    Tanggal</th>
+                                    Date</th>
                                 <th
                                     class="px-6 py-3 text-left font-bold uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     User</th>
@@ -63,29 +63,29 @@
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
                                             @if ($item->activity === 'store')
-                                                Menambahnkan sparepart baru
+                                                Added new item
                                             @elseif($item->activity === 'delete')
-                                                Mengahapus sparepart
+                                                Deleted item
                                             @else
                                                 <ul>
                                                     @if ($item->old_name !== null && $item->new_name !== null)
                                                         <li>
-                                                            Mengganti nama sparepart dari {{ $item->old_name }}
-                                                            menjadi
+                                                            Changed item name from {{ $item->old_name }}
+                                                            to
                                                             {{ $item->new_name }}
                                                         </li>
                                                     @endif
                                                     @if ($item->old_price !== null && $item->new_price !== null)
                                                         <li>
-                                                            Mengganti harga sparepart dari {{ $item->old_price }}
-                                                            menjadi
+                                                            Changed item price from {{ $item->old_price }}
+                                                            to
                                                             {{ $item->new_price }}
                                                         </li>
                                                     @endif
                                                     @if ($item->old_stok !== null && $item->new_stok !== null)
                                                         <li>
-                                                            Memperbarui stok produk dari {{ $item->old_stok }}
-                                                            menjadi
+                                                            Updated item stock from {{ $item->old_stok }}
+                                                            to
                                                             {{ $item->new_stok }}
                                                         </li>
                                                     @endif

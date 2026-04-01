@@ -2,19 +2,66 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Exports\TransactionChartExport;
 use App\Models\Expenditure;
 use App\Models\Transaction;
+use App\Models\PendingChange;
+use App\Models\StockOpname;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Dashboard extends Component
 {
     public $selectedYear;
+    public $showPendingModal = false;
+    public $pendingCount = 0;
+    public $showStockOpnameNotif = false;
+    public $stockOpnameData = null;
+    public $selectedMonthFilter;
+    public $selectedYearFilter;
+    public $chartData = [];
+    public $chartLabels = [];
 
     public function mount()
     {
         $this->selectedYear = Carbon::now()->format('Y');
+        $this->selectedMonthFilter = Carbon::now()->format('m');
+        $this->selectedYearFilter = Carbon::now()->format('Y');
+        
+        // Initialize chart data
+        if (auth()->user()->hasPermission('verification')) {
+            $chartResult = $this->transactionChart();
+            $this->chartData = $chartResult[0];
+            $this->chartLabels = $chartResult[1];
+            
+            // Check for pending verifications
+            $this->pendingCount = PendingChange::pending()->count();
+            $this->showPendingModal = $this->pendingCount > 0;
+        }
+
+        // Check for active stock opname notification (for non-owner)
+        if (!auth()->user()->isOwner()) {
+            $activeOpname = StockOpname::active()
+                ->where(function ($q) {
+                    $q->where('assigned_to', auth()->id())
+                      ->orWhereNull('assigned_to');
+                })
+                ->with('triggeredBy')
+                ->first();
+
+            if ($activeOpname) {
+                $this->showStockOpnameNotif = true;
+                $this->stockOpnameData = [
+                    'id' => $activeOpname->id,
+                    'triggered_by' => $activeOpname->triggeredBy->name ?? '-',
+                    'notes' => $activeOpname->notes,
+                    'created_at' => $activeOpname->created_at->format('d M Y H:i'),
+                    'status' => $activeOpname->status,
+                ];
+            }
+        }
     }
 
     public function transactionChart()
@@ -102,10 +149,9 @@ class Dashboard extends Component
 
         $todayExpenditure = $expenditur[0]['total'];
 
-        $transactionChart = $this->transactionChart();
-
-        $dataChart = $transactionChart[0];
-        $labelChart = $transactionChart[1];
+        // Use cached chart data instead of calling transactionChart() every render
+        $dataChart = $this->chartData;
+        $labelChart = $this->chartLabels;
 
         $dataTransaction = Transaction::take(6)->latest()->get();
 
@@ -119,7 +165,8 @@ class Dashboard extends Component
                 'transactions.id',
                 'transactions.status',
             )
-            // ->whereBetween('transactions.created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->whereYear('transactions.created_at', $this->selectedYearFilter)
+            ->whereMonth('transactions.created_at', $this->selectedMonthFilter)
             ->whereNull('transactions.deleted_at')
             ->groupBy(
                 'transactions.id',
@@ -145,9 +192,79 @@ class Dashboard extends Component
     {
         $transactionChart = $this->transactionChart();
 
-        $dataChart = $transactionChart[0];
-        $labelChart = $transactionChart[1];
+        $this->chartData = $transactionChart[0];
+        $this->chartLabels = $transactionChart[1];
 
-        $this->emit('chartUpdate', $dataChart, $labelChart);
+        $this->emit('chartUpdate', $this->chartData, $this->chartLabels);
+    }
+
+    public function exportExcel()
+    {
+        // Use cached data if available, otherwise fetch fresh data
+        if (empty($this->chartData) || empty($this->chartLabels)) {
+            $transactionChart = $this->transactionChart();
+            $dataChart = $transactionChart[0];
+            $labelChart = $transactionChart[1];
+        } else {
+            $dataChart = $this->chartData;
+            $labelChart = $this->chartLabels;
+        }
+
+        $transactionData = DB::table('transactions as t')
+            ->leftJoinSub(
+                DB::table('transaction_items')
+                    ->selectRaw('transaction_id, SUM(biaya) as total_item_fee')
+                    ->whereNull('deleted_at')
+                    ->groupBy('transaction_id'),
+                'ti',
+                'ti.transaction_id',
+                't.id'
+            )
+            ->selectRaw("
+                t.id,
+                t.order_transaction,
+                t.service,
+                t.customer_id,
+                t.biaya,
+                t.status,
+                t.payment_method,
+                t.created_at,
+                MONTHNAME(t.created_at) as month,
+                MONTH(t.created_at) as month_number,
+                (t.biaya + IFNULL(ti.total_item_fee, 0)) as total_fee
+            ")
+            ->whereYear('t.created_at', $this->selectedYear)
+            ->whereNull('t.deleted_at')
+            ->where('t.status', 'done')
+            ->orderBy('t.created_at')
+            ->get();
+
+        $export = new TransactionChartExport($transactionData, $dataChart, $labelChart, $this->selectedYear);
+
+        $this->updateChart();
+
+        return Excel::download($export, 'transaction-chart-' . $this->selectedYear . '.xlsx');
+    }
+
+    public function goToVerification()
+    {
+        return redirect()->route('dashboard.verification.index');
+    }
+
+    public function goToStockOpname()
+    {
+        return redirect()->route('dashboard.stock-opname.index');
+    }
+
+    public function dismissStockOpnameNotif()
+    {
+        $this->showStockOpnameNotif = false;
+    }
+
+    public function updateTransactionStats()
+    {
+        // This method is called when statistics filters change
+        // We don't need to do anything here as Livewire will automatically re-render
+        // the component when the properties change
     }
 }

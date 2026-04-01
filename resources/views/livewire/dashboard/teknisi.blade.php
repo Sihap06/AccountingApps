@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center ">
         <div class=" mb-0 border-b-0 border-solid ">
-            <h5 class="mb-1 font-serif">Technician</h5>
+            <h5 class="mb-1 font-serif">Technicians</h5>
             <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60 font-serif">
                 {{ \Carbon\Carbon::now()->format('l, d M Y') }}
             </p>
@@ -20,7 +20,7 @@
                 <div
                     class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                     <div class="pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
-                        <h6 class="dark:text-white">Technician Table</h6>
+                        <h6 class="dark:text-white">Technician List</h6>
                     </div>
                     <button type="button" wire:click='setShowAdd'
                         class="px-8 py-2 mb-4 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px"
@@ -32,7 +32,7 @@
                                     class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                             </div>
                         </div>
-                        {{ $isAdd ? 'Batal' : 'Tambah' }}
+                        {{ $isAdd ? 'Cancel' : 'Add' }}
                     </button>
                 </div>
 
@@ -47,13 +47,16 @@
                                         No</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Nama</th>
+                                        Name</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Kode</th>
+                                        Code</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Persentase</th>
+                                        % Fee</th>
+                                    <th
+                                        class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
+                                        % Commission + Parts</th>
                                     <th
                                         class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                     </th>
@@ -92,6 +95,13 @@
                                         </td>
                                         <td
                                             class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <span
+                                                class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
+                                                {{ $item->percent_with_sparepart !== null ? $item->percent_with_sparepart . '%' : '-' }}
+                                            </span>
+                                        </td>
+                                        <td
+                                            class="p-2 text-center align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                             <button type="button" wire:click='edit({{ $item->id }})'
                                                 class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-primary leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                 <i class="fas fa-edit" wire:loading.remove
@@ -104,7 +114,7 @@
                                                     </div>
                                                 </div>
                                             </button>
-                                            {{-- <button type="button"
+                                            <button type="button"
                                                 wire:click="$emit('triggerDelete',{{ $item->id }})"
                                                 class="inline-block px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md">
                                                 <i class="fas fa-trash-alt" wire:loading.remove
@@ -117,7 +127,7 @@
                                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
-                                            </button> --}}
+                                            </button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -153,21 +163,28 @@
 
                             </div>
                             <div class="relative mb-8">
-                                <x-ui.input-default wire:model="kode" label="Kode" />
+                                <x-ui.input-default wire:model="kode" label="Code" />
                                 @error('kode')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
 
                             </div>
                             <div class="relative mb-8">
-                                <x-ui.input-default wire:model="percent_fee" label="Persentase" />
+                                <x-ui.input-default wire:model="percent_fee" label="Percentage" />
                                 @error('percent_fee')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
 
                             </div>
+                            <div class="relative mb-8">
+                                <x-ui.input-default wire:model="percent_with_sparepart" label="% Commission + Parts" />
+                                @error('percent_with_sparepart')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
 
-                            <x-ui.button type="submit" title="Submit" color="primary" wireLoading
+                            </div>
+
+                            <x-ui.button type="submit" title="Save" color="primary" wireLoading
                                 formAction="{{ $isAdd ? 'store' : 'update' }}" />
                         </form>
                     </div>
@@ -186,9 +203,11 @@
             @this.on('triggerDelete', id => {
                 Swal.fire({
                     title: 'Are You Sure?',
-                    html: "You won't be able to revert this!",
+                    html: "You won't be able to recover this data!",
                     icon: 'warning',
                     showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    confirmButtonText: 'Yes, Delete'
                 }).then((result) => {
                     if (result.value) {
                         @this.call('delete', id)

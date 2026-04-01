@@ -7,10 +7,12 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
 use App\Models\TransactionItem;
+use App\Models\PendingChange;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Transaction extends Component
@@ -79,6 +81,7 @@ class Transaction extends Component
                 ->whereNull('transaction_items.deleted_at');
         })
             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
+            ->leftJoin('users', 'transactions.created_by', '=', 'users.id')
             ->select(
                 'transactions.created_at',
                 'customers.name as customer_name',
@@ -86,12 +89,13 @@ class Transaction extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
-                DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
-                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
-                DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
-                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Modal untuk item lainnya dari transaction_items
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
+                DB::raw('transactions.biaya as first_item_biaya'), // Transaction base amount
+                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Transaction items amount
+                DB::raw('transactions.modal as first_item_modal'), // Transaction base modal
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Transaction items modal
+                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total amount
                 'transactions.payment_method',
+                'users.name as operator_name'
             )
             ->where('transactions.status', 'done')
             ->whereNull('transactions.deleted_at')
@@ -102,15 +106,16 @@ class Transaction extends Component
                 'transactions.order_transaction',
                 'transactions.biaya',
                 'transactions.modal',
-                'transactions.payment_method'
+                'transactions.payment_method',
+                'users.name'
             );
 
-        // Menambahkan filter untuk payment_method jika ada
+        // Add payment method filter if specified
         if ($this->selectedPaymentMethod !== '') {
             $data->where('transactions.payment_method', $this->selectedPaymentMethod);
         }
 
-        // Menambahkan filter untuk searchTerm jika ada
+        // Add search term filter if specified
         if ($this->searchTerm !== '') {
             $data->where(function ($sub_query) {
                 $sub_query->where('transactions.order_transaction', 'like', '%' . $this->searchTerm . '%')
@@ -120,7 +125,7 @@ class Transaction extends Component
             $data->whereDate('transactions.created_at', $this->selectedDate);
         }
 
-        // Mengambil hasil query
+        // Execute the query
         $data = $data->get();
 
         // dd($data);
@@ -168,48 +173,96 @@ class Transaction extends Component
         $validateData['biaya'] = $currencyString;
 
         $transaction = ModelsTransaction::findOrFail($this->selectedId);
-        $transaction->order_transaction = $this->order_transaction;
-        $transaction->service = $this->service;
-        $transaction->biaya = $validateData['biaya'];
-        $transaction->payment_method = $this->payment_method;
-        $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
-        $transaction->created_at = $order_date . ' ' . $time;
 
-        $validateData['modal'] = 0;
+        // Check if user is sysadmin (operator) - needs verification
+        if (Auth::user()->requiresVerification()) {
+            // Prepare the new data
+            $newData = [
+                'order_transaction' => $this->order_transaction,
+                'service' => $this->service,
+                'biaya' => $validateData['biaya'],
+                'payment_method' => $this->payment_method,
+                'technical_id' => $validateData['technical_id'] === '' ? null : $validateData['technical_id'],
+                'product_id' => $validateData['product_id'] === '' ? null : $validateData['product_id'],
+                'created_at' => $order_date . ' ' . $time,
+            ];
 
-        if ($validateData['product_id'] != $transaction->product_id) {
-            $currentProduct = Product::findOrFail($transaction->product_id);
-            $currentProduct->stok = $currentProduct->stok + 1;
-            $currentProduct->save();
+            // Calculate modal and other values
+            $validateData['modal'] = 0;
+            if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
+                $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];
+                $validateData['modal'] = $product['harga'];
+            }
 
-            $newProduct = Product::findOrFail($validateData['product_id']);
-            $newProduct->stok = $newProduct->stok - 1;
-            $newProduct->save();
+            $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
+            
+            $newData['modal'] = $perhitungan['modal'];
+            $newData['fee_teknisi'] = $perhitungan['fee_teknisi'];
+            $newData['untung'] = $perhitungan['untung'];
 
-            $transaction->product_id = $validateData['product_id'] === '' ? null : $validateData['product_id'];
+            // Create pending change instead of direct update
+            PendingChange::create([
+                'changeable_type' => ModelsTransaction::class,
+                'changeable_id' => $this->selectedId,
+                'action' => 'update',
+                'old_data' => $transaction->toArray(),
+                'new_data' => array_merge($transaction->toArray(), $newData),
+                'requested_by' => Auth::user()->id,
+                'requested_at' => now(),
+            ]);
+
+            $this->isEdit = false;
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Changes have been saved and are awaiting verification.',
+                'icon' => 'info'
+            ]);
+        } else {
+            // Master admin can update directly
+            $transaction->order_transaction = $this->order_transaction;
+            $transaction->service = $this->service;
+            $transaction->biaya = $validateData['biaya'];
+            $transaction->payment_method = $this->payment_method;
+            $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
+            $transaction->created_at = $order_date . ' ' . $time;
+
+            $validateData['modal'] = 0;
+
+            if ($validateData['product_id'] != $transaction->product_id) {
+                $currentProduct = Product::findOrFail($transaction->product_id);
+                $currentProduct->stok = $currentProduct->stok + 1;
+                $currentProduct->save();
+
+                $newProduct = Product::findOrFail($validateData['product_id']);
+                $newProduct->stok = $newProduct->stok - 1;
+                $newProduct->save();
+
+                $transaction->product_id = $validateData['product_id'] === '' ? null : $validateData['product_id'];
+            }
+
+            if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
+                $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];
+                $validateData['modal'] = $product['harga'];
+                $validateData['product_id'] = (int)$this->product_id;
+            }
+
+            $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
+
+            $transaction->modal = $perhitungan['modal'];
+            $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
+            $transaction->untung = $perhitungan['untung'];
+
+            $transaction->save();
+
+            $this->isEdit = false;
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Transaction updated successfully',
+                'icon' => 'success'
+            ]);
         }
-
-        if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
-            $product = app(ProductController::class)->detailProduct((int)$validateData['product_id'])->getData(true)['data'];
-            $validateData['modal'] = $product['harga'];
-            $validateData['product_id'] = (int)$this->product_id;
-        }
-
-        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
-
-        $transaction->modal = $perhitungan['modal'];
-        $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
-        $transaction->untung = $perhitungan['untung'];
-
-        $transaction->save();
-
-        $this->isEdit = false;
-
-        $this->dispatchBrowserEvent('swal', [
-            'title' => 'Success',
-            'text' => 'Successfully update transaction',
-            'icon' => 'success'
-        ]);
     }
 
     public function batal()
@@ -221,31 +274,51 @@ class Transaction extends Component
     {
         $transaction = ModelsTransaction::findOrFail($id);
 
-        if ($transaction->product_id !== null) {
-            $product = Product::findOrFail($transaction->product_id);
-            $product->stok = $product->stok + 1;
-            $product->save();
-        }
+        // Check if user is sysadmin (operator) - needs verification
+        if (Auth::user()->requiresVerification()) {
+            // Create pending change instead of direct delete
+            PendingChange::create([
+                'changeable_type' => ModelsTransaction::class,
+                'changeable_id' => $id,
+                'action' => 'delete',
+                'old_data' => $transaction->toArray(),
+                'new_data' => null,
+                'requested_by' => Auth::user()->id,
+                'requested_at' => now(),
+            ]);
 
-        $transactionItems = TransactionItem::where('transaction_id', $id)->get();
-        foreach ($transactionItems as $item) {
-            if ($item->product_id !== null) {
-                $product_item = Product::findOrFail($item->product_id);
-                $product_item->stok = $product_item->stok + 1;
-                $product_item->save();
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Delete request has been saved and is awaiting verification.',
+                'icon' => 'info'
+            ]);
+        } else {
+            // Master admin can delete directly
+            if ($transaction->product_id !== null) {
+                $product = Product::findOrFail($transaction->product_id);
+                $product->stok = $product->stok + 1;
+                $product->save();
             }
 
-            $item->delete();
+            $transactionItems = TransactionItem::where('transaction_id', $id)->get();
+            foreach ($transactionItems as $item) {
+                if ($item->product_id !== null) {
+                    $product_item = Product::findOrFail($item->product_id);
+                    $product_item->stok = $product_item->stok + 1;
+                    $product_item->save();
+                }
+
+                $item->delete();
+            }
+
+            $transaction->delete();
+
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Success',
+                'text' => 'Transaction deleted successfully',
+                'icon' => 'success'
+            ]);
         }
-
-
-        $transaction->delete();
-
-        $this->dispatchBrowserEvent('swal', [
-            'title' => 'Success',
-            'text' => 'Successfully delete transaction',
-            'icon' => 'success'
-        ]);
     }
 
     public function complaint($id)
@@ -256,7 +329,7 @@ class Transaction extends Component
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Success',
-            'text' => 'Successfully complaint transaction',
+            'text' => 'Transaction complaint submitted successfully',
             'icon' => 'success'
         ]);
     }

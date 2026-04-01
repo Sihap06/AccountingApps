@@ -119,6 +119,7 @@
                     <p>Tanggal: {{ $date }}</p>
                     <p>Nama: {{ $data['customer_name'] }}</p>
                     <p>No. Handphone: {{ $data['no_telp'] }}</p>
+                    <p>Operator: {{ $data['operator_name'] ?? 'Unknown' }}</p>
                 </div>
             </td>
         </tr>

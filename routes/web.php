@@ -18,6 +18,11 @@ use App\Http\Livewire\Dashboard\TabOnInventory;
 use App\Http\Livewire\Dashboard\TabOnLogActivity;
 use App\Http\Livewire\Dashboard\TabOnPos;
 use App\Http\Livewire\Dashboard\Teknisi;
+use App\Http\Livewire\Dashboard\Verification;
+use App\Http\Livewire\Dashboard\UserManagement;
+use App\Http\Livewire\Dashboard\PaymentMethods;
+use App\Http\Livewire\Dashboard\Reporting\FinancialSummary;
+use App\Http\Livewire\Dashboard\StockOpname;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -53,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('reporting', Reporting::class)->name('reporting');
         Route::get('reporting/{type}', Reporting::class);
         Route::get('detail-transaction/{id}', Reporting::class);
+        Route::get('financial-summary', FinancialSummary::class)->name('financial-summary')->middleware('permission:financial_summary');
 
         Route::prefix('inventory')->name('inventory')->group(function () {
             Route::get('/', TabOnInventory::class);
@@ -70,6 +76,30 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('log_activity')->name('log_activity.')->group(function () {
             Route::get('/', TabOnLogActivity::class)->name('index');
+        });
+
+        // Verification routes (permission-based)
+        Route::prefix('verification')->name('verification.')->middleware('permission:verification')->group(function () {
+            Route::get('/', Verification::class)->name('index');
+        });
+
+        // User & Role Management routes (permission-based)
+        Route::prefix('users')->name('users.')->middleware('permission:user_management')->group(function () {
+            Route::get('/', UserManagement::class)->name('index');
+        });
+        
+        Route::prefix('roles')->name('roles.')->middleware('permission:user_management')->group(function () {
+            Route::get('/', \App\Http\Livewire\Dashboard\RoleManagement::class)->name('index');
+        });
+
+        // Payment Methods routes
+        Route::prefix('payment-methods')->name('payment-methods.')->middleware('permission:payment_methods')->group(function () {
+            Route::get('/', PaymentMethods::class)->name('index');
+        });
+
+        // Stock Opname routes
+        Route::prefix('stock-opname')->name('stock-opname.')->middleware('permission:stock_opname')->group(function () {
+            Route::get('/', StockOpname::class)->name('index');
         });
     });
 });

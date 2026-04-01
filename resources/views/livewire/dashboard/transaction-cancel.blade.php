@@ -5,25 +5,25 @@
         <div class="w-full md:w-3/12 items-center">
             <input type="text" wire:model.debounce.500ms="searchTerm"
                 class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                placeholder="Masukkan order id" />
+                placeholder="Enter order id" />
             <div class="flex gap-x-2 mt-2">
                 <div class="w-full">
                     <div class="flex items-center">
                         <select wire:model="month"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                            <option value="" selected>Pilih Bulan</option>
-                            <option value="01">Januari</option>
-                            <option value="02">Februari</option>
-                            <option value="03">Maret</option>
+                            <option value="" selected>Select Month</option>
+                            <option value="01">January</option>
+                            <option value="02">February</option>
+                            <option value="03">March</option>
                             <option value="04">April</option>
-                            <option value="05">Mei</option>
-                            <option value="06">Juni</option>
-                            <option value="07">Juli</option>
-                            <option value="08">Agustus</option>
+                            <option value="05">May</option>
+                            <option value="06">June</option>
+                            <option value="07">July</option>
+                            <option value="08">August</option>
                             <option value="09">September</option>
-                            <option value="10">Oktober</option>
+                            <option value="10">October</option>
                             <option value="11">November</option>
-                            <option value="12">Desember</option>
+                            <option value="12">December</option>
                         </select>
                     </div>
                     @if ($errors->has('month'))
@@ -35,7 +35,7 @@
                     <div class="flex items-center">
                         <select wire:model="year"
                             class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                            <option value="" selected>Pilih Tahun</option>
+                            <option value="" selected>Select Year</option>
                             <option value="2023">2023</option>
                             <option value="2024">2024</option>
                             <option value="2025">2025</option>
@@ -62,7 +62,7 @@
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                            Tanggal
+                            Date
                         </th>
                         <th
                             class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -273,6 +273,62 @@
                         </div>
                     </div>
 
+                    {{-- Phone Details Section --}}
+                    @if ($detailItem['phone_type'] || (isset($detailItem['items']) && count($detailItem['items']) > 0 && collect($detailItem['items'])->contains(function($item) {
+                        return !empty($item['phone_type']);
+                    })))
+                        <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Phone Details</h4>
+                            @if ($detailItem['phone_type'])
+                                <div class="mb-2">
+                                    <div class="flex gap-x-2 text-sm">
+                                        <span class="text-gray-600">Main Transaction:</span>
+                                        <span class="text-gray-900 font-medium">
+                                            {{ $detailItem['phone_brand'] ?? 'iPhone' }} {{ $detailItem['phone_type'] }}
+                                            @if ($detailItem['phone_internal'])
+                                                - {{ $detailItem['phone_internal'] }}@if (in_array($detailItem['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                            @endif
+                                            @if ($detailItem['phone_color'])
+                                                - {{ $detailItem['phone_color'] }}
+                                            @endif
+                                        </span>
+                                    </div>
+                                    @if ($detailItem['phone_imei'])
+                                        <div class="flex gap-x-2 text-sm mt-1">
+                                            <span class="text-gray-600">IMEI:</span>
+                                            <span class="text-gray-900">{{ $detailItem['phone_imei'] }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                            
+                            @foreach ($detailItem['items'] as $index => $item)
+                                @if (!empty($item['phone_type']))
+                                    <div class="mb-2 @if ($detailItem['phone_type']) border-t pt-2 @endif">
+                                        <div class="flex gap-x-2 text-sm">
+                                            <span class="text-gray-600">{{ $item['service'] }}:</span>
+                                            <span class="text-gray-900 font-medium">
+                                                {{ $item['phone_brand'] ?? 'iPhone' }} {{ $item['phone_type'] }}
+                                                @if ($item['phone_internal'])
+                                                    - {{ $item['phone_internal'] }}@if (in_array($item['phone_internal'], ['1T', '2T']))TB @else GB @endif
+                                                @endif
+                                                @if ($item['phone_color'])
+                                                    - {{ $item['phone_color'] }}
+                                                @endif
+                                            </span>
+                                        </div>
+                                        @if ($item['phone_imei'])
+                                            <div class="flex gap-x-2 text-sm mt-1">
+                                                <span class="text-gray-600">IMEI:</span>
+                                                <span class="text-gray-900">{{ $item['phone_imei'] }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+
                     <div class="mt-3">
                         <table
                             class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
@@ -283,10 +339,10 @@
                                         Service</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Biaya</th>
+                                        Cost</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                        Teknisi</th>
+                                        Technician</th>
                                     <th
                                         class="text-left py-3 px-2 font-bold uppercase bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                         Sparepart</th>

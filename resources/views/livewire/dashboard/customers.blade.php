@@ -1,4 +1,4 @@
-   <div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
+<div class="w-full px-6 py-4 mx-auto flex flex-col h-screen">
        <div class="flex justify-between items-center">
            <div class="mb-0 border-b-0 border-solid">
                <h5 class="mb-1 font-serif">Customers</h5>
@@ -16,7 +16,7 @@
                    <div
                        class="block md:flex w-full justify-between items-center p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                        <button wire:click='create'
-                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center">
+                           class="px-8 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-slate-700 bg-150 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center mb-2 md:mb-0">
                            <div wire:loading wire:target='create'>
                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                    role="status">
@@ -26,12 +26,44 @@
                            </div>
                            New Customer
                        </button>
-                       <div class="flex w-full md:w-4/12 items-center gap-x-3">
+                       <div class="flex flex-col md:flex-row w-full md:w-8/12 items-end gap-3">
+                           <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                               <div class="flex flex-col">
+                                   <label class="text-xs text-gray-600 mb-1">Start Date</label>
+                                   <input type="date" wire:model="startDate"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                               </div>
+                               <div class="flex flex-col">
+                                   <label class="text-xs text-gray-600 mb-1">End Date</label>
+                                   <input type="date" wire:model="endDate"
+                                       class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none" />
+                               </div>
+                           </div>
                            <input type="text" wire:model.debounce.500ms="searchTerm"
-                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
-                               placeholder="Masukkan nama atau no telefon " />
+                               class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full md:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none"
+                               placeholder="Search name/phone" />
+                           @if(auth()->user()->isOwner())
+                               <button wire:click='exportExcel()' wire:loading.attr="disabled"
+                                   class="px-4 py-2 text-xs font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-green-500 leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap">
+                                   <span wire:loading.remove wire:target="exportExcel">
+                                       <i class="fas fa-file-excel mr-1"></i>
+                                       Export
+                                   </span>
+                                   <span wire:loading wire:target="exportExcel">
+                                       <i class="fas fa-spinner fa-spin mr-1"></i>
+                                       Exporting...
+                                   </span>
+                               </button>
+                           @endif
                        </div>
                    </div>
+
+                   {{-- Error Message Display --}}
+                   @if (session()->has('error'))
+                       <div class="mx-6 mt-4 relative px-4 py-3 text-white bg-red-500 rounded-lg">
+                           {{ session('error') }}
+                       </div>
+                   @endif
 
                    <div class="flex-auto px-0 pt-0 mt-4 pb-4 overflow-auto h-full">
                        <div class="p-0">
@@ -44,13 +76,13 @@
                                            No</th>
                                        <th
                                            class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                           Nama</th>
+                                           Name</th>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                           No Telp</th>
+                                           Phone</th>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                           Alamat</th>
+                                           Address</th>
                                        <th
                                            class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
                                        </th>
@@ -219,8 +251,8 @@
                                        @enderror
                                    </div>
                                    <div class="mt-4">
-                                       <label for="no_telp" class="block text-sm font-medium text-gray-700">No
-                                           Telefon</label>
+                                       <label for="no_telp" class="block text-sm font-medium text-gray-700">Phone
+                                           Number</label>
                                        <div class="mt-1 relative rounded-md">
                                            <input type="text" wire:model.lazy="no_telp" id="no_telp"
                                                class="input input-md h-11 focus:ring-indigo-600 focus-within:ring-indigo-600 focus-within:border-indigo-600 focus:border-indigo-600">
@@ -286,7 +318,7 @@
                        class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full sm:p-6">
                        <div class="flex flex-row justify-between items-center">
                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-0" id="modal-title">
-                               Detail Transaction
+                               Detail Transactions
                            </h3>
                            <button wire:loading.remove='closeModalDetailTransaction' type="button"
                                wire:click='closeModalDetailTransaction'>
@@ -316,7 +348,7 @@
                                            <tr>
                                                <th
                                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                   Tanggal
+                                                   Date
                                                </th>
                                                <th
                                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -324,11 +356,11 @@
                                                </th>
                                                <th
                                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                   Biaya
+                                                   Cost
                                                </th>
                                                <th
                                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
-                                                   Teknisi
+                                                   Technician
                                                </th>
                                                <th
                                                    class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">
@@ -466,9 +498,11 @@
                @this.on('triggerDelete', id => {
                    Swal.fire({
                        title: 'Are You Sure?',
-                       html: "You won't be able to revert this!",
+                       html: "You won't be able to recover this data!",
                        icon: 'warning',
                        showCancelButton: true,
+                       cancelButtonText: 'Cancel',
+                       confirmButtonText: 'Yes, Delete'
                    }).then((result) => {
                        if (result.value) {
                            @this.call('delete', id)
