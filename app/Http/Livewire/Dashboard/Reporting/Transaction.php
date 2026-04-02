@@ -230,11 +230,11 @@ class Transaction extends Component
             $validateData['modal'] = 0;
 
             if ($validateData['product_id'] != $transaction->product_id) {
-                $currentProduct = Product::findOrFail($transaction->product_id);
+                $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
                 $currentProduct->stok = $currentProduct->stok + 1;
                 $currentProduct->save();
 
-                $newProduct = Product::findOrFail($validateData['product_id']);
+                $newProduct = Product::withTrashed()->findOrFail($validateData['product_id']);
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
 
@@ -295,7 +295,7 @@ class Transaction extends Component
         } else {
             // Master admin can delete directly
             if ($transaction->product_id !== null) {
-                $product = Product::findOrFail($transaction->product_id);
+                $product = Product::withTrashed()->findOrFail($transaction->product_id);
                 $product->stok = $product->stok + 1;
                 $product->save();
             }
@@ -303,7 +303,7 @@ class Transaction extends Component
             $transactionItems = TransactionItem::where('transaction_id', $id)->get();
             foreach ($transactionItems as $item) {
                 if ($item->product_id !== null) {
-                    $product_item = Product::findOrFail($item->product_id);
+                    $product_item = Product::withTrashed()->findOrFail($item->product_id);
                     $product_item->stok = $product_item->stok + 1;
                     $product_item->save();
                 }

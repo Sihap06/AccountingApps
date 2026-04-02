@@ -22,7 +22,9 @@ class TransactionController extends Controller
             $currencyString = preg_replace("/[^0-9]/", "", $value['biaya']);
 
             $value['biaya'] = $currencyString;
-            $value['modal'] = 0;
+            
+            // Use modal from request if provided, otherwise default to 0
+            $value['modal'] = (isset($value['modal']) && is_numeric($value['modal'])) ? $value['modal'] : 0;
 
             if ($value['product_id'] === '') {
                 $value['product_id'] = null;
@@ -32,9 +34,12 @@ class TransactionController extends Controller
                 $value['technical_id'] = null;
             }
 
+            // Only fetch from DB if modal is still 0 and product_id is set
             if ($value['product_id'] !== null) {
-                $product = app(ProductController::class)->detailProduct((int)$value['product_id'])->getData(true)['data'];
-                $value['modal'] = $product['harga'];
+                if ($value['modal'] == 0) {
+                    $product = app(ProductController::class)->detailProduct((int)$value['product_id'])->getData(true)['data'];
+                    $value['modal'] = $product['harga'];
+                }
                 $value['product_id'] = (int)$value['product_id'];
             }
 

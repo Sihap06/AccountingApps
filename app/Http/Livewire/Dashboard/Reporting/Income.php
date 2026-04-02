@@ -86,17 +86,17 @@ class Income extends Component
         }
 
         if ($this->selectTechnician !== null) {
-            $queryTeknisiTransaction = Transaction::select('id', 'service', 'fee_teknisi', 'created_at', 'order_transaction', 'technical_id')
+            $queryTeknisiTransaction = Transaction::select('id', 'service', 'fee_teknisi', 'created_at', 'order_transaction', 'technical_id', 'product_id')
                 ->whereMonth('created_at', $this->selectedMonth)
                 ->whereYear('created_at', $this->selectedYear)
                 ->where('status', 'done');
 
             $dataFeeTechnicianTransaction = $queryTeknisiTransaction->get()->toArray();
-            $dataFeeSelectedTechnicain = $this->filterByColumnValue($dataFeeTechnicianTransaction, 'technical_id', $this->selectTechnician);
+            $dataFeeSelectedTechnicain = $this->filterByColumnValue($dataFeeTechnicianTransaction);
             $dataFeeTechnician = [...$dataFeeSelectedTechnicain];
 
             foreach ($dataFeeTechnicianTransaction as $key => $value) {
-                $queryTeknisiTransactionItem = TransactionItem::select('service', 'fee_teknisi', 'created_at')
+                $queryTeknisiTransactionItem = TransactionItem::select('service', 'fee_teknisi', 'created_at', 'product_id')
                     ->addSelect(DB::raw("'" . $value['order_transaction'] . "' as order_transaction"))
                     ->addSelect(DB::raw("'" . $value['id'] . "' as id"))
                     ->where('transaction_id', $value['id'])

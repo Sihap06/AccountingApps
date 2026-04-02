@@ -50,18 +50,11 @@ class ProductController extends Controller
     public function listProduct()
     {
         $data = Product::paginate(10);
-        if (count($data) != 0) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'successfully get list product',
-                'data' => $data
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'no data found on our record',
-            ], 404);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => count($data) != 0 ? 'successfully get list product' : 'no data found on our record',
+            'data' => $data
+        ], 200);
     }
     public function listProductAll()
     {
@@ -71,18 +64,11 @@ class ProductController extends Controller
             $response[$item->id] =
                 $item->name;
         }
-        if (count($data) != 0) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'successfully get list product',
-                'data' => $response
-            ], 200);
-        } else {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'no data found on our record',
-            ], 404);
-        }
+        return response()->json([
+            'status' => 'success',
+            'message' => count($data) != 0 ? 'successfully get list product' : 'no data found on our record',
+            'data' => $response
+        ], 200);
     }
     public function deleteProduct($id)
     {

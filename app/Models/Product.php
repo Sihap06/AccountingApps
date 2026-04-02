@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Traits\RequiresVerification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory, RequiresVerification;
+    use HasFactory, SoftDeletes, RequiresVerification;
     
     protected $fillable = ['name', 'kode', 'harga', 'harga_jual', 'stok'];
     
@@ -25,9 +26,13 @@ class Product extends Model
         return $this->hasMany(ProductReturn::class);
     }
 
+    /**
+     * Get product name by ID, including soft-deleted products
+     * so historical references still show the correct name.
+     */
     public static function getProductName($id)
     {
-        $product = self::find($id);
+        $product = self::withTrashed()->find($id);
         return $product ? $product->name : null;
     }
 }

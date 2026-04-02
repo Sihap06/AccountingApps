@@ -112,7 +112,6 @@ class TransactionProcess extends Component
                 'customer_name' => $transaction->customer_name,
                 'no_telp' => $transaction->customer_no_telp,
                 'biaya' => $transaction->transaction_biaya,
-                'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,
                 'modal' => $transaction->transaction_modal,
                 'product_id' => $transaction->transaction_product_id,
@@ -197,7 +196,7 @@ class TransactionProcess extends Component
 
         // Return sparepart quantities to inventory if used
         if ($transaction->product_id !== null) {
-            $product = Product::findOrFail($transaction->product_id);
+            $product = Product::withTrashed()->findOrFail($transaction->product_id);
             $product->bypassVerification = true;
             $product->stok = $product->stok + 1;
             $product->save();
@@ -207,7 +206,7 @@ class TransactionProcess extends Component
         $transactionItems = TransactionItem::where('transaction_id', $id)->get();
         foreach ($transactionItems as $item) {
             if ($item->product_id !== null) {
-                $product = Product::findOrFail($item->product_id);
+                $product = Product::withTrashed()->findOrFail($item->product_id);
                 $product->bypassVerification = true;
                 $product->stok = $product->stok + 1;
                 $product->save();

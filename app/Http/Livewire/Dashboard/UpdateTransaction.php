@@ -46,6 +46,8 @@ class UpdateTransaction extends Component
 
     public $editAction = 'updateItemTransaction';
     public $formAction = '';
+    public $modal = '';
+    public $editModal = '';
 
     protected $listeners = ['setSelected'];
 
@@ -59,6 +61,9 @@ class UpdateTransaction extends Component
             if ($product && $product->harga_jual) {
                 $this->biaya = number_format($product->harga_jual, 0, ',', '.');
             }
+            if ($product && $product->harga) {
+                $this->modal = number_format($product->harga, 0, ',', '.');
+            }
         }
     }
 
@@ -71,6 +76,9 @@ class UpdateTransaction extends Component
             $product = Product::find($value);
             if ($product && $product->harga_jual) {
                 $this->editBiaya = number_format($product->harga_jual, 0, ',', '.');
+            }
+            if ($product && $product->harga) {
+                $this->editModal = number_format($product->harga, 0, ',', '.');
             }
         }
     }
@@ -185,11 +193,12 @@ class UpdateTransaction extends Component
         $newTransactionItem = new TransactionItem();
         $newTransactionItem->bypassVerification = true; // Bypass verification for all users
         $newTransactionItem->transaction_id = $this->transactionId;
-
-        $validateData['modal'] = 0;
+        
+        $modalValue = (int)preg_replace("/[^0-9]/", "", $this->modal);
+        $validateData['modal'] = $modalValue;
 
         if ($validateData['product_id'] !== null) {
-            $product = Product::findOrFail($validateData['product_id']);
+            $product = Product::withTrashed()->findOrFail($validateData['product_id']);
             if ($product->stok < 1) {
                 return $this->dispatchBrowserEvent('swal', [
                     'title' => 'Error',
@@ -199,7 +208,9 @@ class UpdateTransaction extends Component
             }
 
             $newTransactionItem->product_id = $validateData['product_id'];
-            $validateData['modal'] = $product->harga;
+            if ($validateData['modal'] == 0) {
+                $validateData['modal'] = $product->harga;
+            }
             $validateData['technical_id'] = null;
         } elseif ($validateData['technical_id'] !== null) {
             $validateData['modal'] = 0;
@@ -222,7 +233,7 @@ class UpdateTransaction extends Component
 
         // Deduct stock if product was used
         if ($validateData['product_id'] !== null) {
-            $product = Product::findOrFail($validateData['product_id']);
+            $product = Product::withTrashed()->findOrFail($validateData['product_id']);
             $oldStock = $product->stok;
 
             // Set bypass flag to skip verification for transaction stock updates
@@ -295,6 +306,7 @@ class UpdateTransaction extends Component
         $this->editBiaya = $data->biaya;
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
+        $this->editModal = number_format($data->modal, 0, ',', '.');
         $this->warranty = $data->warranty;
         $this->warranty_type = $data->warranty_type;
 
@@ -311,6 +323,7 @@ class UpdateTransaction extends Component
         $this->editBiaya = $data->biaya;
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
+        $this->editModal = number_format($data->modal, 0, ',', '.');
         $this->warranty = $data->warranty;
         $this->warranty_type = $data->warranty_type;
 
@@ -382,8 +395,8 @@ class UpdateTransaction extends Component
             }
 
             if ($validateData['product_id'] != $transaction->product_id) {
-                $log->old_sparepart = $transaction->product_id !== null ? Product::findOrFail($transaction->product_id)->name : null;
-                $log->new_sparepart = $validateData['product_id'] !== null ? Product::findOrFail($validateData['product_id'])->name : null;
+                $log->old_sparepart = $transaction->product_id !== null ? Product::withTrashed()->findOrFail($transaction->product_id)->name : null;
+                $log->new_sparepart = $validateData['product_id'] !== null ? Product::withTrashed()->findOrFail($validateData['product_id'])->name : null;
             }
 
             $log->save();
@@ -393,11 +406,13 @@ class UpdateTransaction extends Component
         $transaction->biaya = $validateData['biaya'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
-        $validateData['modal'] = $transaction->modal;
+        if ($validateData['modal'] == 0) {
+            $validateData['modal'] = $transaction->modal;
+        }
 
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
-                $currentProduct = Product::findOrFail($transaction->product_id);
+                $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
                 $oldStock = $currentProduct->stok;
 
                 // Set bypass flag to skip verification for transaction stock updates
@@ -417,7 +432,7 @@ class UpdateTransaction extends Component
             }
 
             if ($validateData['product_id'] !== null) {
-                $newProduct = Product::findOrFail($validateData['product_id']);
+                $newProduct = Product::withTrashed()->findOrFail($validateData['product_id']);
                 // dd($newProduct['stock']);
                 if ($newProduct->stok < 1) {
                     return $this->dispatchBrowserEvent('swal', [
@@ -532,8 +547,8 @@ class UpdateTransaction extends Component
             }
 
             if ($validateData['product_id'] != $transaction->product_id) {
-                $log->old_sparepart = $transaction->product_id !== null ? Product::findOrFail($transaction->product_id)->name : null;
-                $log->new_sparepart = $validateData['product_id'] !== null ? Product::findOrFail($validateData['product_id'])->name : null;
+                $log->old_sparepart = $transaction->product_id !== null ? Product::withTrashed()->findOrFail($transaction->product_id)->name : null;
+                $log->new_sparepart = $validateData['product_id'] !== null ? Product::withTrashed()->findOrFail($validateData['product_id'])->name : null;
             }
 
             $log->save();
@@ -543,11 +558,13 @@ class UpdateTransaction extends Component
         $transaction->biaya = $validateData['biaya'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
-        $validateData['modal'] = 0;
+        if ($validateData['modal'] == 0) {
+            $validateData['modal'] = $transaction->modal;
+        }
 
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
-                $currentProduct = Product::findOrFail($transaction->product_id);
+                $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
                 $oldStock = $currentProduct->stok;
 
                 // Set bypass flag to skip verification for transaction stock updates
@@ -567,7 +584,7 @@ class UpdateTransaction extends Component
             }
 
             if ($validateData['product_id'] !== null) {
-                $newProduct = Product::findOrFail($validateData['product_id']);
+                $newProduct = Product::withTrashed()->findOrFail($validateData['product_id']);
                 // dd($newProduct['stock']);
                 if ($newProduct->stok < 1) {
                     return $this->dispatchBrowserEvent('swal', [

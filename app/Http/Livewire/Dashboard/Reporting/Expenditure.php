@@ -38,12 +38,25 @@ class Expenditure extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
-    protected $rules = [
-        'tanggal' => 'required',
-        'jenis' => 'required',
-        'total' => 'required',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-    ];
+    public function rules()
+    {
+        $imageRule = 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240';
+        
+        // If not owner
+        if (auth()->check() && !auth()->user()->isOwner()) {
+            // Required if adding NEW, OR if editing but no image currently exists
+            if ($this->isAdd || ($this->isEdit && !$this->existingImage)) {
+                $imageRule = 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240';
+            }
+        }
+
+        return [
+            'tanggal' => 'required',
+            'jenis' => 'required',
+            'total' => 'required',
+            'image' => $imageRule
+        ];
+    }
 
     protected $messages = [
         'image.image' => 'File harus berupa gambar.',

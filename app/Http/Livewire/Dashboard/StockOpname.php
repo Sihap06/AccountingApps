@@ -247,7 +247,12 @@ class StockOpname extends Component
 
     public function showDetail($opnameId)
     {
-        $this->detailOpname = StockOpnameModel::with(['triggeredBy', 'completedBy', 'assignedTo', 'items.product'])->find($opnameId);
+        $this->detailOpname = StockOpnameModel::with(['triggeredBy', 'completedBy', 'assignedTo', 'items' => function($query) {
+            $query->withTrashed();
+            $query->with(['product' => function($q) {
+                $q->withTrashed();
+            }]);
+        }])->find($opnameId);
         $this->detailItems = $this->detailOpname ? $this->detailOpname->items->toArray() : [];
         $this->showDetailModal = true;
     }

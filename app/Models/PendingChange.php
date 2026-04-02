@@ -122,7 +122,7 @@ class PendingChange extends Model
 
                         // Return old product to stock
                         if ($this->old_data['product_id']) {
-                            $oldProduct = \App\Models\Product::find($this->old_data['product_id']);
+                            $oldProduct = \App\Models\Product::withTrashed()->find($this->old_data['product_id']);
                             if ($oldProduct) {
                                 $oldProduct->bypassVerification = true;
                                 $oldProduct->stok = $oldProduct->stok + 1;
@@ -132,7 +132,7 @@ class PendingChange extends Model
 
                         // Deduct new product from stock
                         if ($this->new_data['product_id']) {
-                            $newProduct = \App\Models\Product::find($this->new_data['product_id']);
+                            $newProduct = \App\Models\Product::withTrashed()->find($this->new_data['product_id']);
                             if ($newProduct) {
                                 $newProduct->bypassVerification = true;
                                 $newProduct->stok = $newProduct->stok - 1;
@@ -151,7 +151,7 @@ class PendingChange extends Model
 
                         // Return old product to stock
                         if ($this->old_data['product_id']) {
-                            $oldProduct = \App\Models\Product::find($this->old_data['product_id']);
+                            $oldProduct = \App\Models\Product::withTrashed()->find($this->old_data['product_id']);
                             if ($oldProduct) {
                                 $oldStock = $oldProduct->stok;
                                 $oldProduct->bypassVerification = true;
@@ -171,7 +171,7 @@ class PendingChange extends Model
 
                         // Deduct new product from stock
                         if ($this->new_data['product_id']) {
-                            $newProduct = \App\Models\Product::find($this->new_data['product_id']);
+                            $newProduct = \App\Models\Product::withTrashed()->find($this->new_data['product_id']);
                             if ($newProduct) {
                                 $oldStock = $newProduct->stok;
                                 $newProduct->bypassVerification = true;
@@ -205,7 +205,7 @@ class PendingChange extends Model
                     if ($modelClass === 'App\Models\Transaction') {
                         // Return product to stock
                         if ($model->product_id) {
-                            $product = \App\Models\Product::find($model->product_id);
+                            $product = \App\Models\Product::withTrashed()->find($model->product_id);
                             if ($product) {
                                 $product->bypassVerification = true;
                                 $product->stok = $product->stok + 1;
@@ -217,7 +217,7 @@ class PendingChange extends Model
                         $transactionItems = \App\Models\TransactionItem::where('transaction_id', $model->id)->get();
                         foreach ($transactionItems as $item) {
                             if ($item->product_id) {
-                                $product_item = \App\Models\Product::find($item->product_id);
+                                $product_item = \App\Models\Product::withTrashed()->find($item->product_id);
                                 if ($product_item) {
                                     $product_item->bypassVerification = true;
                                     $product_item->stok = $product_item->stok + 1;
@@ -232,7 +232,7 @@ class PendingChange extends Model
                     if ($modelClass === 'App\Models\TransactionItem') {
                         // Return product to stock if product was used
                         if ($model->product_id) {
-                            $product = \App\Models\Product::find($model->product_id);
+                            $product = \App\Models\Product::withTrashed()->find($model->product_id);
                             if ($product) {
                                 $oldStock = $product->stok;
                                 $product->bypassVerification = true;

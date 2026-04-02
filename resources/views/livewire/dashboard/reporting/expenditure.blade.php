@@ -194,7 +194,7 @@
                     {{-- Image Upload Field --}}
                     <div class="relative mb-8">
                         <label class="block text-gray-700 dark:text-white text-sm font-bold mb-2">
-                            Image (Optional)
+                            Image @if(auth()->user()->isOwner()) (Optional) @else <span class="text-red-500">*</span> @endif
                         </label>
                         <p class="text-xs text-gray-500 mb-2">
                             Max 10MB. Image will be automatically compressed to save storage space.

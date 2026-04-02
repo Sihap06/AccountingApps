@@ -679,7 +679,7 @@
 
                             {{-- Upload Nota --}}
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Receipt <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Receipt {!! auth()->user()->isOwner() ? '<span class="text-xs text-gray-400 font-normal">(Optional)</span>' : '<span class="text-red-500">*</span>' !!}</label>
                                 <input type="file" wire:model="stockUpdateNota" accept="image/*"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all" />
                                 <div wire:loading wire:target="stockUpdateNota" class="mt-2 flex items-center gap-2 text-sm text-gray-500">

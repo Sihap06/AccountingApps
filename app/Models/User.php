@@ -93,7 +93,8 @@ class User extends Authenticatable
      */
     public function requiresVerification(): bool
     {
-        return $this->role && in_array(strtolower($this->role->name), ['kasir', 'manajer']);
+        // Everyone except the Owner role requires verification for sensitive data changes
+        return $this->role && strtolower($this->role->name) !== 'owner';
     }
 
     /**

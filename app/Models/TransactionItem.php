@@ -16,4 +16,9 @@ class TransactionItem extends Model
     
     // Flag to bypass verification
     public $bypassVerification = false;
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class)->withTrashed();
+    }
 }
