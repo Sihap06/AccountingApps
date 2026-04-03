@@ -15,6 +15,11 @@ class Product extends Model
     
     // Flag to bypass verification for transaction stock updates
     public $bypassVerification = false;
+    
+    // Create inventory does not need pending changes, but updates and deletes do.
+    public $verifyCreate = false;
+    public $verifyUpdate = true;
+    public $verifyDelete = true;
 
     public function transactions()
     {
