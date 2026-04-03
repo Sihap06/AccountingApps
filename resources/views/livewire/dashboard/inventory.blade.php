@@ -632,7 +632,7 @@
                                                     <td class="px-3 py-2 text-center text-gray-600 text-xs">Rp {{ number_format($curPrice) }}</td>
                                                     <td class="px-3 py-2 text-center">
                                                         <input type="number" min="1"
-                                                            wire:model.defer="stockUpdateItems.{{ $index }}.qty_added"
+                                                            wire:model.debounce.500ms="stockUpdateItems.{{ $index }}.qty_added"
                                                             class="w-16 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none" />
                                                         @error("stockUpdateItems.{$index}.qty_added")
                                                             <p class="text-red-500 text-xxs mt-0.5">{{ $message }}</p>
@@ -640,7 +640,7 @@
                                                     </td>
                                                     <td class="px-3 py-2 text-center">
                                                         <input type="text"
-                                                            wire:model.defer="stockUpdateItems.{{ $index }}.purchase_price"
+                                                            wire:model.debounce.500ms="stockUpdateItems.{{ $index }}.purchase_price"
                                                             class="w-28 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none"
                                                             placeholder="Rp"
                                                             x-data="{

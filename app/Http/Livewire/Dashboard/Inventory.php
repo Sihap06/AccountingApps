@@ -524,8 +524,10 @@ class Inventory extends Component
 
         $this->validate($rules, $messages);
 
-        // Compress and store nota image
-        $notaPath = $this->compressAndStoreNota($this->stockUpdateNota);
+        // Compress and store nota image if provided
+        $notaPath = $this->stockUpdateNota 
+            ? $this->compressAndStoreNota($this->stockUpdateNota)
+            : null;
 
         // Create stock update record
         $stockUpdate = StockUpdate::create([
