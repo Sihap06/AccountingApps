@@ -51,8 +51,8 @@ class NettoExport implements FromView, ShouldAutoSize, WithColumnFormatting, Wit
         $collection = collect($dataIncome);
         $income = $collection->sum('untung');
 
-        $expend = Expenditure::whereMonth('created_at', $this->month)
-            ->whereYear('created_at', $this->year)
+        $expend = Expenditure::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->sum('total');
         $netto = $income - $expend;
 

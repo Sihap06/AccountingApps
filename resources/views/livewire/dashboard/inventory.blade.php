@@ -632,7 +632,7 @@
                                                     <td class="px-3 py-2 text-center text-gray-600 text-xs">Rp {{ number_format($curPrice) }}</td>
                                                     <td class="px-3 py-2 text-center">
                                                         <input type="number" min="1"
-                                                            wire:model.defer="stockUpdateItems.{{ $index }}.qty_added"
+                                                            wire:model.debounce.500ms="stockUpdateItems.{{ $index }}.qty_added"
                                                             class="w-16 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none" />
                                                         @error("stockUpdateItems.{$index}.qty_added")
                                                             <p class="text-red-500 text-xxs mt-0.5">{{ $message }}</p>
@@ -640,7 +640,7 @@
                                                     </td>
                                                     <td class="px-3 py-2 text-center">
                                                         <input type="text"
-                                                            wire:model.defer="stockUpdateItems.{{ $index }}.purchase_price"
+                                                            wire:model.debounce.500ms="stockUpdateItems.{{ $index }}.purchase_price"
                                                             class="w-28 text-center text-sm rounded-lg border border-gray-300 px-1.5 py-1 focus:border-blue-500 focus:outline-none"
                                                             placeholder="Rp"
                                                             x-data="{
@@ -679,7 +679,7 @@
 
                             {{-- Upload Nota --}}
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Receipt <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Upload Receipt {!! auth()->user()->isOwner() ? '<span class="text-xs text-gray-400 font-normal">(Optional)</span>' : '<span class="text-red-500">*</span>' !!}</label>
                                 <input type="file" wire:model="stockUpdateNota" accept="image/*"
                                     class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-all" />
                                 <div wire:loading wire:target="stockUpdateNota" class="mt-2 flex items-center gap-2 text-sm text-gray-500">

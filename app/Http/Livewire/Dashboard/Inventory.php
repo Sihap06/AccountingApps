@@ -104,48 +104,30 @@ class Inventory extends Component
         $validateData["stok"] = (int)$this->stok;
         $validateData["kode"] = time(); // Generate kode using timestamp
 
-        // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->requiresVerification()) {
-            // Create pending change instead of direct create
-            PendingChange::create([
-                'changeable_type' => Product::class,
-                'changeable_id' => null,
-                'action' => 'create',
-                'old_data' => null,
-                'new_data' => $validateData,
-                'requested_by' => Auth::user()->id,
-                'requested_at' => now(),
-            ]);
+        // Master admin can create directly
+        $request = new Request();
+        $request->merge($validateData);
 
-            $this->dispatchBrowserEvent('swal', [
-                'title' => 'Success',
-                'text' => "Changes saved successfully and awaiting verification.",
-                'icon' => 'info'
-            ]);
-        } else {
-            // Master admin can create directly
-            $request = new Request();
-            $request->merge($validateData);
+        $response = app(ProductController::class)->postProduct($request);
+        $status = $response->getData(true)['status'];
+        $message = $response->getData(true)['message'];
 
-            $response = app(ProductController::class)->postProduct($request);
-            $status = $response->getData(true)['status'];
-            $message = $response->getData(true)['message'];
+        $log = new LogActivityProduct();
+        $log->user = Auth::user()->name;
+        $log->activity = 'store';
+        $log->product = $this->name;
+        $log->new_name = $this->name;
+        $log->new_price = $this->harga;
+        $log->new_stok = $this->stok;
+        $log->save();
 
-            $log = new LogActivityProduct();
-            $log->user = Auth::user()->name;
-            $log->activity = 'store';
-            $log->product = $this->name;
-            $log->new_name = $this->name;
-            $log->new_price = $this->harga;
-            $log->new_stok = $this->stok;
-            $log->save();
+        $this->dispatchBrowserEvent('swal', [
+            'title' => $status,
+            'text' => $message,
+            'icon' => $status
+        ]);
 
-            $this->dispatchBrowserEvent('swal', [
-                'title' => $status,
-                'text' => $message,
-                'icon' => $status
-            ]);
-        }
+        $this->resetField();
 
         $this->resetField();
         
@@ -183,54 +165,41 @@ class Inventory extends Component
 
         $product = Product::findOrFail($this->productId);
 
-        // Check if user is sysadmin (operator) - needs verification
-        if (Auth::user()->requiresVerification()) {
-            // Store data and show reason modal
-            $this->pendingAction = 'update';
-            $this->pendingActionData = [
-                'validateData' => $validateData,
-                'product' => $product->toArray()
-            ];
-            $this->showReasonModal = true;
-            $this->isOpen = false;
-            return; // Return early to prevent resetField() from being called
-        } else {
-            // Master admin can update directly
-            if ($this->name !== $product->name || $this->harga !== $product->harga || $this->harga_jual !== $product->harga_jual || $this->stok !== $product->stok) {
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'update';
-                $log->product = $product->name;
+        // Master admin can update directly
+        if ($this->name !== $product->name || $this->harga !== $product->harga || $this->harga_jual !== $product->harga_jual || $this->stok !== $product->stok) {
+            $log = new LogActivityProduct();
+            $log->user = Auth::user()->name;
+            $log->activity = 'update';
+            $log->product = $product->name;
 
-                if ($product->name !== $this->name) {
-                    $log->new_name = $this->name;
-                    $log->old_name = $product->name;
-                }
-
-                if ($product->harga !== $this->harga) {
-                    $log->new_price = $this->harga;
-                    $log->old_price = $product->harga;
-                }
-
-                if ((int)$this->stok !== $product->stok) {
-                    $log->new_stok = (int)$this->stok;
-                    $log->old_stok = $product->stok;
-                }
-
-                $log->save();
+            if ($product->name !== $this->name) {
+                $log->new_name = $this->name;
+                $log->old_name = $product->name;
             }
 
-            $request = new Request();
-            $request->merge($validateData);
+            if ($product->harga !== $this->harga) {
+                $log->new_price = $this->harga;
+                $log->old_price = $product->harga;
+            }
 
-            $res = app(ProductController::class)->upadteProduct($request, $this->productId);
+            if ((int)$this->stok !== $product->stok) {
+                $log->new_stok = (int)$this->stok;
+                $log->old_stok = $product->stok;
+            }
 
-            $this->dispatchBrowserEvent('swal', [
-                'title' => 'Success',
-                'text' => $res->getData(true)['message'],
-                'icon' => 'success'
-            ]);
+            $log->save();
         }
+
+        $request = new Request();
+        $request->merge($validateData);
+
+        $res = app(ProductController::class)->upadteProduct($request, $this->productId);
+
+        $this->dispatchBrowserEvent('swal', [
+            'title' => 'Success',
+            'text' => $res->getData(true)['message'],
+            'icon' => 'success'
+        ]);
 
         $this->resetField();
         
@@ -538,7 +507,7 @@ class Inventory extends Component
             'stockUpdateItems' => 'required|array|min:1',
             'stockUpdateItems.*.qty_added' => 'required|integer|min:1',
             'stockUpdateItems.*.purchase_price' => 'required',
-            'stockUpdateNota' => 'required|image|max:5120',
+            'stockUpdateNota' => (auth()->user()->isOwner() ? 'nullable' : 'required') . '|image|max:5120',
         ];
 
         $messages = [
@@ -555,8 +524,10 @@ class Inventory extends Component
 
         $this->validate($rules, $messages);
 
-        // Compress and store nota image
-        $notaPath = $this->compressAndStoreNota($this->stockUpdateNota);
+        // Compress and store nota image if provided
+        $notaPath = $this->stockUpdateNota 
+            ? $this->compressAndStoreNota($this->stockUpdateNota)
+            : null;
 
         // Create stock update record
         $stockUpdate = StockUpdate::create([

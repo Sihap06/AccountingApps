@@ -62,97 +62,100 @@
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            <ul>
-                                                @if ($item->old_customer !== null && $item->new_customer !== null)
-                                                    <li>
-                                                        Changed customer from <span
-                                                            class="uppercase font-semibold">{{ $item->old_customer }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_customer }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_payment_method !== null && $item->new_payment_method !== null)
-                                                    <li>
-                                                        Changed payment method from <span
-                                                            class="uppercase font-semibold">{{ $item->old_payment_method }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_payment_method }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
-                                                    <li>
-                                                        Changed transaction date from <span
-                                                            class="uppercase font-semibold">{{ $item->old_tanggal }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_tanggal }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_service !== null && $item->new_service !== null)
-                                                    <li>
-                                                        Changed service from <span
-                                                            class="uppercase font-semibold">{{ $item->old_service }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_service }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_biaya !== null && $item->new_biaya !== null)
-                                                    <li>
-                                                        Changed cost from <span
-                                                            class="uppercase font-semibold">{{ number_format($item->old_biaya) }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ number_format($item->new_biaya) }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_teknisi !== null && $item->new_teknisi !== null)
-                                                    <li>
-                                                        Changed technician from <span
-                                                            class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_teknisi !== null && $item->new_teknisi === null)
-                                                    <li>
-                                                        Removed technician <span
-                                                            class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_sparepart !== null && $item->new_sparepart !== null)
-                                                    <li>
-                                                        Changed sparepart from <span
-                                                            class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
-                                                        to
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->old_teknisi !== null && $item->new_sparepart !== null)
-                                                    <li>
-                                                        Removed technician <span
-                                                            class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
-                                                        and added
-                                                        sparepart
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
-                                                    </li>
-                                                @endif
-                                                @if ($item->new_teknisi !== null && $item->old_sparepart !== null)
-                                                    <li>
-                                                        Removed sparepart <span
-                                                            class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
-                                                        and added
-                                                        technician
-                                                        <span
-                                                            class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
-                                                    </li>
-                                                @endif
-                                            </ul>
+                                            <div class="{{ strpos($item->activity, '(pending)') !== false ? 'text-amber-500' : '' }}">
+                                                {{ strpos($item->activity, '(pending)') !== false ? 'Update (pending):' : '' }}
+                                                <ul>
+                                                    @if ($item->old_customer !== null && $item->new_customer !== null)
+                                                        <li>
+                                                            Changed customer from <span
+                                                                class="uppercase font-semibold">{{ $item->old_customer }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_customer }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_payment_method !== null && $item->new_payment_method !== null)
+                                                        <li>
+                                                            Changed payment method from <span
+                                                                class="uppercase font-semibold">{{ $item->old_payment_method }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_payment_method }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
+                                                        <li>
+                                                            Changed transaction date from <span
+                                                                class="uppercase font-semibold">{{ $item->old_tanggal }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_tanggal }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_service !== null && $item->new_service !== null)
+                                                        <li>
+                                                            Changed service from <span
+                                                                class="uppercase font-semibold">{{ $item->old_service }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_service }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_biaya !== null && $item->new_biaya !== null)
+                                                        <li>
+                                                            Changed cost from <span
+                                                                class="uppercase font-semibold">{{ number_format($item->old_biaya) }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ number_format($item->new_biaya) }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_teknisi !== null && $item->new_teknisi !== null)
+                                                        <li>
+                                                            Changed technician from <span
+                                                                class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_teknisi !== null && $item->new_teknisi === null)
+                                                        <li>
+                                                            Removed technician <span
+                                                                class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_sparepart !== null && $item->new_sparepart !== null)
+                                                        <li>
+                                                            Changed sparepart from <span
+                                                                class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
+                                                            to
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->old_teknisi !== null && $item->new_sparepart !== null)
+                                                        <li>
+                                                            Removed technician <span
+                                                                class="uppercase font-semibold">{{ $item->old_teknisi }}</span>
+                                                            and added
+                                                            sparepart
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_sparepart }}</span>
+                                                        </li>
+                                                    @endif
+                                                    @if ($item->new_teknisi !== null && $item->old_sparepart !== null)
+                                                        <li>
+                                                            Removed sparepart <span
+                                                                class="uppercase font-semibold">{{ $item->old_sparepart }}</span>
+                                                            and added
+                                                            technician
+                                                            <span
+                                                                class="uppercase font-semibold">{{ $item->new_teknisi }}</span>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                            </div>
                                         </span>
                                     </td>
                                 </tr>

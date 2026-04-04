@@ -118,7 +118,7 @@
                                                 class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                 <span
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                    {{ $transaction['product_id'] !== null ? \App\Models\Product::findOrFail($transaction['product_id'])->name : '-' }}
+                                                    {{ \App\Models\Product::getProductName($transaction['product_id']) ?? '-' }}
                                                 </span>
                                             </td>
                                             <td
@@ -190,7 +190,7 @@
                                                     class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ $item['product_id'] !== null ? \App\Models\Product::findOrFail($item['product_id'])->name : '-' }}
+                                                        {{ \App\Models\Product::getProductName($item['product_id']) ?? '-' }}
                                                     </span>
                                                 </td>
                                                 <td

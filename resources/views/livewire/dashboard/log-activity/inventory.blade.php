@@ -62,34 +62,39 @@
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            @if ($item->activity === 'store')
-                                                Added new item
-                                            @elseif($item->activity === 'delete')
-                                                Deleted item
+                                            @if ($item->activity === 'store' || $item->activity === 'create (pending)')
+                                                {{ $item->activity === 'create (pending)' ? 'Added new item (pending)' : 'Added new item' }}
+                                            @elseif($item->activity === 'delete' || $item->activity === 'delete (pending)')
+                                                {{ $item->activity === 'delete (pending)' ? 'Deleted item (pending)' : 'Deleted item' }}
+                                            @elseif($item->activity === 'stock_update')
+                                                Stock Update
                                             @else
-                                                <ul>
-                                                    @if ($item->old_name !== null && $item->new_name !== null)
-                                                        <li>
-                                                            Changed item name from {{ $item->old_name }}
-                                                            to
-                                                            {{ $item->new_name }}
-                                                        </li>
-                                                    @endif
-                                                    @if ($item->old_price !== null && $item->new_price !== null)
-                                                        <li>
-                                                            Changed item price from {{ $item->old_price }}
-                                                            to
-                                                            {{ $item->new_price }}
-                                                        </li>
-                                                    @endif
-                                                    @if ($item->old_stok !== null && $item->new_stok !== null)
-                                                        <li>
-                                                            Updated item stock from {{ $item->old_stok }}
-                                                            to
-                                                            {{ $item->new_stok }}
-                                                        </li>
-                                                    @endif
-                                                </ul>
+                                                <div class="{{ strpos($item->activity, '(pending)') !== false ? 'text-amber-500' : '' }}">
+                                                    {{ strpos($item->activity, '(pending)') !== false ? 'Update (pending):' : '' }}
+                                                    <ul>
+                                                        @if ($item->old_name !== null && $item->new_name !== null)
+                                                            <li>
+                                                                Changed item name from {{ $item->old_name }}
+                                                                to
+                                                                {{ $item->new_name }}
+                                                            </li>
+                                                        @endif
+                                                        @if ($item->old_price !== null && $item->new_price !== null)
+                                                            <li>
+                                                                Changed item price from {{ $item->old_price }}
+                                                                to
+                                                                {{ $item->new_price }}
+                                                            </li>
+                                                        @endif
+                                                        @if ($item->old_stok !== null && $item->new_stok !== null)
+                                                            <li>
+                                                                Updated item stock from {{ $item->old_stok }}
+                                                                to
+                                                                {{ $item->new_stok }}
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
                                             @endif
                                         </span>
                                     </td>

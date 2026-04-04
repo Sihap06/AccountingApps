@@ -11,6 +11,11 @@
         <div class="relative px-8 py-6 m-0 flex flex-col min-w-0 break-words bg-transparent border-0 shadow-none rounded-2xl bg-clip-border"
             sidenav-card="">
             <img class="w-full mx-auto" src="{{ asset('assets/img/logo.png') }}" alt="logo">
+            <div class="mt-4 text-center">
+                <span class="text-xs font-semibold text-slate-500 dark:text-white dark:opacity-60 uppercase tracking-widest">
+                    Hello, {{ auth()->user()->name }}
+                </span>
+            </div>
         </div>
     </div>
 

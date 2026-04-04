@@ -23,6 +23,7 @@ class PointOfSales extends Component
     public $order_transaction = '';
     public $warranty = '';
     public $warranty_type = 'daily';
+    public $modal = '';
     
     // Phone data fields
     public $phone_brand = 'iPhone';
@@ -56,7 +57,8 @@ class PointOfSales extends Component
         'phone_type' => '',
         'phone_color' => '',
         'phone_imei' => '',
-        'phone_internal' => ''
+        'phone_internal' => '',
+        'modal' => ''
     ];
 
     protected $messages = [
@@ -64,7 +66,7 @@ class PointOfSales extends Component
         'service.required' => 'This field is required',
     ];
 
-    protected $listeners = ['refreshComponent' => '$refresh', 'setSelected'];
+    protected $listeners = ['refreshComponent' => '$refresh', 'setSelected' => 'setSelected'];
 
     public function updatedPhoneBrand($value)
     {
@@ -84,6 +86,13 @@ class PointOfSales extends Component
                 $price = $product->harga_jual ?? $product->harga;
                 if ($price) {
                     $this->biaya = number_format($price, 0, ',', '.');
+                }
+                
+                // Set modal (harga beli) if available
+                if ($product->harga) {
+                    $this->modal = number_format($product->harga, 0, ',', '.');
+                } else {
+                    $this->modal = '';
                 }
             }
         }
@@ -151,7 +160,12 @@ class PointOfSales extends Component
 
     public function mount()
     {
-        $this->inventory = Product::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
+        $this->inventory = Product::all()->map(function($product) {
+            return [
+                'label' => $product->name . ' - Rp ' . number_format($product->harga, 0, ',', '.'),
+                'value' => $product->id
+            ];
+        })->toArray();
         $this->technician = Technician::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
         $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->orderBy('created_at', 'DESC')->get()->toArray();
         $this->order_transaction = Transaction::generateOrderId();
@@ -177,6 +191,7 @@ class PointOfSales extends Component
         $this->phone_color = '';
         $this->phone_imei = '';
         $this->phone_internal = '';
+        $this->modal = '';
 
         $this->dispatchBrowserEvent('refreshSelect', ['product_id', 'technical_id']);
     }
@@ -189,6 +204,7 @@ class PointOfSales extends Component
         $this->product_id = '';
         $this->technical_id = '';
         $this->customer_id = null;
+        $this->modal = '';
         $this->serviceItems = [];
 
         $this->dispatchBrowserEvent('refreshSelect');
@@ -248,6 +264,7 @@ class PointOfSales extends Component
             'phone_color' => $this->phone_color,
             'phone_imei' => $this->phone_imei,
             'phone_internal' => $this->phone_internal,
+            'modal' => preg_replace("/[^0-9]/", "", $this->modal) ?: 0,
         ];
 
         $this->resetValue();

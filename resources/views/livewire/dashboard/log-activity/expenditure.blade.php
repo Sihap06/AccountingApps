@@ -53,32 +53,41 @@
                                         class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
                                             class="text-xs  leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                            @if ($item->activity === 'store')
-                                                Added expenditure for {{ $item->new_jenis }} amounting to
-                                                {{ number_format($item->new_total) }}
+                                            @if ($item->activity === 'store' || $item->activity === 'create (pending)')
+                                                <span class="{{ $item->activity === 'create (pending)' ? 'text-amber-500' : '' }}">
+                                                    {{ $item->activity === 'create (pending)' ? 'Added expenditure (pending) for' : 'Added expenditure for' }} {{ $item->new_jenis }} amounting to
+                                                    {{ number_format($item->new_total) }}
+                                                </span>
+                                            @elseif($item->activity === 'delete' || $item->activity === 'delete (pending)')
+                                                <span class="{{ $item->activity === 'delete (pending)' ? 'text-amber-500' : '' }}">
+                                                    {{ $item->activity === 'delete (pending)' ? 'Deleted expenditure (pending):' : 'Deleted expenditure:' }} {{ $item->jenis }}
+                                                </span>
                                             @else
-                                                <ul>
-                                                    @if ($item->old_jenis !== null && $item->new_jenis !== null)
-                                                        <li>
-                                                            Changed {{ $item->old_jenis }} to
-                                                            {{ $item->new_jenis }}
-                                                        </li>
-                                                    @endif
-                                                    @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
-                                                        <li>
-                                                            Changed expenditure date from
-                                                            {{ \Carbon\Carbon::parse($item->old_tanggal)->format('d/m/Y') }}
-                                                            to
-                                                            {{ \Carbon\Carbon::parse($item->new_tanggal)->format('d/m/Y') }}
-                                                        </li>
-                                                    @endif
-                                                    @if ($item->old_total !== null && $item->new_total !== null)
-                                                        <li>
-                                                            Changed expenditure total from {{ $item->old_total }}
-                                                            to {{ $item->new_total }}
-                                                        </li>
-                                                    @endif
-                                                </ul>
+                                                <div class="{{ strpos($item->activity, '(pending)') !== false ? 'text-amber-500' : '' }}">
+                                                    {{ strpos($item->activity, '(pending)') !== false ? 'Update (pending):' : '' }}
+                                                    <ul>
+                                                        @if ($item->old_jenis !== null && $item->new_jenis !== null)
+                                                            <li>
+                                                                Changed {{ $item->old_jenis }} to
+                                                                {{ $item->new_jenis }}
+                                                            </li>
+                                                        @endif
+                                                        @if ($item->old_tanggal !== null && $item->new_tanggal !== null)
+                                                            <li>
+                                                                Changed expenditure date from
+                                                                {{ \Carbon\Carbon::parse($item->old_tanggal)->format('d/m/Y') }}
+                                                                to
+                                                                {{ \Carbon\Carbon::parse($item->new_tanggal)->format('d/m/Y') }}
+                                                            </li>
+                                                        @endif
+                                                        @if ($item->old_total !== null && $item->new_total !== null)
+                                                            <li>
+                                                                Changed expenditure total from {{ $item->old_total }}
+                                                                to {{ $item->new_total }}
+                                                            </li>
+                                                        @endif
+                                                    </ul>
+                                                </div>
                                             @endif
                                         </span>
                                     </td>

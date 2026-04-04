@@ -24,8 +24,8 @@ class ExpenditureReport implements FromView, ShouldAutoSize, WithColumnFormattin
 
     public function view(): View
     {
-        $data = Expenditure::whereMonth('created_at', $this->month)
-            ->whereYear('created_at', $this->year)
+        $data = Expenditure::whereMonth('tanggal', $this->month)
+            ->whereYear('tanggal', $this->year)
             ->get();
 
         return view('export.expenditure', [

@@ -59,6 +59,9 @@
                                             Parts/Sparepart</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                            Price Basis</th>
+                                        <th
+                                            class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                                             Warranty</th>
                                         <th
                                             class="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
@@ -90,6 +93,8 @@
                                                 {{ $item['technical_name'] ?: '-' }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
                                                 {{ $item['product_name'] ?: '-' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                Rp {{ number_format($item['modal'] ?? 0) }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
                                                 @if ($item['warranty'])
                                                     {{ $item['warranty'] }}
@@ -231,6 +236,7 @@
                                         }" x-on:input="formatNumber($event)" />
                                 </div>
                             </div>
+
 
                             <div>
                                 <div class="relative">

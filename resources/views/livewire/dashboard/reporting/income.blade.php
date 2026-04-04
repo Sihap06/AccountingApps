@@ -236,6 +236,9 @@
                                     Service
                                 </th>
                                 <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
+                                    Sparepart
+                                </th>
+                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
                                     Order ID
                                 </th>
                                 <th class="py-3 px-4 text-right text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
@@ -257,6 +260,9 @@
                                             {{ $item['service'] }}
                                         </span>
                                     </td>
+                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ \App\Models\Product::getProductName($item['product_id']) ?? '-' }}
+                                    </td>
                                     <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400 font-mono">
                                         {{ $item['order_transaction'] }}
                                     </td>
@@ -266,7 +272,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
+                                    <td colspan="5" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
                                         @if ($selectTechnician)
                                             No fee data for selected technician in this period
                                         @else
@@ -280,7 +286,10 @@
                             @for ($i = 0; $i <= 5; $i++)
                                 <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
                                     wire:target='selectedMonth, selectedYear, selectTechnician'>
-                                    <td class="py-3 px-4">
+                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
+                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
                                         <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
                                     </td>
                                     <td class="py-3 px-4">

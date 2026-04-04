@@ -22,6 +22,10 @@ trait RequiresVerification
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
             
+            if ((property_exists($model, 'verifyCreate') && !$model->verifyCreate)) {
+                return true;
+            }
+            
             if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptCreate();
                 return false;
@@ -40,6 +44,10 @@ trait RequiresVerification
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
             
+            if ((property_exists($model, 'verifyUpdate') && !$model->verifyUpdate)) {
+                return true;
+            }
+            
             if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptUpdate();
                 return false;
@@ -57,6 +65,10 @@ trait RequiresVerification
                 'user_role' => Auth::check() ? Auth::user()->role : 'not logged in',
                 'user_id' => Auth::check() ? Auth::user()->id : null
             ]);
+            
+            if ((property_exists($model, 'verifyDelete') && !$model->verifyDelete)) {
+                return true;
+            }
             
             if (Auth::check() && Auth::user()->requiresVerification()) {
                 $model->interceptDelete();

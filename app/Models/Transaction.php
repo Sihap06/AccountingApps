@@ -18,7 +18,12 @@ class Transaction extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class)->withTrashed();
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class)->withTrashed();
     }
     
     public function transactionItems()
