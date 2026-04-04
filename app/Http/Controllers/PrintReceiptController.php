@@ -35,6 +35,7 @@ class PrintReceiptController extends Controller
                 'transactions.technical_id as transaction_technical_id',
                 'transactions.warranty as transaction_warranty',
                 'transactions.warranty_type as transaction_warranty_type',
+                'transactions.potongan as transaction_potongan',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
                 'customers.name as customer_name',
@@ -52,6 +53,7 @@ class PrintReceiptController extends Controller
                 'transaction_items.untung as item_untung',
                 'transaction_items.warranty as item_warranty',
                 'transaction_items.warranty_type as item_warranty_type',
+                'transaction_items.potongan as item_potongan',
                 'transaction_items.updated_at as item_updated_at'
             )
             ->where('transactions.id', $id)
@@ -62,6 +64,7 @@ class PrintReceiptController extends Controller
             $transaction = $items->first();
 
             $total = $transaction->transaction_biaya;
+            $totalPotongan = $transaction->transaction_potongan ?? 0;
 
             return [
                 'id' => $transaction->transaction_id,
@@ -76,18 +79,21 @@ class PrintReceiptController extends Controller
                 'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,
                 'modal' => $transaction->transaction_modal,
+                'potongan' => $transaction->transaction_potongan ?? 0,
                 'product_id' => $transaction->transaction_product_id,
                 'service' => $transaction->transaction_service,
                 'technical_id' => $transaction->transaction_technical_id,
                 'untung' => $transaction->transaction_untung,
                 'warranty' => $transaction->transaction_warranty,
                 'warranty_type' => $transaction->transaction_warranty_type,
-                'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
+                'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total, &$totalPotongan) {
 
                     $total += $item->item_biaya;
+                    $totalPotongan += $item->item_potongan ?? 0;
 
                     return [
                         'biaya' => $item->item_biaya,
+                        'potongan' => $item->item_potongan ?? 0,
                         'created_at' => $item->item_created_at,
                         'fee_teknisi' => $item->item_fee_teknisi,
                         'modal' => $item->item_modal,
@@ -99,7 +105,8 @@ class PrintReceiptController extends Controller
                         'warranty_type' => $item->item_warranty_type
                     ];
                 })->toArray() : [],
-                'total' => $total
+                'total' => $total,
+                'total_potongan' => $totalPotongan
             ];
         });
 

@@ -140,7 +140,7 @@
             <tr>
                 <td>1</td>
                 <td>{{ $data['service'] }}</td>
-                <td>Rp {{ number_format($data['biaya']) }}</td>
+                <td>Rp {{ number_format($data['biaya'] - ($data['potongan'] ?? 0)) }}</td>
                 <td>
                     @if ($data['warranty'] != null)
                         {{ $data['warranty'] }}
@@ -160,7 +160,7 @@
                 <tr>
                     <td>{{ $index + 2 }}</td>
                     <td>{{ $item['service'] }}</td>
-                    <td>Rp {{ number_format($item['biaya']) }}</td>
+                    <td>Rp {{ number_format($item['biaya'] - ($item['potongan'] ?? 0)) }}</td>
                     <td>
                         @if ($item['warranty'] != null)
                             {{ $item['warranty'] }}
@@ -218,7 +218,7 @@
                     <tr>
                         <td><strong>Total</strong></td>
                         <td>:</td>
-                        <td>Rp {{ number_format($data['total']) }}</td>
+                        <td>Rp {{ number_format($data['total'] - ($data['total_potongan'] ?? 0)) }}</td>
                     </tr>
                     <tr>
                         <td><strong>Payment</strong></td>
