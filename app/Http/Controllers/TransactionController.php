@@ -240,15 +240,16 @@ class TransactionController extends Controller
             
             // Check if using sparepart (modal > 0) to determine which percentage to use
             if ($modal > 0) {
-                // Using sparepart, use percent_with_sparepart
+                // Using sparepart: fee based on (harga_jual - modal) * percent
                 $percentModal = $tecnician->percent_with_sparepart;
+                $countModal = ($biaya - $modal) * $percentModal / 100;
             } else {
                 // Not using sparepart, use normal percent_fee
                 $percentModal = $tecnician->percent_fee;
+                $countModal = $biaya * $percentModal / 100;
             }
-            
+
             $percentUntung = 100 - $percentModal;
-            $countModal = $biaya * $percentModal / 100;
             $countUntung = $biaya * $percentUntung / 100;
             
             return [
