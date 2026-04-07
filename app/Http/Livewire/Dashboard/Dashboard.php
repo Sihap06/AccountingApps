@@ -19,6 +19,7 @@ class Dashboard extends Component
     public $pendingCount = 0;
     public $showStockOpnameNotif = false;
     public $stockOpnameData = null;
+    public $verificationResults = []; // approved/rejected requests not yet acknowledged
     public $selectedMonthFilter;
     public $selectedYearFilter;
     public $chartData = [];
@@ -62,6 +63,63 @@ class Dashboard extends Component
                 ];
             }
         }
+
+        $this->loadVerificationResults();
+    }
+
+    /**
+     * Load any approved/rejected pending changes belonging to the current user
+     * that have not been acknowledged yet, so the dashboard can surface them.
+     */
+    public function loadVerificationResults()
+    {
+        $changes = PendingChange::with('verifiedBy')
+            ->where('requested_by', auth()->id())
+            ->whereIn('status', ['approved', 'rejected'])
+            ->whereNotNull('verified_at')
+            ->whereNull('acknowledged_at')
+            ->orderBy('verified_at', 'desc')
+            ->get();
+
+        $this->verificationResults = $changes->map(function ($change) {
+            return [
+                'id' => $change->id,
+                'status' => $change->status,
+                'action' => $change->action,
+                'type' => class_basename($change->changeable_type),
+                'reason' => $change->reason,
+                'verification_notes' => $change->verification_notes,
+                'verified_by' => $change->verifiedBy->name ?? '-',
+                'verified_at' => optional($change->verified_at)->format('d M Y H:i'),
+            ];
+        })->toArray();
+    }
+
+    public function acknowledgeVerificationResult($id)
+    {
+        $change = PendingChange::where('id', $id)
+            ->where('requested_by', auth()->id())
+            ->first();
+
+        if ($change) {
+            $change->acknowledged_at = now();
+            $change->save();
+        }
+
+        $this->verificationResults = array_values(array_filter(
+            $this->verificationResults,
+            fn($item) => $item['id'] !== $id
+        ));
+    }
+
+    public function acknowledgeAllVerificationResults()
+    {
+        PendingChange::where('requested_by', auth()->id())
+            ->whereIn('status', ['approved', 'rejected'])
+            ->whereNull('acknowledged_at')
+            ->update(['acknowledged_at' => now()]);
+
+        $this->verificationResults = [];
     }
 
     public function transactionChart()
@@ -75,7 +133,7 @@ class Dashboard extends Component
                 $query->from('transactions as t')
                     ->leftJoinSub(
                         DB::table('transaction_items')
-                            ->selectRaw('transaction_id, SUM(biaya) as total_item_fee')
+                            ->selectRaw('transaction_id, SUM(biaya - IFNULL(potongan, 0)) as total_item_fee')
                             ->whereNull('deleted_at')
                             ->groupBy('transaction_id'),
                         'ti',
@@ -85,7 +143,7 @@ class Dashboard extends Component
                     ->selectRaw("
                     MONTHNAME(t.created_at) as month,
                     MONTH(t.created_at) as number_of_month,
-                    (SUM(t.biaya) + IFNULL(SUM(ti.total_item_fee), 0)) as total_fee
+                    (SUM(t.biaya - IFNULL(t.potongan, 0)) + IFNULL(SUM(ti.total_item_fee), 0)) as total_fee
                 ")
                     ->whereYear('t.created_at', $this->selectedYear)
                     ->whereNull('t.deleted_at')
@@ -123,7 +181,7 @@ class Dashboard extends Component
                 ->whereNull('transaction_items.deleted_at');
         })
             ->select(
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) + IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as total_biaya'),
             )
             ->where('transactions.status', 'done')
             ->whereNull('transactions.deleted_at')
@@ -133,6 +191,7 @@ class Dashboard extends Component
                 'transactions.id',
                 'transactions.order_transaction',
                 'transactions.biaya',
+                'transactions.potongan',
                 'transactions.modal',
                 'transactions.payment_method'
             );
@@ -155,36 +214,19 @@ class Dashboard extends Component
 
         $dataTransaction = Transaction::take(6)->latest()->get();
 
-        $subQuery = DB::table('transactions')
-            ->leftJoin('transaction_items', function ($join) {
-                $join->on('transactions.id', '=', 'transaction_items.transaction_id')
-                    ->whereNull('transaction_items.deleted_at'); // Only join valid transaction items
-            })
-            ->leftJoin('customers', 'transactions.customer_id', '=', 'customers.id')
-            ->select(
-                'transactions.id',
-                'transactions.status',
-            )
-            ->whereYear('transactions.created_at', $this->selectedYearFilter)
-            ->whereMonth('transactions.created_at', $this->selectedMonthFilter)
-            ->whereNull('transactions.deleted_at')
-            ->groupBy(
-                'transactions.id',
-                'transactions.status',
-                'transactions.biaya'
-            );
+        $completedCount = Transaction::where('status', 'done')
+            ->whereYear('created_at', $this->selectedYearFilter)
+            ->whereMonth('created_at', $this->selectedMonthFilter)
+            ->count();
 
-        $transactionsMonthly = DB::table(DB::raw("({$subQuery->toSql()}) as sub"))
-            ->select(
-                DB::raw('SUM(CASE WHEN sub.status = "done" THEN 1 ELSE 0 END) as total_transaksi_done'),
-                DB::raw('SUM(CASE WHEN sub.status = "cancel" THEN 1 ELSE 0 END) as total_transaksi_cancel'),
-                DB::raw('SUM(CASE WHEN sub.status = "proses" THEN 1 ELSE 0 END) as total_transaksi_proses'),
-            )
-            ->mergeBindings($subQuery)
-            ->get();
+        $cancelledCount = Transaction::where('status', 'cancel')
+            ->whereYear('created_at', $this->selectedYearFilter)
+            ->whereMonth('created_at', $this->selectedMonthFilter)
+            ->count();
 
+        $inProcessCount = Transaction::where('status', 'proses')->count();
 
-        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction', 'transactionsMonthly', 'years'))
+        return view('livewire.dashboard.dashboard', compact('dataChart', 'labelChart', 'todayTransaction', 'todayIncome', 'todayExpenditure', 'dataTransaction', 'completedCount', 'cancelledCount', 'inProcessCount', 'years'))
             ->layout('components.layouts.dashboard');
     }
 
@@ -213,7 +255,7 @@ class Dashboard extends Component
         $transactionData = DB::table('transactions as t')
             ->leftJoinSub(
                 DB::table('transaction_items')
-                    ->selectRaw('transaction_id, SUM(biaya) as total_item_fee')
+                    ->selectRaw('transaction_id, SUM(biaya - IFNULL(potongan, 0)) as total_item_fee')
                     ->whereNull('deleted_at')
                     ->groupBy('transaction_id'),
                 'ti',
@@ -225,13 +267,13 @@ class Dashboard extends Component
                 t.order_transaction,
                 t.service,
                 t.customer_id,
-                t.biaya,
+                (t.biaya - IFNULL(t.potongan, 0)) as biaya,
                 t.status,
                 t.payment_method,
                 t.created_at,
                 MONTHNAME(t.created_at) as month,
                 MONTH(t.created_at) as month_number,
-                (t.biaya + IFNULL(ti.total_item_fee, 0)) as total_fee
+                ((t.biaya - IFNULL(t.potongan, 0)) + IFNULL(ti.total_item_fee, 0)) as total_fee
             ")
             ->whereYear('t.created_at', $this->selectedYear)
             ->whereNull('t.deleted_at')

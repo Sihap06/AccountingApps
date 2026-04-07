@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Dashboard;
 use App\Http\Controllers\ProductController;
 use App\Models\Customer;
 use App\Models\LogActivityTransaction;
-use App\Models\LogActivityProduct;
+use App\Models\PaymentMethod;
 use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
@@ -31,11 +31,13 @@ class UpdateTransaction extends Component
     public $editId;
     public $editService;
     public $editBiaya;
+    public $editPotongan = '';
     public $editTechnical;
     public $editProduct;
 
     public $service;
     public $biaya;
+    public $potongan = '';
     public $technical;
     public $product;
 
@@ -102,6 +104,7 @@ class UpdateTransaction extends Component
 
         // dd($technician);
         $customers = Customer::all();
+        $paymentMethods = PaymentMethod::select('code', 'name')->get();
         $transaction = Transaction::findOrFail($this->transactionId);
         $transaction_items = TransactionItem::where('transaction_id', $this->transactionId)->get();
         $this->customer_id = $transaction['customer_id'];
@@ -110,17 +113,19 @@ class UpdateTransaction extends Component
         $this->orderTransaction = $transaction['order_transaction'];
         // dd($this->orderDate);
 
-        return view('livewire.dashboard.update-transaction', compact('transaction', 'transaction_items', 'inventory', 'technician', 'customers'));
+        return view('livewire.dashboard.update-transaction', compact('transaction', 'transaction_items', 'inventory', 'technician', 'customers', 'paymentMethods'));
     }
 
     public function resetFieldValue()
     {
         $this->editBiaya = null;
+        $this->editPotongan = '';
         $this->editService = null;
         $this->editTechnical = null;
         $this->editProduct = null;
 
         $this->biaya = null;
+        $this->potongan = '';
         $this->service = null;
         $this->technical = null;
         $this->product = null;
@@ -157,6 +162,7 @@ class UpdateTransaction extends Component
         $validateData = $this->validate([
             'service' => 'required',
             'biaya' => 'required',
+            'potongan' => '',
             'technical' => '',
             'product' => '',
             'warranty' => '',
@@ -217,11 +223,22 @@ class UpdateTransaction extends Component
             $validateData['product_id'] = null;
         }
 
+        $potonganValue = (int) preg_replace("/[^0-9]/", "", (string) $this->potongan);
+        if ($potonganValue > (int) $validateData['biaya']) {
+            return $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => 'Discount cannot be greater than cost',
+                'icon' => 'error'
+            ]);
+        }
+
         $newTransactionItem->technical_id = $validateData['technical_id'];
         $newTransactionItem->service = $validateData['service'];
         $newTransactionItem->biaya = $validateData['biaya'];
+        $newTransactionItem->potongan = $potonganValue;
 
-        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
+        $effectiveBiaya = (int) $validateData['biaya'] - $potonganValue;
+        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $effectiveBiaya, $validateData['modal']);
 
         $newTransactionItem->modal = $perhitungan['modal'];
         $newTransactionItem->fee_teknisi  = $perhitungan['fee_teknisi'];
@@ -234,22 +251,12 @@ class UpdateTransaction extends Component
         // Deduct stock if product was used
         if ($validateData['product_id'] !== null) {
             $product = Product::withTrashed()->findOrFail($validateData['product_id']);
-            $oldStock = $product->stok;
 
             // Set bypass flag to skip verification for transaction stock updates
             $product->bypassVerification = true;
 
             $product->stok = $product->stok - 1;
             $product->save();
-
-            // Log stock usage
-            $log = new LogActivityProduct();
-            $log->user = Auth::user()->name;
-            $log->activity = 'update';
-            $log->product = $product->name;
-            $log->old_stok = $oldStock;
-            $log->new_stok = $product->stok;
-            $log->save();
         }
 
         $this->dispatchBrowserEvent('swal', [
@@ -271,22 +278,11 @@ class UpdateTransaction extends Component
         if ($transactionItem->product_id) {
             $product = Product::find($transactionItem->product_id);
             if ($product) {
-                $oldStock = $product->stok;
-
                 // Set bypass flag to skip verification for transaction stock updates
                 $product->bypassVerification = true;
 
                 $product->stok = $product->stok + 1;
                 $product->save();
-
-                // Log stock return
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'update';
-                $log->product = $product->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $product->stok;
-                $log->save();
             }
         }
 
@@ -304,6 +300,7 @@ class UpdateTransaction extends Component
         $data = Transaction::findOrFail($id);
         $this->editService = $data->service;
         $this->editBiaya = $data->biaya;
+        $this->editPotongan = $data->potongan ? number_format($data->potongan, 0, ',', '.') : '';
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
         $this->editModal = number_format($data->modal, 0, ',', '.');
@@ -321,6 +318,7 @@ class UpdateTransaction extends Component
         $data = TransactionItem::findOrFail($id);
         $this->editService = $data->service;
         $this->editBiaya = $data->biaya;
+        $this->editPotongan = $data->potongan ? number_format($data->potongan, 0, ',', '.') : '';
         $this->editTechnical = $data->technical_id;
         $this->editProduct = $data->product_id;
         $this->editModal = number_format($data->modal, 0, ',', '.');
@@ -338,6 +336,7 @@ class UpdateTransaction extends Component
         $validateData = $this->validate([
             'editService' => 'required',
             'editBiaya' => 'required',
+            'editPotongan' => '',
             'editTechnical' => '',
             'editProduct' => '',
         ], [
@@ -347,8 +346,17 @@ class UpdateTransaction extends Component
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
+        $validateData['potongan'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editPotongan);
         $validateData['technical_id'] = $this->editTechnical;
         $validateData['product_id'] = $this->editProduct;
+
+        if ($validateData['potongan'] > (int) $validateData['biaya']) {
+            return $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => 'Discount cannot be greater than cost',
+                'icon' => 'error'
+            ]);
+        }
 
         if ($validateData['product_id'] === '') {
             $validateData['product_id'] = null;
@@ -404,6 +412,7 @@ class UpdateTransaction extends Component
 
         $transaction->service = $this->editService;
         $transaction->biaya = $validateData['biaya'];
+        $transaction->potongan = $validateData['potongan'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
         if ($validateData['modal'] == 0) {
@@ -413,22 +422,12 @@ class UpdateTransaction extends Component
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
-                $oldStock = $currentProduct->stok;
 
                 // Set bypass flag to skip verification for transaction stock updates
                 $currentProduct->bypassVerification = true;
 
                 $currentProduct->stok = $currentProduct->stok + 1;
                 $currentProduct->save();
-
-                // Log stock return
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'transaction stock return';
-                $log->product = $currentProduct->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $currentProduct->stok;
-                $log->save();
             }
 
             if ($validateData['product_id'] !== null) {
@@ -442,22 +441,11 @@ class UpdateTransaction extends Component
                     ]);
                 }
 
-                $oldStock = $newProduct->stok;
-
                 // Set bypass flag to skip verification for transaction stock updates
                 $newProduct->bypassVerification = true;
 
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
-
-                // Log stock usage
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'transaction stock update';
-                $log->product = $newProduct->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $newProduct->stok;
-                $log->save();
 
                 $validateData['modal'] = $newProduct->harga;
             }
@@ -466,7 +454,9 @@ class UpdateTransaction extends Component
             $transaction->product_id = $validateData['product_id'];
         }
 
-        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
+        // Recalculate profit/fee using net cost (cost - new discount).
+        $effectiveBiaya = (int) $validateData['biaya'] - (int) $validateData['potongan'];
+        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $effectiveBiaya, $validateData['modal']);
 
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
@@ -490,6 +480,7 @@ class UpdateTransaction extends Component
         $validateData = $this->validate([
             'editService' => 'required',
             'editBiaya' => 'required',
+            'editPotongan' => '',
             'editTechnical' => '',
             'editProduct' => '',
         ], [
@@ -499,8 +490,17 @@ class UpdateTransaction extends Component
 
         $currencyString = preg_replace("/[^0-9]/", "", $this->editBiaya);
         $validateData['biaya'] = $currencyString;
+        $validateData['potongan'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editPotongan);
         $validateData['technical_id'] = $this->editTechnical;
         $validateData['product_id'] = $this->editProduct;
+
+        if ($validateData['potongan'] > (int) $validateData['biaya']) {
+            return $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => 'Discount cannot be greater than cost',
+                'icon' => 'error'
+            ]);
+        }
 
         if ($validateData['product_id'] === '') {
             $validateData['product_id'] = null;
@@ -556,6 +556,7 @@ class UpdateTransaction extends Component
 
         $transaction->service = $this->editService;
         $transaction->biaya = $validateData['biaya'];
+        $transaction->potongan = $validateData['potongan'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
         if ($validateData['modal'] == 0) {
@@ -565,22 +566,12 @@ class UpdateTransaction extends Component
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
-                $oldStock = $currentProduct->stok;
 
                 // Set bypass flag to skip verification for transaction stock updates
                 $currentProduct->bypassVerification = true;
 
                 $currentProduct->stok = $currentProduct->stok + 1;
                 $currentProduct->save();
-
-                // Log stock return
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'transaction stock return';
-                $log->product = $currentProduct->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $currentProduct->stok;
-                $log->save();
             }
 
             if ($validateData['product_id'] !== null) {
@@ -594,22 +585,11 @@ class UpdateTransaction extends Component
                     ]);
                 }
 
-                $oldStock = $newProduct->stok;
-
                 // Set bypass flag to skip verification for transaction stock updates
                 $newProduct->bypassVerification = true;
 
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
-
-                // Log stock usage
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'transaction stock update';
-                $log->product = $newProduct->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $newProduct->stok;
-                $log->save();
 
                 $validateData['modal'] = $newProduct->harga;
             }
@@ -618,7 +598,9 @@ class UpdateTransaction extends Component
             $transaction->product_id = $validateData['product_id'];
         }
 
-        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $validateData['biaya'], $validateData['modal']);
+        // Recalculate profit/fee using net cost (cost - new discount).
+        $effectiveBiaya = (int) $validateData['biaya'] - (int) $validateData['potongan'];
+        $perhitungan = $this->getPerhitungan($validateData['technical_id'], $effectiveBiaya, $validateData['modal']);
 
         $transaction->modal = $perhitungan['modal'];
         $transaction->fee_teknisi  = $perhitungan['fee_teknisi'];
@@ -752,6 +734,7 @@ class UpdateTransaction extends Component
             $newData = $transaction;
             $newData['service'] = $this->pendingActionData['editService'];
             $newData['biaya'] = $validateData['biaya'];
+            $newData['potongan'] = $validateData['potongan'];
             $newData['technical_id'] = $validateData['technical_id'];
             $newData['product_id'] = $validateData['product_id'];
             $newData['warranty'] = $this->pendingActionData['warranty'];
@@ -782,6 +765,7 @@ class UpdateTransaction extends Component
             $newData = $transactionItem;
             $newData['service'] = $this->pendingActionData['editService'];
             $newData['biaya'] = $validateData['biaya'];
+            $newData['potongan'] = $validateData['potongan'];
             $newData['technical_id'] = $validateData['technical_id'];
             $newData['product_id'] = $validateData['product_id'];
             $newData['warranty'] = $this->pendingActionData['warranty'];

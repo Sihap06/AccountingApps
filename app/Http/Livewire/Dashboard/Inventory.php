@@ -12,6 +12,7 @@ use App\Models\StockUpdateItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -49,15 +50,26 @@ class Inventory extends Component
     public $stockUpdateNota = null;
     public $stockUpdateNotes = '';
 
-    protected $rules = [
-        'name' => 'required',
-        'harga' => 'required',
-        'harga_jual' => 'required',
-        'stok' => 'required'
-    ];
+    protected function rules()
+    {
+        return [
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products', 'name')
+                    ->ignore($this->productId)
+                    ->whereNull('deleted_at'),
+            ],
+            'harga' => 'required',
+            'harga_jual' => 'required',
+            'stok' => 'required',
+        ];
+    }
 
     protected $messages = [
         'name.required' => 'Product name is required',
+        'name.unique' => 'Product name already exists',
         'harga.required' => 'Product capital price is required',
         'harga_jual.required' => 'Product selling price is required',
         'stok.required' => 'Product stock is required'
@@ -95,6 +107,7 @@ class Inventory extends Component
 
     public function store()
     {
+        $this->name = trim((string) $this->name);
         $validateData = $this->validate();
         $currencyString = preg_replace("/[^0-9]/", "", $this->harga);
         $currencyStringJual = preg_replace("/[^0-9]/", "", $this->harga_jual);
@@ -155,6 +168,7 @@ class Inventory extends Component
 
     public function update()
     {
+        $this->name = trim((string) $this->name);
         $validateData = $this->validate();
         $currencyString = preg_replace("/[^0-9]/", "", $this->harga);
         $currencyStringJual = preg_replace("/[^0-9]/", "", $this->harga_jual);

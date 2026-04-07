@@ -38,12 +38,9 @@
                                     <div wire:ignore>
                                         <x-ui.select label="Payment Method" wire:model="paymentMethod"
                                             id="paymentMethod" search size="lg">
-                                            <option value="cash">CASH</option>
-                                            <option value="qris">QRIS</option>
-                                            <option value="bca">BCA</option>
-                                            <option value="debit">DEBIT</option>
-                                            <option value="mandiri">MANDIRI</option>
-                                            <option value="transfer">TRANSFER</option>
+                                            @foreach ($paymentMethods as $method)
+                                                <option value="{{ $method->code }}">{{ strtoupper($method->name) }}</option>
+                                            @endforeach
                                         </x-ui.select>
                                     </div>
                                     @error('paymentMethod')
@@ -104,7 +101,12 @@
                                                 class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                 <span
                                                     class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                    {{ number_format($transaction['biaya']) }}
+                                                    {{ number_format($transaction['biaya'] - ($transaction['potongan'] ?? 0)) }}
+                                                    @if (!empty($transaction['potongan']))
+                                                        <div class="text-[10px] text-amber-500 font-normal mt-0.5">
+                                                            (disc {{ number_format($transaction['potongan']) }})
+                                                        </div>
+                                                    @endif
                                                 </span>
                                             </td>
                                             <td
@@ -176,7 +178,12 @@
                                                     class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                                     <span
                                                         class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                                                        {{ number_format($item['biaya']) }}
+                                                        {{ number_format($item['biaya'] - ($item['potongan'] ?? 0)) }}
+                                                        @if (!empty($item['potongan']))
+                                                            <div class="text-[10px] text-amber-500 font-normal mt-0.5">
+                                                                (disc {{ number_format($item['potongan']) }})
+                                                            </div>
+                                                        @endif
                                                     </span>
                                                 </td>
                                                 <td
@@ -326,6 +333,22 @@
                                 @enderror
                             </div>
                             <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
+                                <label for="potongan" class="text-sm">Discount <span class="text-gray-400">(optional)</span></label>
+                                <input type="text" wire:model.lazy='potongan' id="potongan" x-data="{
+                                    formatNumber: function(event) {
+                                        const input = event.target;
+                                        const value = input.value.replace(/\D/g, '');
+                                        input.value = value ? new Intl.NumberFormat('en-US').format(value) : '';
+                                    }
+                                }"
+                                    x-on:input="formatNumber($event)"
+                                    placeholder="0"
+                                    class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
+                                @error('potongan')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
                                 @livewire('searchable-select', ['list' => $technician, 'selectedOption' => $technical, 'name' => 'technical', 'label' => 'Technician'])
 
                                 @error('technical')
@@ -424,6 +447,22 @@
                                     }" x-on:input="formatNumber($event)"
                                     class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
                                 @error('editBiaya')
+                                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-8 w-full max-w-full px-3 shrink-0 md:flex-0">
+                                <label for="editPotongan" class="text-sm">Discount <span class="text-gray-400">(optional)</span></label>
+                                <input type="text" wire:model.lazy='editPotongan' id="editPotongan"
+                                    x-data="{
+                                        formatNumber: function(event) {
+                                            const input = event.target;
+                                            const value = input.value.replace(/\D/g, '');
+                                            input.value = value ? new Intl.NumberFormat('en-US').format(value) : '';
+                                        }
+                                    }" x-on:input="formatNumber($event)"
+                                    placeholder="0"
+                                    class="relative w-full bg-white border border-gray-300 rounded-lg pl-3 pr-10 py-2 text-left focus:ring-1 focus:outline-0 focus:ring-primary focus:border-blue-500">
+                                @error('editPotongan')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
                             </div>

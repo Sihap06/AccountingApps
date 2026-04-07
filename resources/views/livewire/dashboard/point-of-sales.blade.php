@@ -10,7 +10,7 @@
                         <div class="flex items-center space-x-2">
                             <span class="text-sm text-gray-600 dark:text-gray-400">ID Order:</span>
                             <span
-                                class="font-mono bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded text-sm font-semibold text-gray-800 dark:text-gray-200">{{ $order_transaction }}</span>
+                                class="font-mono bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded text-sm font-semibold text-gray-500 dark:text-gray-400 italic">Auto-assigned on save</span>
                         </div>
                     </div>
                     <div class="flex space-x-3">

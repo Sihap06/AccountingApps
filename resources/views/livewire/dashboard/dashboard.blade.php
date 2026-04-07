@@ -41,6 +41,75 @@
            </div>
        @endif
 
+       {{-- Verification Result Notification (for the requester) --}}
+       @if(count($verificationResults) > 0)
+           <div class="mb-6 space-y-3">
+               @foreach($verificationResults as $result)
+                   @php
+                       $isApproved = $result['status'] === 'approved';
+                       $borderColor = $isApproved ? 'border-emerald-500' : 'border-red-500';
+                       $iconBg = $isApproved ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500' : 'bg-red-50 dark:bg-red-900/30 text-red-500';
+                       $iconClass = $isApproved ? 'fa-circle-check' : 'fa-circle-xmark';
+                       $title = $isApproved ? 'Request Approved' : 'Request Rejected';
+                       $statusBadge = $isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
+                   @endphp
+                   <div class="bg-white dark:bg-slate-850 border-l-4 {{ $borderColor }} rounded-2xl shadow-xl p-5">
+                       <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                           <div class="flex items-start gap-4 flex-1">
+                               <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full {{ $iconBg }}">
+                                   <i class="fas {{ $iconClass }} text-xl"></i>
+                               </div>
+                               <div class="flex-1">
+                                   <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                       <h6 class="text-base font-bold text-gray-800 dark:text-white">{{ $title }}</h6>
+                                       <span class="text-xs px-2 py-0.5 rounded-full font-semibold uppercase {{ $statusBadge }}">
+                                           {{ $result['action'] }} {{ $result['type'] }}
+                                       </span>
+                                   </div>
+                                   <p class="text-sm text-gray-600 dark:text-gray-400">
+                                       Verified by <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $result['verified_by'] }}</span> on {{ $result['verified_at'] }}
+                                   </p>
+                                   @if($result['reason'])
+                                       <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                           <i class="fas fa-comment-dots mr-1 text-gray-400"></i>
+                                           <span class="font-semibold">Your reason:</span> {{ $result['reason'] }}
+                                       </p>
+                                   @endif
+                                   @if($result['verification_notes'])
+                                       <div class="mt-2 p-3 rounded-lg {{ $isApproved ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-red-50 dark:bg-red-900/20' }}">
+                                           <p class="text-sm {{ $isApproved ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300' }}">
+                                               <i class="fas {{ $isApproved ? 'fa-thumbs-up' : 'fa-comment-exclamation' }} mr-1"></i>
+                                               <span class="font-semibold">{{ $isApproved ? 'Approver note' : 'Rejection reason' }}:</span>
+                                               {{ $result['verification_notes'] }}
+                                           </p>
+                                       </div>
+                                   @elseif(!$isApproved)
+                                       <p class="text-xs text-gray-400 italic mt-2">No rejection reason provided.</p>
+                                   @endif
+                               </div>
+                           </div>
+                           <div class="flex-shrink-0">
+                               <button wire:click="acknowledgeVerificationResult({{ $result['id'] }})"
+                                   class="px-3 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 dark:text-white dark:hover:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg transition-all whitespace-nowrap"
+                                   title="Dismiss">
+                                   <i class="fas fa-times"></i>
+                               </button>
+                           </div>
+                       </div>
+                   </div>
+               @endforeach
+
+               @if(count($verificationResults) > 1)
+                   <div class="text-right">
+                       <button wire:click="acknowledgeAllVerificationResults"
+                           class="text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white underline">
+                           Dismiss all ({{ count($verificationResults) }})
+                       </button>
+                   </div>
+               @endif
+           </div>
+       @endif
+
        {{-- Stock Opname Notification (Kasir/Manajer) --}}
        @if($showStockOpnameNotif && $stockOpnameData)
            <div class="mb-6 bg-white dark:bg-slate-850 border-l-4 border-blue-500 rounded-2xl shadow-xl p-5">
@@ -268,56 +337,13 @@
            </div>
        </div>
 
-       <!-- Transaction Statistics Filter Section -->
-       <div class="flex flex-wrap -mx-3 mt-8">
-           <div class="w-full px-3 mb-4">
-               <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-850 p-4 rounded-lg shadow-lg">
-                   <h6 class="text-base font-semibold dark:text-white flex items-center">
-                       <i class="fas fa-filter mr-2 text-blue-500"></i>
-                       Transaction Statistics Filter
-                   </h6>
-                   <div class="flex flex-col sm:flex-row gap-3 items-center w-full md:w-auto">
-                       <select wire:model="selectedMonthFilter" wire:change="updateTransactionStats"
-                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                           <option value="01">January</option>
-                           <option value="02">February</option>
-                           <option value="03">March</option>
-                           <option value="04">April</option>
-                           <option value="05">May</option>
-                           <option value="06">June</option>
-                           <option value="07">July</option>
-                           <option value="08">August</option>
-                           <option value="09">September</option>
-                           <option value="10">October</option>
-                           <option value="11">November</option>
-                           <option value="12">December</option>
-                       </select>
-                       
-                       <select wire:model="selectedYearFilter" wire:change="updateTransactionStats"
-                           class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full sm:w-auto appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                           @foreach ($years as $year)
-                               <option value="{{ $year }}">{{ $year }}</option>
-                           @endforeach
-                       </select>
-                       
-                       <div wire:loading wire:target="updateTransactionStats" class="flex items-center">
-                           <div class="inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-                               role="status">
-                               <span
-                                   class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
-                           </div>
-                           <span class="ml-2 text-sm text-gray-600">Updating...</span>
-                       </div>
-                   </div>
-               </div>
-           </div>
-       </div>
+       <div class="mt-8"></div>
 
        <div class="flex flex-wrap -mx-3">
-           <!-- card1 -->
+           <!-- card1: Completed Transactions (with month/year filter) -->
            <div class="w-full max-w-full px-3 mb-6 sm:w-full sm:flex-none xl:mb-0 xl:w-4/12">
                <div
-                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
@@ -326,7 +352,11 @@
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Completed Transactions</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
-                                       {{ number_format($transactionsMonthly[0]->total_transaksi_done) }}
+                                       <span wire:loading.remove wire:target="selectedMonthFilter,selectedYearFilter,updateTransactionStats">
+                                           {{ number_format($completedCount) }}
+                                       </span>
+                                       <span wire:loading wire:target="selectedMonthFilter,selectedYearFilter,updateTransactionStats"
+                                             class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-emerald-500 border-r-transparent align-middle"></span>
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
                                        {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
@@ -340,14 +370,42 @@
                                </div>
                            </div>
                        </div>
+
+                       <!-- Inline period filter (only affects Completed card) -->
+                       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
+                           <div class="flex items-center gap-2">
+                               <i class="fas fa-filter text-xs text-gray-400"></i>
+                               <select wire:model="selectedMonthFilter" wire:change="updateTransactionStats"
+                                   class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-xs leading-tight ease flex-1 appearance-none rounded-md border border-solid border-gray-300 bg-white bg-clip-padding px-2 py-1 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
+                                   <option value="01">January</option>
+                                   <option value="02">February</option>
+                                   <option value="03">March</option>
+                                   <option value="04">April</option>
+                                   <option value="05">May</option>
+                                   <option value="06">June</option>
+                                   <option value="07">July</option>
+                                   <option value="08">August</option>
+                                   <option value="09">September</option>
+                                   <option value="10">October</option>
+                                   <option value="11">November</option>
+                                   <option value="12">December</option>
+                               </select>
+                               <select wire:model="selectedYearFilter" wire:change="updateTransactionStats"
+                                   class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-xs leading-tight ease w-20 appearance-none rounded-md border border-solid border-gray-300 bg-white bg-clip-padding px-2 py-1 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
+                                   @foreach ($years as $year)
+                                       <option value="{{ $year }}">{{ $year }}</option>
+                                   @endforeach
+                               </select>
+                           </div>
+                       </div>
                    </div>
                </div>
            </div>
 
-           <!-- card2 -->
+           <!-- card2: Cancelled Transactions (shares filter with Completed) -->
            <div class="w-full max-w-full px-3 mb-6 sm:w-full sm:flex-none xl:mb-0 xl:w-4/12">
                <div
-                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
@@ -356,7 +414,11 @@
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Cancelled Transactions</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
-                                       {{ number_format($transactionsMonthly[0]->total_transaksi_cancel) }}
+                                       <span wire:loading.remove wire:target="selectedMonthFilter,selectedYearFilter,updateTransactionStats">
+                                           {{ number_format($cancelledCount) }}
+                                       </span>
+                                       <span wire:loading wire:target="selectedMonthFilter,selectedYearFilter,updateTransactionStats"
+                                             class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-solid border-red-500 border-r-transparent align-middle"></span>
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
                                        {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
@@ -370,12 +432,22 @@
                                </div>
                            </div>
                        </div>
+
+                       <!-- Spacer to align card height with Completed card (which has filter) -->
+                       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
+                           <p class="text-xs text-gray-400 italic flex items-center gap-2">
+                               <i class="fas fa-link text-xs"></i>
+                               Period synced with Completed card
+                           </p>
+                       </div>
                    </div>
                </div>
            </div>
+
+           <!-- card3: Transactions In Process (all time) -->
            <div class="w-full max-w-full px-3 mb-6 sm:w-full sm:flex-none xl:mb-0 xl:w-4/12">
                <div
-                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+                   class="relative flex flex-col min-w-0 break-words bg-white shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
                    <div class="flex-auto p-4">
                        <div class="flex flex-row -mx-3">
                            <div class="flex-none w-2/3 max-w-full px-3">
@@ -384,10 +456,10 @@
                                        class="mb-2 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">
                                        Transactions In Process</p>
                                    <h4 class="mb-2 font-bold text-neutral-700 dark:text-white">
-                                       {{ number_format($transactionsMonthly[0]->total_transaksi_proses) }}
+                                       {{ number_format($inProcessCount) }}
                                    </h4>
                                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                                       {{ \Carbon\Carbon::createFromFormat('m', $selectedMonthFilter)->locale('en')->translatedFormat('F') }} {{ $selectedYearFilter }}
+                                       All time
                                    </p>
                                </div>
                            </div>
@@ -398,11 +470,17 @@
                                </div>
                            </div>
                        </div>
+
+                       <!-- Spacer to align card height with Completed card -->
+                       <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
+                           <p class="text-xs text-gray-400 italic flex items-center gap-2">
+                               <i class="fas fa-infinity text-xs"></i>
+                               Showing all-time data
+                           </p>
+                       </div>
                    </div>
                </div>
            </div>
-
-
        </div>
        <div class="mt-8">
            <div class="flex flex-col gap-4">

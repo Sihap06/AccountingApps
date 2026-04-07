@@ -6,19 +6,49 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
-use App\Models\LogActivityProduct;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
     public function postTransaction(Request $request, $customer_id)
     {
+        $items = $request->all();
+
+        // Wrap the entire transaction creation in a DB transaction so that
+        // generateOrderId()'s lockForUpdate() actually holds the row, and so
+        // any partial failure (stock update, item insert) is rolled back.
+        // Retry up to 3 times if a unique-key collision still slips through
+        // (e.g. concurrent inserts that both passed the lock window).
+        $maxAttempts = 3;
+        $attempt = 0;
+
+        while (true) {
+            $attempt++;
+            try {
+                return DB::transaction(function () use ($items, $customer_id) {
+                    $orderId = Transaction::generateOrderId();
+                    return $this->storeTransactionItems($items, $customer_id, $orderId);
+                });
+            } catch (QueryException $e) {
+                // MySQL error 1062 = duplicate entry for unique key
+                if ($e->errorInfo[1] === 1062 && $attempt < $maxAttempts) {
+                    continue;
+                }
+                throw $e;
+            }
+        }
+    }
+
+    private function storeTransactionItems(array $items, $customer_id, string $orderId)
+    {
         $transaction_id = null;
 
-        foreach ($request->all() as $key => $value) {
+        foreach ($items as $key => $value) {
             $currencyString = preg_replace("/[^0-9]/", "", $value['biaya']);
 
             $value['biaya'] = $currencyString;
@@ -56,24 +86,12 @@ class TransactionController extends Controller
                     ], 400);
                 }
 
-                // Store old stock value for logging
-                $oldStock = $product->stok;
-
                 // Set bypass flag to skip verification for transaction stock updates
                 $product->bypassVerification = true;
 
                 // Update stock
                 $product->stok = $product->stok - 1;
                 $product->save();
-
-                // Create activity log for stock change during transaction
-                $log = new LogActivityProduct();
-                $log->user = Auth::user()->name;
-                $log->activity = 'update';
-                $log->product = $product->name;
-                $log->old_stok = $oldStock;
-                $log->new_stok = $product->stok;
-                $log->save();
             }
 
             if ($key === 0) {
@@ -91,7 +109,7 @@ class TransactionController extends Controller
                 $data->fee_teknisi  = $perhitungan['fee_teknisi'];
                 $data->untung = $perhitungan['untung'];
                 $data->created_by = Auth::user()->id;
-                $data->order_transaction = $value['order_transaction'];
+                $data->order_transaction = $orderId;
                 $data->customer_id = $customer_id;
                 $data->status = 'proses';
                 $data->warranty = (int)$value['warranty'];

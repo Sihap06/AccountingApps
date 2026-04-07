@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction as ModelsTransaction;
 use App\Models\TransactionItem;
+use App\Models\PaymentMethod;
 use App\Models\PendingChange;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -82,6 +83,7 @@ class Transaction extends Component
         })
             ->leftJoin('customers', 'customers.id', '=', 'transactions.customer_id')
             ->leftJoin('users', 'transactions.created_by', '=', 'users.id')
+            ->leftJoin('payment_methods', 'payment_methods.code', '=', 'transactions.payment_method')
             ->select(
                 'transactions.created_at',
                 'customers.name as customer_name',
@@ -89,12 +91,13 @@ class Transaction extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
-                DB::raw('transactions.biaya as first_item_biaya'), // Transaction base amount
-                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Transaction items amount
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) as first_item_biaya'), // Transaction base amount net of discount
+                DB::raw('IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as other_items_biaya'), // Items amount net of discount
                 DB::raw('transactions.modal as first_item_modal'), // Transaction base modal
                 DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Transaction items modal
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total amount
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) + IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as total_biaya'), // Total amount net of discount
                 'transactions.payment_method',
+                'payment_methods.name as payment_method_name',
                 'users.name as operator_name'
             )
             ->where('transactions.status', 'done')
@@ -105,8 +108,10 @@ class Transaction extends Component
                 'transactions.id',
                 'transactions.order_transaction',
                 'transactions.biaya',
+                'transactions.potongan',
                 'transactions.modal',
                 'transactions.payment_method',
+                'payment_methods.name',
                 'users.name'
             );
 
@@ -132,8 +137,9 @@ class Transaction extends Component
 
         $this->totalBiaya = $data->sum('total_biaya');
 
+        $paymentMethods = PaymentMethod::select('code', 'name')->get();
 
-        return view('livewire.dashboard.reporting.transaction', compact('data'));
+        return view('livewire.dashboard.reporting.transaction', compact('data', 'paymentMethods'));
     }
 
     public function edit($id)

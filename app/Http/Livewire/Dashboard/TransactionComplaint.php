@@ -49,6 +49,7 @@ class TransactionComplaint extends Component
             ->select(
                 'transactions.id as transaction_id',
                 'transactions.biaya as transaction_biaya',
+                'transactions.potongan as transaction_potongan',
                 'transactions.created_at as transaction_created_at',
                 'transactions.created_by as transaction_created_by',
                 'transactions.customer_id as transaction_customer_id',
@@ -72,6 +73,7 @@ class TransactionComplaint extends Component
                 'customers.no_telp as customer_no_telp',
                 'transaction_items.id as item_id',
                 'transaction_items.biaya as item_biaya',
+                'transaction_items.potongan as item_potongan',
                 'transaction_items.created_at as item_created_at',
                 'transaction_items.deleted_at as item_deleted_at',
                 'transaction_items.fee_teknisi as item_fee_teknisi',
@@ -103,7 +105,7 @@ class TransactionComplaint extends Component
                 'status' => $transaction->transaction_status,
                 'customer_name' => $transaction->customer_name,
                 'no_telp' => $transaction->customer_no_telp,
-                'biaya' => $transaction->transaction_biaya,
+                'biaya' => $transaction->transaction_biaya - ($transaction->transaction_potongan ?? 0),
                 'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,
                 'modal' => $transaction->transaction_modal,
@@ -119,13 +121,14 @@ class TransactionComplaint extends Component
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     if ($index === 0) {
-                        $total += $item->transaction_biaya + $item->item_biaya;
+                        $total += ($item->transaction_biaya - ($item->transaction_potongan ?? 0))
+                                + ($item->item_biaya - ($item->item_potongan ?? 0));
                     } else {
-                        $total += $item->item_biaya;
+                        $total += $item->item_biaya - ($item->item_potongan ?? 0);
                     }
 
                     return [
-                        'biaya' => $item->item_biaya,
+                        'biaya' => $item->item_biaya - ($item->item_potongan ?? 0),
                         'created_at' => $item->item_created_at,
                         'fee_teknisi' => $item->item_fee_teknisi,
                         'modal' => $item->item_modal,
@@ -165,11 +168,11 @@ class TransactionComplaint extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
-                DB::raw('transactions.biaya as first_item_biaya'), // Biaya item pertama dari transactions
-                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'), // Biaya untuk item lainnya dari transaction_items
-                DB::raw('transactions.modal as first_item_modal'), // Modal item pertama dari transactions
-                DB::raw('SUM(transaction_items.modal) as other_items_modal'), // Modal untuk item lainnya dari transaction_items
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'), // Total biaya
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) as first_item_biaya'), // Net of discount
+                DB::raw('IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as other_items_biaya'), // Net of discount
+                DB::raw('transactions.modal as first_item_modal'),
+                DB::raw('SUM(transaction_items.modal) as other_items_modal'),
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) + IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as total_biaya'), // Net of discount
                 'transactions.payment_method',
                 'transactions.status'
             )
@@ -185,6 +188,7 @@ class TransactionComplaint extends Component
                 'transactions.id',
                 'transactions.order_transaction',
                 'transactions.biaya',
+                'transactions.potongan',
                 'transactions.modal',
                 'transactions.payment_method'
             )->get();
@@ -273,11 +277,11 @@ class TransactionComplaint extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 DB::raw('GROUP_CONCAT(transaction_items.service SEPARATOR ", ") as service_name'),
-                DB::raw('transactions.biaya as first_item_biaya'),
-                DB::raw('SUM(transaction_items.biaya) as other_items_biaya'),
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) as first_item_biaya'),
+                DB::raw('IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as other_items_biaya'),
                 DB::raw('transactions.modal as first_item_modal'),
                 DB::raw('SUM(transaction_items.modal) as other_items_modal'),
-                DB::raw('transactions.biaya + IFNULL(SUM(transaction_items.biaya), 0) as total_biaya'),
+                DB::raw('(transactions.biaya - IFNULL(transactions.potongan, 0)) + IFNULL(SUM(transaction_items.biaya - IFNULL(transaction_items.potongan, 0)), 0) as total_biaya'),
                 'transactions.payment_method',
                 'transactions.status',
                 'technicians.name as technician_name',
@@ -294,6 +298,7 @@ class TransactionComplaint extends Component
                 'transactions.order_transaction',
                 'transactions.service',
                 'transactions.biaya',
+                'transactions.potongan',
                 'transactions.modal',
                 'transactions.payment_method',
                 'transactions.status',

@@ -143,7 +143,7 @@ class StockOpname extends Component
 
         $this->dispatchBrowserEvent('swal', [
             'title' => 'Stock Opname Created',
-            'text' => 'Notification has been sent to the cashier to perform stock checking.',
+            'text' => 'Notification has been sent to the assigned user to perform stock checking.',
             'icon' => 'success'
         ]);
     }
@@ -248,7 +248,6 @@ class StockOpname extends Component
     public function showDetail($opnameId)
     {
         $this->detailOpname = StockOpnameModel::with(['triggeredBy', 'completedBy', 'assignedTo', 'items' => function($query) {
-            $query->withTrashed();
             $query->with(['product' => function($q) {
                 $q->withTrashed();
             }]);
@@ -267,7 +266,7 @@ class StockOpname extends Component
     public function render()
     {
         $kasirList = User::whereHas('role', function ($query) {
-            $query->where('name', 'Kasir');
+            $query->whereRaw('LOWER(name) != ?', ['owner']);
         })->get();
 
         // Get items for active opname with filtering

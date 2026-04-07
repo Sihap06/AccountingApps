@@ -36,21 +36,30 @@ class Transaction extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public static function generateOrderId()
+    /**
+     * Generate the next order_transaction ID safely.
+     *
+     * MUST be called inside a DB::transaction() so that lockForUpdate()
+     * can hold the row and prevent concurrent requests from generating
+     * the same ID. Sorting is numeric (CAST) so values past INV9999
+     * still increment correctly. Soft-deleted records are included so
+     * a deleted ID is never reused.
+     */
+    public static function generateOrderId(): string
     {
         $prefix = 'INV';
-        $lastOrder = self::where('order_transaction', 'like', $prefix . '%')
-            ->orderBy('order_transaction', 'desc')
+        $prefixLen = strlen($prefix);
+
+        $lastOrder = self::withTrashed()
+            ->where('order_transaction', 'like', $prefix . '%')
+            ->orderByRaw('CAST(SUBSTRING(order_transaction, ' . ($prefixLen + 1) . ') AS UNSIGNED) DESC')
+            ->lockForUpdate()
             ->first();
 
-        if (!$lastOrder) {
-            $newOrderId = $prefix . '0001';
-        } else {
-            $lastIncrement = (int) substr($lastOrder->order_transaction, strlen($prefix));
-            $newIncrement = str_pad($lastIncrement + 1, 4, '0', STR_PAD_LEFT);
-            $newOrderId = $prefix . $newIncrement;
-        }
+        $next = $lastOrder
+            ? ((int) substr($lastOrder->order_transaction, $prefixLen)) + 1
+            : 1;
 
-        return $newOrderId;
+        return $prefix . str_pad((string) $next, 4, '0', STR_PAD_LEFT);
     }
 }

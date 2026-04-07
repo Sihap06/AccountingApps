@@ -7,7 +7,6 @@ use App\Http\Controllers\TransactionController;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Technician;
-use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -168,7 +167,9 @@ class PointOfSales extends Component
         })->toArray();
         $this->technician = Technician::select(DB::raw("name as label"), DB::raw("id as value"))->get()->toArray();
         $this->customers = Customer::select(DB::raw("CONCAT(name, ' - ', no_telp) as label"), DB::raw("id as value"))->orderBy('created_at', 'DESC')->get()->toArray();
-        $this->order_transaction = Transaction::generateOrderId();
+        // Order ID is now generated server-side at submit time (inside a DB
+        // transaction with row lock) to prevent concurrent duplicates.
+        $this->order_transaction = '';
         $this->phone_brand = 'iPhone'; // Set default value
     }
 
@@ -309,7 +310,7 @@ class PointOfSales extends Component
         ]);
 
         $this->resetAll();
-        $this->order_transaction = Transaction::generateOrderId();
+        $this->order_transaction = '';
 
         // return redirect()->route('dashboard.point-of-sales');
     }

@@ -1,4 +1,4 @@
-<div class="flex flex-wrap -mx-3 custom-height">
+<div class="flex flex-wrap -mx-3 custom-height" wire:init="loadLogs">
     <div class="flex-none w-full max-w-full px-3 h-full">
         <div
             class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border h-full">
@@ -27,9 +27,29 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if (!$readyToLoad)
+                                @for ($i = 0; $i < 5; $i++)
+                                    <tr>
+                                        <td class="p-2 px-4 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-8 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-32 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-24 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-32 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                        <td class="p-2 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
+                                            <div class="h-5 w-48 rounded bg-gray-200 animate-pulse"></div>
+                                        </td>
+                                    </tr>
+                                @endfor
+                            @else
                             @foreach ($data as $index => $item)
-                                <tr wire:key='{{ $index }}' wire:loading.remove
-                                    wire:target='gotoPage, previousPage, nextPage, searchTerm'>
+                                <tr wire:key='log-inv-{{ $index }}'>
                                     <td
                                         class="p-2 px-4 align-middle bg-transparent border-b dark:border-white/40 whitespace-nowrap shadow-transparent">
                                         <span
@@ -100,10 +120,32 @@
                                     </td>
                                 </tr>
                             @endforeach
+                            @endif
 
                         </tbody>
 
                     </table>
+
+                    @if ($readyToLoad && $hasMorePages)
+                        <div x-data="{
+                            observe() {
+                                const observer = new IntersectionObserver((entries) => {
+                                    entries.forEach(entry => {
+                                        if (entry.isIntersecting) {
+                                            @this.call('loadMore');
+                                        }
+                                    });
+                                });
+                                observer.observe(this.$el);
+                            }
+                        }" x-init="observe" class="p-4 text-center">
+                            <div wire:loading wire:target="loadMore"
+                                class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite] text-primary">
+                                <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+                            </div>
+                            <span wire:loading.remove wire:target="loadMore" class="text-sm text-gray-500">Scroll to see more...</span>
+                        </div>
+                    @endif
 
                 </div>
             </div>

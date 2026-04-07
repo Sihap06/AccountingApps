@@ -332,12 +332,12 @@
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Create New Stock Opname</h3>
                                 <form class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Assign to Cashier (Optional)</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Assign to User (Optional)</label>
                                         <select wire:model="selectedKasir"
                                             class="text-sm ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all focus:border-blue-500 focus:outline-none">
-                                            <option value="">All Cashiers</option>
+                                            <option value="">All Users</option>
                                             @foreach($kasirList as $kasir)
-                                                <option value="{{ $kasir->id }}">{{ $kasir->name }}</option>
+                                                <option value="{{ $kasir->id }}">{{ $kasir->name }} ({{ $kasir->role->name ?? '-' }})</option>
                                             @endforeach
                                         </select>
                                     </div>

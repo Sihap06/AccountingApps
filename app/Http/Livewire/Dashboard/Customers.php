@@ -163,6 +163,7 @@ class Customers extends Component
             ->select(
                 'transactions.id as transaction_id',
                 'transactions.biaya as transaction_biaya',
+                'transactions.potongan as transaction_potongan',
                 'transactions.created_at as transaction_created_at',
                 'transactions.created_by as transaction_created_by',
                 'transactions.customer_id as transaction_customer_id',
@@ -180,6 +181,7 @@ class Customers extends Component
                 'customers.name as customer_name',
                 'transaction_items.id as item_id',
                 'transaction_items.biaya as item_biaya',
+                'transaction_items.potongan as item_potongan',
                 'transaction_items.created_at as item_created_at',
                 'transaction_items.deleted_at as item_deleted_at',
                 'transaction_items.fee_teknisi as item_fee_teknisi',
@@ -198,7 +200,7 @@ class Customers extends Component
         $results = $transactions->map(function ($items, $transactionId) {
             $transaction = $items->first();
 
-            $total = $transaction->transaction_biaya;
+            $total = $transaction->transaction_biaya - ($transaction->transaction_potongan ?? 0);
 
             return [
                 'id' => $transaction->transaction_id,
@@ -206,7 +208,7 @@ class Customers extends Component
                 'order_transaction' => $transaction->transaction_order_transaction,
                 'status' => $transaction->transaction_status,
                 'customer_name' => $transaction->customer_name,
-                'biaya' => $transaction->transaction_biaya,
+                'biaya' => $transaction->transaction_biaya - ($transaction->transaction_potongan ?? 0),
                 'created_at' => $transaction->transaction_created_at,
                 'fee_teknisi' => $transaction->transaction_fee_teknisi,
                 'modal' => $transaction->transaction_modal,
@@ -217,12 +219,12 @@ class Customers extends Component
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total) {
 
                     if ($index > 0) {
-                        $total += $item->item_biaya;
+                        $total += $item->item_biaya - ($item->item_potongan ?? 0);
                     }
 
                     return [
                         'id' => $item->item_id,
-                        'biaya' => $item->item_biaya,
+                        'biaya' => $item->item_biaya - ($item->item_potongan ?? 0),
                         'created_at' => $item->item_created_at,
                         'fee_teknisi' => $item->item_fee_teknisi,
                         'modal' => $item->item_modal,
