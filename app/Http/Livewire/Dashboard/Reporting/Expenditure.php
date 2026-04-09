@@ -8,7 +8,6 @@ use App\Models\PendingChange;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
@@ -382,62 +381,16 @@ class Expenditure extends Component
     }
 
     /**
-     * Compress and store image file
+     * Store image file
      */
     private function compressAndStoreImage($imageFile, $path = 'expenditure-images')
     {
-        // Generate unique filename
-        $filename = time() . '_' . uniqid() . '.webp';
+        $extension = strtolower($imageFile->getClientOriginalExtension());
+        $filename = time() . '_' . uniqid() . '.' . $extension;
         $fullPath = $path . '/' . $filename;
 
-        // Get original file size
-        $originalSize = $imageFile->getSize();
-        $originalSizeMB = round($originalSize / 1024 / 1024, 2);
-
-        // Load and compress image
-        $image = Image::make($imageFile->getRealPath());
-
-        // Determine max dimensions and quality based on file size
-        $maxDimension = 1200;
-        $quality = 80;
-
-        // If file is larger than 1MB, apply more aggressive compression
-        if ($originalSizeMB > 1) {
-            $maxDimension = 1000;
-            $quality = 70;
-            
-            // For files larger than 2MB, be even more aggressive
-            if ($originalSizeMB > 2) {
-                $maxDimension = 800;
-                $quality = 60;
-            }
-        }
-
-        // Resize if too large
-        if ($image->width() > $maxDimension || $image->height() > $maxDimension) {
-            $image->resize($maxDimension, $maxDimension, function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-        }
-
-        // Convert to WebP and compress
-        $compressedImage = $image->encode('webp', $quality);
-
-        // Check compressed size
-        $compressedSize = strlen($compressedImage);
-        $compressedSizeMB = round($compressedSize / 1024 / 1024, 2);
-
-        Log::info('Image compression result:', [
-            'original_size_mb' => $originalSizeMB,
-            'compressed_size_mb' => $compressedSizeMB,
-            'quality' => $quality,
-            'max_dimension' => $maxDimension,
-            'compression_ratio' => round((1 - $compressedSize / $originalSize) * 100, 2) . '%'
-        ]);
-
-        // Store the compressed image
-        Storage::disk('public')->put($fullPath, $compressedImage);
+        // Store image directly without compression
+        $imageFile->storeAs('public/' . $path, $filename);
 
         return $fullPath;
     }

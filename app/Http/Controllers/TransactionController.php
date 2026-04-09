@@ -137,6 +137,10 @@ class TransactionController extends Controller
                 $transaction_id = $data->id;
             } else {
                 $transactionItems = new TransactionItem();
+
+                // Set bypass flag to skip verification for transaction item creation
+                $transactionItems->bypassVerification = true;
+
                 $transactionItems->transaction_id = $transaction_id;
                 $transactionItems->product_id = $value['product_id'];
                 $transactionItems->technical_id = $value['technical_id'];
