@@ -4,7 +4,13 @@
             class=" border-black/12.5 dark:bg-slate-850 dark:shadow-dark-xl shadow-xl z-20 min-w-0 flex-col break-words rounded-2xl border-0 border-solid bg-white bg-clip-border items-center flex-1">
             <div class="border-black/12.5 rounded-t-2xl border-b-0 border-solid p-6 pb-0">
                 <div class="flex justify-between items-start">
-                    <p class="mb-0 dark:text-white/80">Update Transaction</p>
+                    <p class="mb-0 dark:text-white/80">
+                        @if (request()->routeIs('dashboard.detail-transaction'))
+                            Detail Transaction
+                        @else
+                            Update Transaction
+                        @endif
+                    </p>
                     <div class="flex flex-col gap-2">
                         <p>ORDER ID : {{ $transaction['order_transaction'] }}</p>
                         <x-ui.button type="button" title="Add Service Items" color="primary" wireLoading
@@ -17,16 +23,13 @@
                     <div class="flex flex-col justify-between -mx-3">
                         <div class="mb-8">
                             <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
-                                <div wire:ignore>
-                                    <x-ui.select label="Customer" wire:model="customer_id" id="customer_id" search
-                                        size="lg">
-                                        @foreach ($customers as $value)
-                                            <option value="{{ $value->id }}">{{ $value->no_telp }}
-                                                ({{ $value->name }})
-                                            </option>
-                                        @endforeach
-                                    </x-ui.select>
-                                </div>
+                                <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Customer</label>
+                                <select wire:model="customer_id" id="customer_id"
+                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                    @foreach ($customers as $value)
+                                        <option value="{{ $value->id }}">{{ $value->no_telp }} ({{ $value->name }})</option>
+                                    @endforeach
+                                </select>
                                 @error('customer_id')
                                     <div class="text-red-500 text-sm">{{ $message }}</div>
                                 @enderror
@@ -35,14 +38,13 @@
                         <div class="flex flex-row justify-between items-center gap-x-2">
                             <div class="mb-8 w-full">
                                 <div class="w-full max-w-full px-3 shrink-0 md:flex-0">
-                                    <div wire:ignore>
-                                        <x-ui.select label="Payment Method" wire:model="paymentMethod"
-                                            id="paymentMethod" search size="lg">
-                                            @foreach ($paymentMethods as $method)
-                                                <option value="{{ $method->code }}">{{ strtoupper($method->name) }}</option>
-                                            @endforeach
-                                        </x-ui.select>
-                                    </div>
+                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Payment Method</label>
+                                    <select wire:model="paymentMethod" id="paymentMethod"
+                                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
+                                        @foreach ($paymentMethods as $method)
+                                            <option value="{{ $method->code }}">{{ strtoupper($method->name) }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('paymentMethod')
                                         <div class="text-red-500 text-sm">{{ $message }}</div>
                                     @enderror

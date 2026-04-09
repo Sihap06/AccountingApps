@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard;
 
+use App\Models\LogActivityProduct;
 use App\Models\Product;
 use App\Models\StockOpname as StockOpnameModel;
 use App\Models\StockOpnameItem;
@@ -33,6 +34,11 @@ class StockOpname extends Component
     public $editingItemId = null;
     public $actualStock = null;
     public $itemNotes = '';
+
+    // Apply adjustment
+    public $showApplyModal = false;
+    public $applyingOpname = null;
+    public $applyItems = [];
 
     public function mount()
     {
@@ -247,7 +253,7 @@ class StockOpname extends Component
 
     public function showDetail($opnameId)
     {
-        $this->detailOpname = StockOpnameModel::with(['triggeredBy', 'completedBy', 'assignedTo', 'items' => function($query) {
+        $this->detailOpname = StockOpnameModel::with(['triggeredBy', 'completedBy', 'assignedTo', 'appliedBy', 'items' => function($query) {
             $query->with(['product' => function($q) {
                 $q->withTrashed();
             }]);
@@ -261,6 +267,84 @@ class StockOpname extends Component
         $this->showDetailModal = false;
         $this->detailOpname = null;
         $this->detailItems = [];
+    }
+
+    // === Apply Adjustment (Owner) ===
+
+    public function openApplyModal($opnameId)
+    {
+        if (!auth()->user()->isOwner()) {
+            return;
+        }
+
+        $opname = StockOpnameModel::with(['items.product'])->find($opnameId);
+
+        if (!$opname || $opname->status !== 'completed') {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => 'Stock opname not found or not completed yet.',
+                'icon' => 'error'
+            ]);
+            return;
+        }
+
+        if ($opname->is_applied) {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Already Applied',
+                'text' => 'This stock adjustment has already been applied.',
+                'icon' => 'info'
+            ]);
+            return;
+        }
+
+        $this->applyingOpname = $opname;
+        $this->applyItems = $opname->items()->where('difference', '!=', 0)->get()->toArray();
+        $this->showApplyModal = true;
+    }
+
+    public function closeApplyModal()
+    {
+        $this->showApplyModal = false;
+        $this->applyingOpname = null;
+        $this->applyItems = [];
+    }
+
+    public function applyAdjustment()
+    {
+        if (!auth()->user()->isOwner() || !$this->applyingOpname) {
+            return;
+        }
+
+        try {
+            $adjustments = $this->applyingOpname->applyAdjustment(auth()->id());
+
+            // Log activity
+            foreach ($adjustments as $adj) {
+                LogActivityProduct::create([
+                    'user' => auth()->user()->name,
+                    'activity' => 'stock_adjustment',
+                    'product' => $adj['product_name'],
+                    'old_stok' => $adj['old_stock'],
+                    'new_stok' => $adj['new_stock'],
+                ]);
+            }
+
+            $this->closeApplyModal();
+            $this->closeDetailModal();
+
+            $count = count($adjustments);
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Adjustment Applied',
+                'text' => "Successfully updated stock for {$count} product(s).",
+                'icon' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => $e->getMessage(),
+                'icon' => 'error'
+            ]);
+        }
     }
 
     public function render()
@@ -288,7 +372,7 @@ class StockOpname extends Component
         }
 
         // History
-        $history = StockOpnameModel::with(['triggeredBy', 'completedBy'])
+        $history = StockOpnameModel::with(['triggeredBy', 'completedBy', 'appliedBy'])
             ->whereIn('status', ['completed', 'cancelled'])
             ->latest()
             ->paginate(10);

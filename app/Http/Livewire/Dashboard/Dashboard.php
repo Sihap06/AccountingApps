@@ -25,6 +25,15 @@ class Dashboard extends Component
     public $chartData = [];
     public $chartLabels = [];
 
+    // Cancelled transactions modal
+    public $showCancelledModal = false;
+    public $cancelledTransactions = [];
+
+    // Transaction detail modal
+    public $showTransactionDetailModal = false;
+    public $transactionDetail = null;
+    public $transactionDetailItems = [];
+
     public function mount()
     {
         $this->selectedYear = Carbon::now()->format('Y');
@@ -308,5 +317,107 @@ class Dashboard extends Component
         // This method is called when statistics filters change
         // We don't need to do anything here as Livewire will automatically re-render
         // the component when the properties change
+    }
+
+    // === Cancelled Transactions Modal ===
+
+    public function showCancelledTransactions()
+    {
+        $this->loadCancelledTransactions();
+        $this->showCancelledModal = true;
+    }
+
+    public function closeCancelledModal()
+    {
+        $this->showCancelledModal = false;
+        $this->cancelledTransactions = [];
+    }
+
+    public function loadCancelledTransactions()
+    {
+        $this->cancelledTransactions = Transaction::where('status', 'cancel')
+            ->whereYear('created_at', $this->selectedYearFilter)
+            ->whereMonth('created_at', $this->selectedMonthFilter)
+            ->with(['customer', 'items'])
+            ->latest()
+            ->get()
+            ->map(function ($transaction) {
+                $total = $transaction->biaya - ($transaction->potongan ?? 0);
+                $total += $transaction->items->sum(function ($item) {
+                    return $item->biaya - ($item->potongan ?? 0);
+                });
+
+                return [
+                    'id' => $transaction->id,
+                    'order_transaction' => $transaction->order_transaction,
+                    'service' => $transaction->service,
+                    'customer_name' => $transaction->customer->name ?? '-',
+                    'customer_phone' => $transaction->customer->no_telp ?? '-',
+                    'total' => $total,
+                    'created_at' => $transaction->created_at->format('d M Y H:i'),
+                    'cancelled_at' => $transaction->updated_at->format('d M Y H:i'),
+                ];
+            })
+            ->toArray();
+    }
+
+    // === Transaction Detail Modal ===
+
+    public function showTransactionDetail($transactionId)
+    {
+        $transaction = Transaction::with(['customer', 'items.product', 'user'])->find($transactionId);
+
+        if (!$transaction) {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Error',
+                'text' => 'Transaction not found.',
+                'icon' => 'error'
+            ]);
+            return;
+        }
+
+        $mainTotal = $transaction->biaya - ($transaction->potongan ?? 0);
+        $itemsTotal = $transaction->items->sum(function ($item) {
+            return $item->biaya - ($item->potongan ?? 0);
+        });
+        $grandTotal = $mainTotal + $itemsTotal;
+
+        $this->transactionDetail = [
+            'id' => $transaction->id,
+            'order_transaction' => $transaction->order_transaction,
+            'service' => $transaction->service,
+            'status' => $transaction->status,
+            'payment_method' => $transaction->payment_method,
+            'created_at' => $transaction->created_at->format('d M Y H:i'),
+            'created_by' => $transaction->user->name ?? '-',
+            'customer_name' => $transaction->customer->name ?? '-',
+            'customer_phone' => $transaction->customer->no_telp ?? '-',
+            'main_biaya' => $transaction->biaya,
+            'main_potongan' => $transaction->potongan ?? 0,
+            'main_total' => $mainTotal,
+            'items_total' => $itemsTotal,
+            'grand_total' => $grandTotal,
+        ];
+
+        $this->transactionDetailItems = $transaction->items->map(function ($item) {
+            return [
+                'service' => $item->service,
+                'biaya' => $item->biaya,
+                'potongan' => $item->potongan ?? 0,
+                'total' => $item->biaya - ($item->potongan ?? 0),
+                'technician' => $item->technical_id ? \App\Models\Technician::find($item->technical_id)?->name : '-',
+                'product' => $item->product?->name ?? '-',
+                'warranty' => $item->warranty ? $item->warranty . ' ' . ($item->warranty_type == 'daily' ? 'Days' : ($item->warranty_type == 'weekly' ? 'Weeks' : 'Months')) : '-',
+            ];
+        })->toArray();
+
+        $this->showTransactionDetailModal = true;
+    }
+
+    public function closeTransactionDetailModal()
+    {
+        $this->showTransactionDetailModal = false;
+        $this->transactionDetail = null;
+        $this->transactionDetailItems = [];
     }
 }

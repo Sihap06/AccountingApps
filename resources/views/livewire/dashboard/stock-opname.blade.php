@@ -287,7 +287,11 @@
                                 </td>
                                 <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
                                     @if($opname->status === 'completed')
-                                        <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Completed</span>
+                                        @if($opname->is_applied)
+                                            <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">Applied</span>
+                                        @else
+                                            <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Completed</span>
+                                        @endif
                                     @else
                                         <span class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Cancelled</span>
                                     @endif
@@ -378,12 +382,26 @@
 
                 <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Stock Opname Detail</h3>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Stock Opname Detail</h3>
+                            @if($detailOpname->status === 'completed')
+                                @if($detailOpname->is_applied)
+                                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">Applied</span>
+                                @else
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Completed</span>
+                                @endif
+                            @else
+                                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-500 font-semibold">Cancelled</span>
+                            @endif
+                        </div>
                         <div class="text-xs text-gray-500 mb-4 space-y-1">
                             <p>Date: {{ $detailOpname->created_at->format('d M Y H:i') }}</p>
                             <p>Created by: {{ $detailOpname->triggeredBy->name ?? '-' }}</p>
                             @if($detailOpname->completedBy)
                                 <p>Completed by: {{ $detailOpname->completedBy->name }} on {{ $detailOpname->completed_at?->format('d M Y H:i') }}</p>
+                            @endif
+                            @if($detailOpname->is_applied && $detailOpname->appliedBy)
+                                <p class="text-blue-600">Applied by: {{ $detailOpname->appliedBy->name }} on {{ $detailOpname->applied_at?->format('d M Y H:i') }}</p>
                             @endif
                         </div>
 
@@ -425,9 +443,96 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button wire:click="closeDetailModal"
-                            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm">
+                        @if(auth()->user()->isOwner() && $detailOpname->status === 'completed' && !$detailOpname->is_applied)
+                            <button wire:click="openApplyModal({{ $detailOpname->id }})" wire:loading.attr="disabled"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                                <div wire:loading wire:target="openApplyModal({{ $detailOpname->id }})" class="mr-2">
+                                    <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                                </div>
+                                Apply Adjustment
+                            </button>
+                        @endif
+                        <button wire:click="closeDetailModal" wire:loading.attr="disabled"
+                            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                            <div wire:loading wire:target="closeDetailModal" class="mr-2">
+                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                            </div>
                             Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Apply Adjustment Confirmation Modal --}}
+    @if($showApplyModal && $applyingOpname)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeApplyModal"></div>
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <i class="fas fa-check-double text-blue-600"></i>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Apply Stock Adjustment</h3>
+                                <p class="text-sm text-gray-500 mb-4">
+                                    This will update product stock based on the actual stock counted during opname. The following products will be adjusted:
+                                </p>
+
+                                @if(count($applyItems) > 0)
+                                    <div class="overflow-auto max-h-64 border rounded-lg">
+                                        <table class="items-center w-full mb-0 align-top border-collapse text-slate-500">
+                                            <thead class="align-bottom sticky top-0 bg-gray-50">
+                                                <tr>
+                                                    <th class="px-3 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Product</th>
+                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Old Stock</th>
+                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">New Stock</th>
+                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Diff</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($applyItems as $item)
+                                                    <tr>
+                                                        <td class="px-3 py-2 text-xs font-semibold text-slate-700 border-b">{{ $item['product_name'] }}</td>
+                                                        <td class="px-3 py-2 text-xs text-center text-slate-600 border-b">{{ $item['system_stock'] }}</td>
+                                                        <td class="px-3 py-2 text-xs text-center font-semibold text-blue-600 border-b">{{ $item['actual_stock'] }}</td>
+                                                        <td class="px-3 py-2 text-xs text-center border-b">
+                                                            @if($item['difference'] > 0)
+                                                                <span class="text-green-600 font-semibold">+{{ $item['difference'] }}</span>
+                                                            @else
+                                                                <span class="text-red-600 font-semibold">{{ $item['difference'] }}</span>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @else
+                                    <p class="text-sm text-gray-500 italic">No adjustments needed. All stocks match.</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button wire:click="applyAdjustment" wire:loading.attr="disabled"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                            <div wire:loading wire:target="applyAdjustment" class="mr-2">
+                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                            </div>
+                            Confirm Apply
+                        </button>
+                        <button wire:click="closeApplyModal" wire:loading.attr="disabled"
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50">
+                            <div wire:loading wire:target="closeApplyModal" class="mr-2">
+                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent" role="status"></div>
+                            </div>
+                            Cancel
                         </button>
                     </div>
                 </div>

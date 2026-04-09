@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\PaymentMethod;
 
 class PrintReceiptController extends Controller
 {
@@ -38,6 +39,9 @@ class PrintReceiptController extends Controller
                 'transactions.potongan as transaction_potongan',
                 'transactions.untung as transaction_untung',
                 'transactions.updated_at as transaction_updated_at',
+                'transactions.phone_brand as transaction_phone_brand',
+                'transactions.phone_type as transaction_phone_type',
+                'transactions.phone_imei as transaction_phone_imei',
                 'customers.name as customer_name',
                 'customers.no_telp as customer_no_telp',
                 'users.name as operator_name',
@@ -86,6 +90,9 @@ class PrintReceiptController extends Controller
                 'untung' => $transaction->transaction_untung,
                 'warranty' => $transaction->transaction_warranty,
                 'warranty_type' => $transaction->transaction_warranty_type,
+                'phone_brand' => $transaction->transaction_phone_brand,
+                'phone_type' => $transaction->transaction_phone_type,
+                'phone_imei' => $transaction->transaction_phone_imei,
                 'items' =>  $transaction->item_biaya !== null ? $items->map(function ($item, $index) use (&$total, &$totalPotongan) {
 
                     $total += $item->item_biaya;
@@ -113,7 +120,11 @@ class PrintReceiptController extends Controller
         $data = $results->values()->toArray()[0];
         $date = Carbon::now()->format('d/m/Y');
 
-        $pdf = Pdf::loadView('pdf.receipt', ['data' => $data, 'date' => $date, 'payment_method' => $payment_method]);
+        // Fetch payment method name from database based on code
+        $paymentMethod = PaymentMethod::where('code', $payment_method)->first();
+        $paymentMethodName = $paymentMethod ? $paymentMethod->name : $payment_method;
+
+        $pdf = Pdf::loadView('pdf.receipt', ['data' => $data, 'date' => $date, 'payment_method' => $paymentMethodName]);
         return $pdf->stream('nota.pdf');
     }
     public function test()

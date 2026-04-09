@@ -31,9 +31,19 @@ class Transaction extends Model
         return $this->hasMany(TransactionItem::class);
     }
 
+    public function items()
+    {
+        return $this->hasMany(TransactionItem::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     /**

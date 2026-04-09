@@ -349,6 +349,7 @@ class UpdateTransaction extends Component
         $validateData['potongan'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editPotongan);
         $validateData['technical_id'] = $this->editTechnical;
         $validateData['product_id'] = $this->editProduct;
+        $validateData['modal'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editModal);
 
         if ($validateData['potongan'] > (int) $validateData['biaya']) {
             return $this->dispatchBrowserEvent('swal', [
@@ -493,6 +494,7 @@ class UpdateTransaction extends Component
         $validateData['potongan'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editPotongan);
         $validateData['technical_id'] = $this->editTechnical;
         $validateData['product_id'] = $this->editProduct;
+        $validateData['modal'] = (int) preg_replace("/[^0-9]/", "", (string) $this->editModal);
 
         if ($validateData['potongan'] > (int) $validateData['biaya']) {
             return $this->dispatchBrowserEvent('swal', [

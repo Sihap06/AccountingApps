@@ -189,17 +189,17 @@
                     <tr>
                         <td>Merk</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{ $data['phone_brand'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td>Type</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{ $data['phone_type'] ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td>No. Imei</td>
                         <td>:</td>
-                        <td></td>
+                        <td>{{ $data['phone_imei'] ?? '-' }}</td>
                     </tr>
                 </table>
                 <div class="terms">
