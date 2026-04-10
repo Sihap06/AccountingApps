@@ -1,6 +1,6 @@
    <div class="w-full px-6 py-4 mx-auto flex flex-col">
 
-       {{-- @if (auth()->user()->hasPermission('verification') && $showPendingModal)
+       @if (auth()->user()->hasPermission('verification') && $showPendingModal)
            <!-- Pending Verification Modal -->
            <div class="fixed inset-0 z-50 overflow-hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -45,10 +45,10 @@
                    </div>
                </div>
            </div>
-       @endif --}}
+       @endif
 
        {{-- Verification Result Notification (for the requester) --}}
-       @if (count($verificationResults) > 1)
+       @if (count($verificationResults) > 0)
            <div class="mb-6 space-y-3">
                @foreach ($verificationResults as $result)
                    @php
@@ -350,11 +350,13 @@
                                        <button wire:click="showTransactionDetail({{ $item->id }})"
                                            wire:loading.attr="disabled"
                                            class="group ease-in leading-pro text-xs rounded-3.5xl p-1.2 h-6.5 w-6.5 mx-0 my-auto inline-block cursor-pointer border-0 bg-transparent text-center align-middle font-bold text-slate-700 shadow-none transition-all dark:text-white disabled:opacity-50">
-                                           <i wire:loading.remove wire:target="showTransactionDetail({{ $item->id }})"
+                                           <i wire:loading.remove
+                                               wire:target="showTransactionDetail({{ $item->id }})"
                                                class="ni ease-bounce text-2xs group-hover:translate-x-1.25 ni-bold-right transition-all duration-200"
                                                aria-hidden="true"></i>
                                            <div wire:loading wire:target="showTransactionDetail({{ $item->id }})"
-                                               class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-middle"></div>
+                                               class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-middle">
+                                           </div>
                                        </button>
                                    </div>
                                </li>
@@ -605,7 +607,8 @@
                                                        <button wire:click="showTransactionDetail({{ $item['id'] }})"
                                                            wire:loading.attr="disabled"
                                                            class="text-blue-600 hover:text-blue-800 font-semibold disabled:opacity-50">
-                                                           <div wire:loading wire:target="showTransactionDetail({{ $item['id'] }})"
+                                                           <div wire:loading
+                                                               wire:target="showTransactionDetail({{ $item['id'] }})"
                                                                class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent mr-1">
                                                            </div>
                                                            <span wire:loading.remove
@@ -641,175 +644,190 @@
            </div>
        @endif
 
-    {{-- Transaction Detail Modal --}}
-    @if ($showTransactionDetailModal && $transactionDetail)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
-            aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
-                    wire:click="closeTransactionDetailModal"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+       {{-- Transaction Detail Modal --}}
+       @if ($showTransactionDetailModal && $transactionDetail)
+           <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+               aria-modal="true">
+               <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                   <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+                       wire:click="closeTransactionDetailModal"></div>
+                   <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                <div
-                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
-                        {{-- Header --}}
-                        <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
-                            <div>
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Transaction Detail</h3>
-                                <p class="text-sm text-gray-500 mt-1">Order ID: <span
-                                        class="font-semibold">{{ $transactionDetail['order_transaction'] }}</span></p>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                @if ($transactionDetail['status'] === 'done')
-                                    <span
-                                        class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 font-semibold">Completed</span>
-                                @elseif($transactionDetail['status'] === 'cancel')
-                                    <span
-                                        class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 font-semibold">Cancelled</span>
-                                @elseif($transactionDetail['status'] === 'proses')
-                                    <span
-                                        class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">In
-                                        Process</span>
-                                @endif
-                                <button wire:click="closeTransactionDetailModal" class="text-gray-400 hover:text-gray-600">
-                                    <i class="fas fa-times text-xl"></i>
-                                </button>
-                            </div>
-                        </div>
+                   <div
+                       class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                       <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                           {{-- Header --}}
+                           <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-200">
+                               <div>
+                                   <h3 class="text-lg leading-6 font-medium text-gray-900">Transaction Detail</h3>
+                                   <p class="text-sm text-gray-500 mt-1">Order ID: <span
+                                           class="font-semibold">{{ $transactionDetail['order_transaction'] }}</span>
+                                   </p>
+                               </div>
+                               <div class="flex items-center gap-3">
+                                   @if ($transactionDetail['status'] === 'done')
+                                       <span
+                                           class="px-3 py-1 text-xs rounded-full bg-emerald-100 text-emerald-700 font-semibold">Completed</span>
+                                   @elseif($transactionDetail['status'] === 'cancel')
+                                       <span
+                                           class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700 font-semibold">Cancelled</span>
+                                   @elseif($transactionDetail['status'] === 'proses')
+                                       <span
+                                           class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold">In
+                                           Process</span>
+                                   @endif
+                                   <button wire:click="closeTransactionDetailModal"
+                                       class="text-gray-400 hover:text-gray-600">
+                                       <i class="fas fa-times text-xl"></i>
+                                   </button>
+                               </div>
+                           </div>
 
-                        {{-- Customer Info --}}
-                        <div class="bg-gray-50 rounded-lg p-4 mb-6">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Customer Information</h4>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p class="text-xs text-gray-500">Name</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ $transactionDetail['customer_name'] }}
-                                    </p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-500">Phone</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ $transactionDetail['customer_phone'] }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                           {{-- Customer Info --}}
+                           <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                               <h4 class="text-sm font-semibold text-gray-700 mb-3">Customer Information</h4>
+                               <div class="grid grid-cols-2 gap-4">
+                                   <div>
+                                       <p class="text-xs text-gray-500">Name</p>
+                                       <p class="text-sm font-medium text-gray-900">
+                                           {{ $transactionDetail['customer_name'] }}
+                                       </p>
+                                   </div>
+                                   <div>
+                                       <p class="text-xs text-gray-500">Phone</p>
+                                       <p class="text-sm font-medium text-gray-900">
+                                           {{ $transactionDetail['customer_phone'] }}
+                                       </p>
+                                   </div>
+                               </div>
+                           </div>
 
-                        {{-- Transaction Info --}}
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <p class="text-xs text-gray-500">Payment Method</p>
-                                <p class="text-sm font-semibold text-gray-900 uppercase">
-                                    {{ $transactionDetail['payment_method'] }}</p>
-                            </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <p class="text-xs text-gray-500">Created At</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ $transactionDetail['created_at'] }}</p>
-                            </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <p class="text-xs text-gray-500">Created By</p>
-                                <p class="text-sm font-semibold text-gray-900">{{ $transactionDetail['created_by'] }}</p>
-                            </div>
-                        </div>
+                           {{-- Transaction Info --}}
+                           <div class="grid grid-cols-3 gap-4 mb-6">
+                               <div class="bg-gray-50 rounded-lg p-3">
+                                   <p class="text-xs text-gray-500">Payment Method</p>
+                                   <p class="text-sm font-semibold text-gray-900 uppercase">
+                                       {{ $transactionDetail['payment_method'] }}</p>
+                               </div>
+                               <div class="bg-gray-50 rounded-lg p-3">
+                                   <p class="text-xs text-gray-500">Created At</p>
+                                   <p class="text-sm font-semibold text-gray-900">
+                                       {{ $transactionDetail['created_at'] }}</p>
+                               </div>
+                               <div class="bg-gray-50 rounded-lg p-3">
+                                   <p class="text-xs text-gray-500">Created By</p>
+                                   <p class="text-sm font-semibold text-gray-900">
+                                       {{ $transactionDetail['created_by'] }}</p>
+                               </div>
+                           </div>
 
-                        {{-- Main Service --}}
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Main Service</h4>
-                            <div class="border rounded-lg overflow-hidden">
-                                <table class="w-full text-sm">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Service</th>
-                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Cost</th>
-                                            @if ($transactionDetail['main_potongan'] > 0)
-                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Discount
-                                                </th>
-                                            @endif
-                                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="border-t">
-                                            <td class="px-4 py-3">{{ $transactionDetail['service'] }}</td>
-                                            <td class="px-4 py-3 text-right">Rp
-                                                {{ number_format($transactionDetail['main_biaya']) }}</td>
-                                            @if ($transactionDetail['main_potongan'] > 0)
-                                                <td class="px-4 py-3 text-right text-red-600">-Rp
-                                                    {{ number_format($transactionDetail['main_potongan']) }}</td>
-                                            @endif
-                                            <td class="px-4 py-3 text-right font-semibold">Rp
-                                                {{ number_format($transactionDetail['main_total']) }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                           {{-- Main Service --}}
+                           <div class="mb-6">
+                               <h4 class="text-sm font-semibold text-gray-700 mb-3">Main Service</h4>
+                               <div class="border rounded-lg overflow-hidden">
+                                   <table class="w-full text-sm">
+                                       <thead class="bg-gray-50">
+                                           <tr>
+                                               <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                                   Service</th>
+                                               <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Cost
+                                               </th>
+                                               @if ($transactionDetail['main_potongan'] > 0)
+                                                   <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">
+                                                       Discount
+                                                   </th>
+                                               @endif
+                                               <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Total
+                                               </th>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           <tr class="border-t">
+                                               <td class="px-4 py-3">{{ $transactionDetail['service'] }}</td>
+                                               <td class="px-4 py-3 text-right">Rp
+                                                   {{ number_format($transactionDetail['main_biaya']) }}</td>
+                                               @if ($transactionDetail['main_potongan'] > 0)
+                                                   <td class="px-4 py-3 text-right text-red-600">-Rp
+                                                       {{ number_format($transactionDetail['main_potongan']) }}</td>
+                                               @endif
+                                               <td class="px-4 py-3 text-right font-semibold">Rp
+                                                   {{ number_format($transactionDetail['main_total']) }}</td>
+                                           </tr>
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
 
-                        {{-- Additional Items --}}
-                        @if (count($transactionDetailItems) > 0)
-                            <div class="mb-6">
-                                <h4 class="text-sm font-semibold text-gray-700 mb-3">Additional Services</h4>
-                                <div class="border rounded-lg overflow-hidden">
-                                    <table class="w-full text-sm">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Service
-                                                </th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
-                                                    Technician</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">Sparepart
-                                                </th>
-                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">Warranty
-                                                </th>
-                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">Total</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($transactionDetailItems as $item)
-                                                <tr class="border-t">
-                                                    <td class="px-4 py-3">{{ $item['service'] }}</td>
-                                                    <td class="px-4 py-3 text-xs">{{ $item['technician'] }}</td>
-                                                    <td class="px-4 py-3 text-xs">{{ $item['product'] }}</td>
-                                                    <td class="px-4 py-3 text-center text-xs">{{ $item['warranty'] }}</td>
-                                                    <td class="px-4 py-3 text-right font-semibold">Rp
-                                                        {{ number_format($item['total']) }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        @endif
+                           {{-- Additional Items --}}
+                           @if (count($transactionDetailItems) > 0)
+                               <div class="mb-6">
+                                   <h4 class="text-sm font-semibold text-gray-700 mb-3">Additional Services</h4>
+                                   <div class="border rounded-lg overflow-hidden">
+                                       <table class="w-full text-sm">
+                                           <thead class="bg-gray-50">
+                                               <tr>
+                                                   <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                                       Service
+                                                   </th>
+                                                   <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                                       Technician</th>
+                                                   <th class="px-4 py-2 text-left text-xs font-medium text-gray-500">
+                                                       Sparepart
+                                                   </th>
+                                                   <th class="px-4 py-2 text-center text-xs font-medium text-gray-500">
+                                                       Warranty
+                                                   </th>
+                                                   <th class="px-4 py-2 text-right text-xs font-medium text-gray-500">
+                                                       Total</th>
+                                               </tr>
+                                           </thead>
+                                           <tbody>
+                                               @foreach ($transactionDetailItems as $item)
+                                                   <tr class="border-t">
+                                                       <td class="px-4 py-3">{{ $item['service'] }}</td>
+                                                       <td class="px-4 py-3 text-xs">{{ $item['technician'] }}</td>
+                                                       <td class="px-4 py-3 text-xs">{{ $item['product'] }}</td>
+                                                       <td class="px-4 py-3 text-center text-xs">
+                                                           {{ $item['warranty'] }}</td>
+                                                       <td class="px-4 py-3 text-right font-semibold">Rp
+                                                           {{ number_format($item['total']) }}</td>
+                                                   </tr>
+                                               @endforeach
+                                           </tbody>
+                                       </table>
+                                   </div>
+                               </div>
+                           @endif
 
-                        {{-- Total --}}
-                        <div class="bg-gray-900 rounded-lg p-4 text-white">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm">Grand Total</span>
-                                <span class="text-xl font-bold">Rp
-                                    {{ number_format($transactionDetail['grand_total']) }}</span>
-                            </div>
-                        </div>
-                    </div>
+                           {{-- Total --}}
+                           <div class="bg-gray-900 rounded-lg p-4 text-white">
+                               <div class="flex justify-between items-center">
+                                   <span class="text-sm">Grand Total</span>
+                                   <span class="text-xl font-bold">Rp
+                                       {{ number_format($transactionDetail['grand_total']) }}</span>
+                               </div>
+                           </div>
+                       </div>
 
-                    {{-- Footer --}}
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
-                        <a href="{{ url('dashboard/detail-transaction', $transactionDetail['id']) }}"
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:w-auto sm:text-sm">
-                            <i class="fas fa-edit mr-2 mt-1"></i>Edit Transaction
-                        </a>
-                        <button wire:click="closeTransactionDetailModal" wire:loading.attr="disabled"
-                            class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm disabled:opacity-50">
-                            <div wire:loading wire:target="closeTransactionDetailModal" class="mr-2">
-                                <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"
-                                    role="status"></div>
-                            </div>
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
+                       {{-- Footer --}}
+                       <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                           <a href="{{ url('dashboard/detail-transaction', $transactionDetail['id']) }}"
+                               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:w-auto sm:text-sm">
+                               <i class="fas fa-edit mr-2 mt-1"></i>Edit Transaction
+                           </a>
+                           <button wire:click="closeTransactionDetailModal" wire:loading.attr="disabled"
+                               class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:w-auto sm:text-sm disabled:opacity-50">
+                               <div wire:loading wire:target="closeTransactionDetailModal" class="mr-2">
+                                   <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"
+                                       role="status"></div>
+                               </div>
+                               Close
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       @endif
 
    </div>
 
