@@ -7,7 +7,7 @@
             </p>
         </div>
         <div class="flex items-center gap-x-3">
-            @if(auth()->user()->isOwner())
+            @if(auth()->user()->isOwner() || auth()->user()->hasPermission('stock_opname_create'))
                 <button wire:click="openTriggerModal"
                     class="px-6 py-2 text-xs font-bold leading-normal text-center text-white capitalize transition-all ease-in rounded-lg shadow-md bg-blue-600 hover:shadow-xs hover:-translate-y-px flex gap-x-2 items-center">
                     <div wire:loading wire:target="openTriggerModal">

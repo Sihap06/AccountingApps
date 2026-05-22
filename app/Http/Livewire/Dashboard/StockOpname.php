@@ -84,7 +84,8 @@ class StockOpname extends Component
 
     public function openTriggerModal()
     {
-        if (!auth()->user()->isOwner()) return;
+        $user = auth()->user();
+        if (!$user->isOwner() && !$user->hasPermission('stock_opname_create')) return;
 
         // Check if there's already an active opname
         $existing = StockOpnameModel::active()->first();
@@ -110,7 +111,8 @@ class StockOpname extends Component
 
     public function triggerStockOpname()
     {
-        if (!auth()->user()->isOwner()) return;
+        $user = auth()->user();
+        if (!$user->isOwner() && !$user->hasPermission('stock_opname_create')) return;
 
         $this->validate([
             'selectedKasir' => 'nullable|exists:users,id',
