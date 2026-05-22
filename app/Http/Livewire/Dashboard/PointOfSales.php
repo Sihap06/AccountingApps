@@ -67,12 +67,6 @@ class PointOfSales extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh', 'setSelected' => 'setSelected'];
 
-    public function updatedPhoneBrand($value)
-    {
-        // Reset phone_type when phone_brand changes
-        $this->phone_type = '';
-    }
-
     public function setSelected($value, $name)
     {
         $this->$name = $value;

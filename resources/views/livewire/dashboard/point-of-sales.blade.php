@@ -313,121 +313,24 @@
 
                             <div class="grid grid-cols-2 gap-x-3">
                                 <div>
-                                    <x-ui.input-default wire:model.lazy="phone_brand" label="Brand" value="iPhone"
-                                        disabled="true" />
+                                    <x-ui.input-default wire:model.lazy="phone_brand" label="Brand"
+                                        placeholder="e.g. iPhone, Samsung, Xiaomi" />
                                 </div>
 
                                 <div>
-                                    <label
-                                        class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Storage</label>
-                                    <select wire:model.lazy="phone_internal"
-                                        class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                        <option value="">Select</option>
-                                        <option value="16">16 GB</option>
-                                        <option value="32">32 GB</option>
-                                        <option value="64">64 GB</option>
-                                        <option value="128">128 GB</option>
-                                        <option value="256">256 GB</option>
-                                        <option value="512">512 GB</option>
-                                        <option value="1T">1 TB</option>
-                                        <option value="2T">2 TB</option>
-                                    </select>
+                                    <x-ui.input-default wire:model.lazy="phone_internal" label="Storage"
+                                        placeholder="e.g. 128GB" />
                                 </div>
                             </div>
 
                             <div>
-                                <label
-                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Model</label>
-                                <select wire:model.lazy="phone_type"
-                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                    <option value="">Select iPhone Model</option>
-                                    <optgroup label="iPhone 15 Series">
-                                        <option value="iPhone 15 Pro Max">iPhone 15 Pro Max</option>
-                                        <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-                                        <option value="iPhone 15 Plus">iPhone 15 Plus</option>
-                                        <option value="iPhone 15">iPhone 15</option>
-                                    </optgroup>
-                                    <optgroup label="iPhone 14 Series">
-                                        <option value="iPhone 14 Pro Max">iPhone 14 Pro Max</option>
-                                        <option value="iPhone 14 Pro">iPhone 14 Pro</option>
-                                        <option value="iPhone 14 Plus">iPhone 14 Plus</option>
-                                        <option value="iPhone 14">iPhone 14</option>
-                                    </optgroup>
-                                    <optgroup label="iPhone 13 Series">
-                                        <option value="iPhone 13 Pro Max">iPhone 13 Pro Max</option>
-                                        <option value="iPhone 13 Pro">iPhone 13 Pro</option>
-                                        <option value="iPhone 13">iPhone 13</option>
-                                        <option value="iPhone 13 Mini">iPhone 13 Mini</option>
-                                    </optgroup>
-                                    <optgroup label="iPhone 12 Series">
-                                        <option value="iPhone 12 Pro Max">iPhone 12 Pro Max</option>
-                                        <option value="iPhone 12 Pro">iPhone 12 Pro</option>
-                                        <option value="iPhone 12">iPhone 12</option>
-                                        <option value="iPhone 12 Mini">iPhone 12 Mini</option>
-                                    </optgroup>
-                                    <optgroup label="iPhone 11 Series">
-                                        <option value="iPhone 11 Pro Max">iPhone 11 Pro Max</option>
-                                        <option value="iPhone 11 Pro">iPhone 11 Pro</option>
-                                        <option value="iPhone 11">iPhone 11</option>
-                                    </optgroup>
-                                    <optgroup label="iPhone SE">
-                                        <option value="iPhone SE 3">iPhone SE 3</option>
-                                        <option value="iPhone SE 2">iPhone SE 2</option>
-                                    </optgroup>
-                                    <optgroup label="Other Models">
-                                        <option value="iPhone XS Max">iPhone XS Max</option>
-                                        <option value="iPhone XS">iPhone XS</option>
-                                        <option value="iPhone XR">iPhone XR</option>
-                                        <option value="iPhone X">iPhone X</option>
-                                        <option value="iPhone 8 Plus">iPhone 8 Plus</option>
-                                        <option value="iPhone 8">iPhone 8</option>
-                                        <option value="iPhone 7 Plus">iPhone 7 Plus</option>
-                                        <option value="iPhone 7">iPhone 7</option>
-                                        <option value="iPhone 6s Plus">iPhone 6s Plus</option>
-                                        <option value="iPhone 6s">iPhone 6s</option>
-                                        <option value="iPhone 6 Plus">iPhone 6 Plus</option>
-                                        <option value="iPhone 6">iPhone 6</option>
-                                    </optgroup>
-                                </select>
+                                <x-ui.input-default wire:model.lazy="phone_type" label="Model"
+                                    placeholder="e.g. iPhone 14 Pro Max" />
                             </div>
 
                             <div>
-                                <label
-                                    class="inline-block mb-2 ml-1 font-bold text-xs text-slate-700 dark:text-white dark:text-opacity-80">Color</label>
-                                <select wire:model.lazy="phone_color"
-                                    class="focus:shadow-primary-outline dark:bg-slate-850 dark:text-white text-sm leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding px-3 py-2 font-normal text-gray-700 outline-none transition-all placeholder:text-gray-500 focus:border-blue-500 focus:outline-none">
-                                    <option value="">Select Color</option>
-                                    <optgroup label="Common Colors">
-                                        <option value="Black">Black</option>
-                                        <option value="White">White</option>
-                                        <option value="Silver">Silver</option>
-                                        <option value="Gold">Gold</option>
-                                        <option value="Space Gray">Space Gray</option>
-                                    </optgroup>
-                                    <optgroup label="Pro Colors">
-                                        <option value="Graphite">Graphite</option>
-                                        <option value="Pacific Blue">Pacific Blue</option>
-                                        <option value="Sierra Blue">Sierra Blue</option>
-                                        <option value="Alpine Green">Alpine Green</option>
-                                        <option value="Deep Purple">Deep Purple</option>
-                                    </optgroup>
-                                    <optgroup label="Standard Colors">
-                                        <option value="Blue">Blue</option>
-                                        <option value="Midnight">Midnight</option>
-                                        <option value="Starlight">Starlight</option>
-                                        <option value="Pink">Pink</option>
-                                        <option value="Red">Red</option>
-                                        <option value="Green">Green</option>
-                                        <option value="Yellow">Yellow</option>
-                                        <option value="Purple">Purple</option>
-                                    </optgroup>
-                                    <optgroup label="Special Edition">
-                                        <option value="Rose Gold">Rose Gold</option>
-                                        <option value="Coral">Coral</option>
-                                        <option value="Lavender">Lavender</option>
-                                        <option value="Mint">Mint</option>
-                                    </optgroup>
-                                </select>
+                                <x-ui.input-default wire:model.lazy="phone_color" label="Color"
+                                    placeholder="e.g. Space Gray" />
                             </div>
 
                             <div>
