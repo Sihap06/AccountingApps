@@ -84,11 +84,11 @@ class FinancialSummary extends Component
             ->whereNull('deleted_at')
             ->count();
 
-        // Calculate total income using subquery for transaction items
+        // Calculate total income (profit) using subquery for transaction items
         $incomeData = DB::table('transactions as t')
             ->leftJoinSub(
                 DB::table('transaction_items')
-                    ->selectRaw('transaction_id, SUM(biaya - IFNULL(potongan, 0)) as total_item_biaya')
+                    ->selectRaw('transaction_id, SUM(untung) as total_item_untung')
                     ->whereNull('deleted_at')
                     ->groupBy('transaction_id'),
                 'ti',
@@ -98,7 +98,7 @@ class FinancialSummary extends Component
             ->where('t.status', 'done')
             ->whereBetween('t.created_at', [$startDate, $endDate])
             ->whereNull('t.deleted_at')
-            ->selectRaw('SUM(t.biaya - IFNULL(t.potongan, 0) + IFNULL(ti.total_item_biaya, 0)) as total_income')
+            ->selectRaw('SUM(t.untung + IFNULL(ti.total_item_untung, 0)) as total_income')
             ->first();
 
         $this->totalIncome = $incomeData->total_income ?? 0;
@@ -125,11 +125,9 @@ class FinancialSummary extends Component
             ->get();
 
         $this->transactionDetails = $transactions->map(function ($transaction) {
-            // Calculate total amount net of discount (transaction-level + item-level)
-            $itemsTotal = $transaction->transactionItems->sum(function ($item) {
-                return $item->biaya - ($item->potongan ?? 0);
-            });
-            $totalAmount = ($transaction->biaya - ($transaction->potongan ?? 0)) + $itemsTotal;
+            // Calculate total profit (transaction-level + item-level)
+            $itemsTotal = $transaction->transactionItems->sum('untung');
+            $totalAmount = $transaction->untung + $itemsTotal;
 
             // Return array with all needed data
             return [

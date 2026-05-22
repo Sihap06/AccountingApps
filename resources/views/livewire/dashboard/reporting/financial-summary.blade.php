@@ -94,7 +94,7 @@
                                             </div>
                                             <div class="flex flex-col justify-center">
                                                 <h6 class="mb-0 text-sm leading-normal font-semibold">Total Income</h6>
-                                                <p class="mb-0 text-xs leading-tight text-slate-400">Revenue from
+                                                <p class="mb-0 text-xs leading-tight text-slate-400">Profit from
                                                     completed transactions</p>
                                             </div>
                                         </div>

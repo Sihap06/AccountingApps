@@ -63,6 +63,7 @@ class Income extends Component
         return [
             'income' => $income,
             'total_income' => $totalIncome,
+            'transactions_count' => count($dataIncomeTransaction),
         ];
     }
 
@@ -128,9 +129,10 @@ class Income extends Component
 
         $technician = Technician::all();
 
-        $income = $this->getIncome()['income'];
-
-        $totalIncome = $this->getIncome()['total_income'];
+        $incomeData = $this->getIncome();
+        $income = $incomeData['income'];
+        $totalIncome = $incomeData['total_income'];
+        $transactionsCount = $incomeData['transactions_count'];
 
         $totalExpenditure = Expenditure::whereMonth('tanggal', $this->selectedMonth)
             ->whereYear('tanggal', $this->selectedYear)
@@ -155,7 +157,7 @@ class Income extends Component
         ];
 
 
-        return view('livewire.dashboard.reporting.income', compact('technician', 'dataFeeTechnician', 'income', 'listYear', 'listMonth', 'totalFeeTeknisi', 'totalIncome', 'totalExpenditure', 'totalNetto'));
+        return view('livewire.dashboard.reporting.income', compact('technician', 'dataFeeTechnician', 'income', 'listYear', 'listMonth', 'totalFeeTeknisi', 'totalIncome', 'totalExpenditure', 'totalNetto', 'transactionsCount'));
     }
 
     public function exportReport()
