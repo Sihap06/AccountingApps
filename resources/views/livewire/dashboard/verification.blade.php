@@ -303,6 +303,7 @@
                                     <h5 class="text-sm font-semibold text-green-800 mb-2">New Data</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->new_data as $key => $value)
+                                            @continue(in_array($key, ['created_at', 'updated_at']))
                                             @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                 <div class="col-span-2">
                                                     <span class="text-xs text-gray-600">Image:</span>
@@ -329,6 +330,7 @@
                                         <h5 class="text-sm font-semibold text-yellow-800 mb-2">Old Data</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->old_data as $key => $value)
+                                                @continue(in_array($key, ['created_at', 'updated_at']))
                                                 @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                     <div class="{{ isset($selectedChange->new_data[$key]) && $selectedChange->new_data[$key] != $value ? 'text-red-600' : '' }}">
                                                         <span class="text-xs text-gray-600">Image:</span>
@@ -354,6 +356,7 @@
                                         <h5 class="text-sm font-semibold text-green-800 mb-2">New Data</h5>
                                         <div class="space-y-1">
                                             @foreach ($selectedChange->new_data as $key => $value)
+                                                @continue(in_array($key, ['created_at', 'updated_at']))
                                                 @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                     <div class="{{ isset($selectedChange->old_data[$key]) && $selectedChange->old_data[$key] != $value ? 'text-green-600' : '' }}">
                                                         <span class="text-xs text-gray-600">Image:</span>
@@ -381,6 +384,7 @@
                                     <h5 class="text-sm font-semibold text-red-800 mb-2">Data to be Deleted</h5>
                                     <div class="grid grid-cols-2 gap-2">
                                         @foreach ($selectedChange->old_data as $key => $value)
+                                            @continue(in_array($key, ['created_at', 'updated_at']))
                                             @if ($key === 'image' && $value && $selectedChange->changeable_type === 'App\Models\Expenditure')
                                                 <div class="col-span-2">
                                                     <span class="text-xs text-gray-600">Image:</span>

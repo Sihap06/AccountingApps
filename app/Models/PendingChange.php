@@ -102,6 +102,7 @@ class PendingChange extends Model
         switch ($this->action) {
             case 'create':
                 $model = new $modelClass($this->new_data);
+                $model->bypassVerification = true;
                 $model->save();
                 $this->changeable_id = $model->id;
 
@@ -112,6 +113,7 @@ class PendingChange extends Model
             case 'update':
                 $model = $modelClass::find($this->changeable_id);
                 if ($model) {
+                    $model->bypassVerification = true;
                     // Special handling for Transaction updates with product changes
                     if (
                         $modelClass === 'App\Models\Transaction' &&
@@ -201,6 +203,7 @@ class PendingChange extends Model
             case 'delete':
                 $model = $modelClass::find($this->changeable_id);
                 if ($model) {
+                    $model->bypassVerification = true;
                     // Special handling for Transaction deletions
                     if ($modelClass === 'App\Models\Transaction') {
                         // Return product to stock
@@ -224,6 +227,7 @@ class PendingChange extends Model
                                     $product_item->save();
                                 }
                             }
+                            $item->bypassVerification = true;
                             $item->delete();
                         }
                     }
