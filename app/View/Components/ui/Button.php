@@ -11,14 +11,16 @@ class Button extends Component
     public $color;
     public $isLoading;
     public $wireLoading;
+    public $formAction;
 
-    public function __construct($type, $title, $color, $isLoading, $wireLoading)
+    public function __construct($type, $title, $color, $isLoading = false, $wireLoading = false, $formAction = '')
     {
         $this->type = $type;
         $this->title = $title;
         $this->color = $color;
         $this->isLoading = $isLoading;
         $this->wireLoading  = $wireLoading;
+        $this->formAction = $formAction;
     }
 
     /**
