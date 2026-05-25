@@ -139,7 +139,14 @@ class Transaction extends Component
 
         $paymentMethods = PaymentMethod::select('code', 'name')->get();
 
-        return view('livewire.dashboard.reporting.transaction', compact('data', 'paymentMethods'));
+        $pendingTransactionIds = PendingChange::where('changeable_type', ModelsTransaction::class)
+            ->where('status', 'pending')
+            ->whereIn('changeable_id', $data->pluck('id'))
+            ->pluck('changeable_id')
+            ->unique()
+            ->values();
+
+        return view('livewire.dashboard.reporting.transaction', compact('data', 'paymentMethods', 'pendingTransactionIds'));
     }
 
     public function edit($id)
@@ -330,6 +337,16 @@ class Transaction extends Component
     public function complaint($id)
     {
         $data = ModelsTransaction::findOrFail($id);
+
+        if (Auth::user()->requiresVerification() && $data->hasPendingChanges()) {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Info',
+                'text' => 'Komplain sudah dalam antrian verifikasi owner.',
+                'icon' => 'info'
+            ]);
+            return;
+        }
+
         $data->status = 'complaint';
         $data->save();
 

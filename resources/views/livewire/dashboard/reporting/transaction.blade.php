@@ -198,9 +198,14 @@
                                                 </button>
                                             @endif
 
+                                            @php
+                                                $isPendingVerification = !auth()->user()->isOwner() && $pendingTransactionIds->contains($item->id);
+                                            @endphp
                                             <button type="button"
-                                                wire:click="$emit('triggerComplaint',{{ $item->id }})"
-                                                class="px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-red-600 leading-normal  ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 hover:-translate-y-px active:opacity-85 hover:shadow-md flex gap-x-2 items-center">
+                                                @if (!$isPendingVerification) wire:click="$emit('triggerComplaint',{{ $item->id }})" @endif
+                                                @if ($isPendingVerification) disabled @endif
+                                                title="{{ $isPendingVerification ? 'Komplain sudah dalam antrian verifikasi owner' : 'Komplain transaksi ini' }}"
+                                                class="px-3 py-2 text-xs mr-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg leading-normal ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 flex gap-x-2 items-center {{ $isPendingVerification ? 'bg-gray-400 cursor-not-allowed opacity-70' : 'bg-red-600 cursor-pointer hover:-translate-y-px active:opacity-85 hover:shadow-md' }}">
                                                 <div wire:loading wire:target='complaint("{{ $item->id }}")'>
                                                     <div class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
                                                         role="status">
@@ -208,7 +213,7 @@
                                                             class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
                                                     </div>
                                                 </div>
-                                                <span>Complaint</span>
+                                                <span>{{ $isPendingVerification ? 'Pending Verif' : 'Complaint' }}</span>
 
                                             </button>
 
