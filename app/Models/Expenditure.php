@@ -13,6 +13,8 @@ class Expenditure extends Model
 
     protected $guarded = [];
 
+    public $bypassVerification = false;
+
     /**
      * Get the full URL for the image
      */
