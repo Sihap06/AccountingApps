@@ -157,6 +157,31 @@ class UpdateTransaction extends Component
         }
     }
 
+    /**
+     * Resolve modal + profit figures for a pending item change, mirroring the
+     * master-admin path. Without this the verification flow would store stale
+     * modal/untung (e.g. profit stays at full biaya after a sparepart is added).
+     */
+    private function resolveItemPerhitungan(array $validateData, $fallbackModal)
+    {
+        $modal = $validateData['modal'];
+
+        if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
+            $product = Product::withTrashed()->find($validateData['product_id']);
+            if ($product) {
+                $modal = $product->harga;
+            }
+        }
+
+        if ((int) $modal == 0) {
+            $modal = $fallbackModal;
+        }
+
+        $effectiveBiaya = (int) $validateData['biaya'] - (int) $validateData['potongan'];
+
+        return $this->getPerhitungan($validateData['technical_id'], $effectiveBiaya, $modal);
+    }
+
     public function addServiceItem()
     {
         $validateData = $this->validate([
@@ -367,11 +392,32 @@ class UpdateTransaction extends Component
 
         // Check if user is sysadmin (operator) - needs verification
         if (Auth::user()->requiresVerification()) {
+            // Skip verification entirely when nothing actually changed,
+            // otherwise a no-op submit creates a redundant pending change.
+            $hasChanges = $this->editService != $transaction->service
+                || $validateData['biaya'] != $transaction->biaya
+                || $validateData['potongan'] != $transaction->potongan
+                || $validateData['technical_id'] != $transaction->technical_id
+                || $validateData['product_id'] != $transaction->product_id
+                || $this->warranty != $transaction->warranty
+                || $this->warranty_type != $transaction->warranty_type;
+
+            if (!$hasChanges) {
+                $this->dispatchBrowserEvent('swal', [
+                    'title' => 'Info',
+                    'text' => 'Tidak ada perubahan untuk disimpan.',
+                    'icon' => 'info'
+                ]);
+                $this->resetFieldValue();
+                return;
+            }
+
             // Store data and show reason modal
             $this->pendingAction = 'updateItemTransaction';
             $this->pendingActionData = [
                 'transaction' => $transaction->toArray(),
                 'validateData' => $validateData,
+                'perhitungan' => $this->resolveItemPerhitungan($validateData, $transaction->modal),
                 'editService' => $this->editService,
                 'warranty' => $this->warranty,
                 'warranty_type' => $this->warranty_type
@@ -512,11 +558,32 @@ class UpdateTransaction extends Component
 
         // Check if user is sysadmin (operator) - needs verification for updates
         if (Auth::user()->requiresVerification()) {
+            // Skip verification entirely when nothing actually changed,
+            // otherwise a no-op submit creates a redundant pending change.
+            $hasChanges = $this->editService != $transaction->service
+                || $validateData['biaya'] != $transaction->biaya
+                || $validateData['potongan'] != $transaction->potongan
+                || $validateData['technical_id'] != $transaction->technical_id
+                || $validateData['product_id'] != $transaction->product_id
+                || $this->warranty != $transaction->warranty
+                || $this->warranty_type != $transaction->warranty_type;
+
+            if (!$hasChanges) {
+                $this->dispatchBrowserEvent('swal', [
+                    'title' => 'Info',
+                    'text' => 'Tidak ada perubahan untuk disimpan.',
+                    'icon' => 'info'
+                ]);
+                $this->resetFieldValue();
+                return;
+            }
+
             // Store data and show reason modal
             $this->pendingAction = 'updateItem';
             $this->pendingActionData = [
                 'transactionItem' => $transaction->toArray(),
                 'validateData' => $validateData,
+                'perhitungan' => $this->resolveItemPerhitungan($validateData, $transaction->modal),
                 'editService' => $this->editService,
                 'warranty' => $this->warranty,
                 'warranty_type' => $this->warranty_type
@@ -642,6 +709,16 @@ class UpdateTransaction extends Component
 
         // Check if user is sysadmin (operator) - needs verification
         if (Auth::user()->requiresVerification()) {
+            // Skip verification entirely when nothing actually changed,
+            // otherwise a no-op submit creates a redundant pending change.
+            $hasChanges = $transaction->customer_id != $this->customer_id
+                || $transaction->payment_method != $validateData['payment_method']
+                || Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date;
+
+            if (!$hasChanges) {
+                return redirect()->route('dashboard.reporting');
+            }
+
             // Store data and show reason modal
             $this->pendingAction = 'updateTransaction';
             $this->pendingActionData = [
@@ -741,6 +818,9 @@ class UpdateTransaction extends Component
             $newData['product_id'] = $validateData['product_id'];
             $newData['warranty'] = $this->pendingActionData['warranty'];
             $newData['warranty_type'] = $this->pendingActionData['warranty_type'];
+            $newData['modal'] = $this->pendingActionData['perhitungan']['modal'];
+            $newData['fee_teknisi'] = $this->pendingActionData['perhitungan']['fee_teknisi'];
+            $newData['untung'] = $this->pendingActionData['perhitungan']['untung'];
 
             // Create pending change with reason
             PendingChange::create([
@@ -772,6 +852,9 @@ class UpdateTransaction extends Component
             $newData['product_id'] = $validateData['product_id'];
             $newData['warranty'] = $this->pendingActionData['warranty'];
             $newData['warranty_type'] = $this->pendingActionData['warranty_type'];
+            $newData['modal'] = $this->pendingActionData['perhitungan']['modal'];
+            $newData['fee_teknisi'] = $this->pendingActionData['perhitungan']['fee_teknisi'];
+            $newData['untung'] = $this->pendingActionData['perhitungan']['untung'];
 
             // Create pending change with reason
             PendingChange::create([

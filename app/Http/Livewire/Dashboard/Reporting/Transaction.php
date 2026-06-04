@@ -189,6 +189,29 @@ class Transaction extends Component
 
         // Check if user is sysadmin (operator) - needs verification
         if (Auth::user()->requiresVerification()) {
+            // Skip verification entirely when nothing actually changed,
+            // otherwise a no-op submit creates a redundant pending change.
+            $normalizedTechnicalId = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
+            $normalizedProductId = $validateData['product_id'] === '' ? null : $validateData['product_id'];
+
+            $hasChanges = $this->order_transaction != $transaction->order_transaction
+                || $this->service != $transaction->service
+                || $validateData['biaya'] != $transaction->biaya
+                || $this->payment_method != $transaction->payment_method
+                || $normalizedTechnicalId != $transaction->technical_id
+                || $normalizedProductId != $transaction->product_id
+                || Carbon::parse($transaction->created_at)->format('Y-m-d') != $order_date;
+
+            if (!$hasChanges) {
+                $this->isEdit = false;
+                $this->dispatchBrowserEvent('swal', [
+                    'title' => 'Info',
+                    'text' => 'Tidak ada perubahan untuk disimpan.',
+                    'icon' => 'info'
+                ]);
+                return;
+            }
+
             // Prepare the new data
             $newData = [
                 'order_transaction' => $this->order_transaction,

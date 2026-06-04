@@ -192,7 +192,33 @@ class PendingChange extends Model
                         }
                     }
 
-                    $model->fill($this->new_data);
+                    // Apply ONLY the fields this change actually modified
+                    // (diff of old_data vs new_data). Filling the full snapshot
+                    // would let a stale older pending change revert fields set by
+                    // a newer one — making approvals look like a rollback.
+                    $oldData = $this->old_data ?? [];
+                    $changedFields = [];
+                    foreach ($this->new_data as $key => $value) {
+                        if (in_array($key, ['id', 'created_at', 'updated_at', 'deleted_at'], true)) {
+                            continue;
+                        }
+                        if (!array_key_exists($key, $oldData) || $oldData[$key] != $value) {
+                            $changedFields[$key] = $value;
+                        }
+                    }
+
+                    // created_at is editable on transactions; only apply it when
+                    // its date actually changed (ignore the time-only noise).
+                    if (
+                        array_key_exists('created_at', $this->new_data) &&
+                        isset($oldData['created_at']) &&
+                        \Carbon\Carbon::parse($oldData['created_at'])->format('Y-m-d')
+                            !== \Carbon\Carbon::parse($this->new_data['created_at'])->format('Y-m-d')
+                    ) {
+                        $changedFields['created_at'] = $this->new_data['created_at'];
+                    }
+
+                    $model->fill($changedFields);
                     $model->save();
 
                     // Create activity log for successful update
