@@ -106,8 +106,8 @@
             <td>
                 <div class="header-left">
                     <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo">
-                    <p style="margin-top: 8px">Jalan mastrip 71 (depan nelongso) <span
-                            style="margin-left: 10px">089638911151</span>
+                    <p style="margin-top: 8px">Jl Mastrip 71 (Depan Ruko mastrip Square) <span
+                            style="margin-left: 10px">089696007000</span>
                     </p>
                 </div>
             </td>
