@@ -21,6 +21,21 @@ class Product extends Model
     public $verifyUpdate = true;
     public $verifyDelete = true;
 
+    protected static function booted()
+    {
+        // Keep active stock opnames in sync with real stock movements
+        // (sales, returns, restock) that happen while an opname is running.
+        static::updated(function (Product $product) {
+            if ($product->wasChanged('stok')) {
+                StockOpname::syncProductStockChange($product);
+            }
+        });
+
+        static::created(function (Product $product) {
+            StockOpname::addProductToActive($product);
+        });
+    }
+
     public function transactions()
     {
         return $this->belongsToMany(Transaction::class);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class StockOpname extends Model
 {
@@ -67,6 +68,27 @@ class StockOpname extends Model
         return $this->items()->where('difference', '!=', 0)->exists();
     }
 
+    /**
+     * Total value of missing stock (positive rupiah amount).
+     * Kept separate from surplus so they never cancel each other out.
+     */
+    public function getLossValueAttribute()
+    {
+        return $this->items
+            ->filter(fn ($item) => ($item->difference ?? 0) < 0)
+            ->sum(fn ($item) => abs($item->difference_value ?? 0));
+    }
+
+    /**
+     * Total value of excess stock found (positive rupiah amount).
+     */
+    public function getSurplusValueAttribute()
+    {
+        return $this->items
+            ->filter(fn ($item) => ($item->difference ?? 0) > 0)
+            ->sum(fn ($item) => $item->difference_value ?? 0);
+    }
+
     public function applyAdjustment($appliedBy)
     {
         if ($this->status !== 'completed') {
@@ -77,15 +99,21 @@ class StockOpname extends Model
             throw new \Exception('Adjustment has already been applied.');
         }
 
-        $adjustments = [];
+        return DB::transaction(function () use ($appliedBy) {
+            $adjustments = [];
 
-        foreach ($this->items()->where('difference', '!=', 0)->get() as $item) {
-            $product = $item->product;
-            if ($product) {
+            foreach ($this->items()->where('difference', '!=', 0)->get() as $item) {
+                // Delta-based: adjust the CURRENT stock by the counted difference so
+                // transactions that happened after counting are preserved. Skips
+                // soft-deleted products; locks the row against concurrent sales.
+                $product = Product::whereKey($item->product_id)->lockForUpdate()->first();
+                if (!$product) {
+                    continue;
+                }
+
                 $oldStock = $product->stok;
-                $newStock = $item->actual_stock;
+                $newStock = max(0, $oldStock + $item->difference);
 
-                // Update product stock
                 $product->bypassVerification = true;
                 $product->stok = $newStock;
                 $product->save();
@@ -98,15 +126,58 @@ class StockOpname extends Model
                     'difference' => $item->difference,
                 ];
             }
+
+            $this->update([
+                'is_applied' => true,
+                'applied_by' => $appliedBy,
+                'applied_at' => now(),
+            ]);
+
+            return $adjustments;
+        });
+    }
+
+    /**
+     * Sync active opname items when a product's stock changes outside the opname:
+     * unchecked items follow the new system stock, checked items are flagged for re-count.
+     */
+    public static function syncProductStockChange(Product $product)
+    {
+        $activeIds = static::active()->pluck('id');
+        if ($activeIds->isEmpty()) {
+            return;
         }
 
-        $this->update([
-            'is_applied' => true,
-            'applied_by' => $appliedBy,
-            'applied_at' => now(),
-        ]);
+        StockOpnameItem::whereIn('stock_opname_id', $activeIds)
+            ->where('product_id', $product->id)
+            ->where('checked', false)
+            ->update(['system_stock' => $product->stok]);
 
-        return $adjustments;
+        StockOpnameItem::whereIn('stock_opname_id', $activeIds)
+            ->where('product_id', $product->id)
+            ->where('checked', true)
+            ->where('needs_recheck', false)
+            ->update(['needs_recheck' => true]);
+    }
+
+    /**
+     * Include a newly created product in any active opname so it doesn't
+     * escape counting.
+     */
+    public static function addProductToActive(Product $product)
+    {
+        foreach (static::active()->get() as $opname) {
+            StockOpnameItem::firstOrCreate(
+                [
+                    'stock_opname_id' => $opname->id,
+                    'product_id' => $product->id,
+                ],
+                [
+                    'product_name' => $product->name,
+                    'system_stock' => $product->stok,
+                ]
+            );
+        }
     }
 
     public function scopeActive($query)

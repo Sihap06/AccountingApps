@@ -196,7 +196,11 @@
                                             <span class="text-xs text-gray-500">{{ $item->notes ?? '-' }}</span>
                                         </td>
                                         <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                            @if($item->checked)
+                                            @if($item->needs_recheck)
+                                                <span class="px-2 py-0.5 text-xs rounded-full bg-orange-100 text-orange-700 font-semibold" title="Product stock changed after this item was counted. Please re-check.">
+                                                    <i class="fas fa-exclamation-triangle text-xxs mr-0.5"></i> Re-check
+                                                </span>
+                                            @elseif($item->checked)
                                                 <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">
                                                     <i class="fas fa-check text-xxs mr-0.5"></i> Done
                                                 </span>
@@ -209,7 +213,7 @@
                                             <button wire:click="editItem({{ $item->id }})" wire:loading.attr="disabled"
                                                 class="text-xs font-semibold text-blue-600 hover:text-blue-800 disabled:opacity-50">
                                                 <div wire:loading wire:target="editItem({{ $item->id }})" class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-solid border-blue-600 border-r-transparent" role="status"></div>
-                                                <span wire:loading.remove wire:target="editItem({{ $item->id }})">{{ $item->checked ? 'Edit' : 'Check' }}</span>
+                                                <span wire:loading.remove wire:target="editItem({{ $item->id }})">{{ $item->needs_recheck ? 'Re-check' : ($item->checked ? 'Edit' : 'Check') }}</span>
                                             </button>
                                         </td>
                                         @endif
@@ -272,14 +276,22 @@
                                     <span class="text-xs font-semibold text-slate-600">{{ $opname->items->count() }}</span>
                                 </td>
                                 <td class="p-2 text-center align-middle bg-transparent border-b whitespace-nowrap">
-                                    @php
-                                        $totalDiff = $opname->items->sum('difference');
-                                    @endphp
                                     @if($opname->status === 'completed')
-                                        @if($totalDiff == 0)
+                                        @if($opname->loss_value == 0 && $opname->surplus_value == 0)
                                             <span class="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700 font-semibold">Match</span>
                                         @else
-                                            <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700 font-semibold">{{ $totalDiff > 0 ? '+' : '' }}{{ $totalDiff }}</span>
+                                            <div class="flex flex-col items-center gap-0.5">
+                                                @if($opname->loss_value > 0)
+                                                    <span class="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700 font-semibold" title="Total value of missing stock">
+                                                        Loss Rp {{ number_format($opname->loss_value) }}
+                                                    </span>
+                                                @endif
+                                                @if($opname->surplus_value > 0)
+                                                    <span class="px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-semibold" title="Total value of excess stock found">
+                                                        Surplus Rp {{ number_format($opname->surplus_value) }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         @endif
                                     @else
                                         <span class="text-xs text-gray-400">-</span>
@@ -413,11 +425,16 @@
                                         <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">System Stock</th>
                                         <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Actual Stock</th>
                                         <th class="px-4 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Difference</th>
+                                        <th class="px-4 py-2 font-bold text-right text-xxs uppercase text-slate-400 border-b">Value</th>
                                         <th class="px-4 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Notes</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($detailItems as $item)
+                                        @php
+                                            $cost = $item['unit_cost'] ?? ($item['product']['harga'] ?? null);
+                                            $diffValue = (isset($item['difference']) && $cost !== null) ? $item['difference'] * $cost : null;
+                                        @endphp
                                         <tr class="{{ ($item['difference'] ?? 0) != 0 ? 'bg-red-50' : '' }}">
                                             <td class="px-4 py-2 text-xs font-semibold text-slate-700 border-b">{{ $item['product_name'] }}</td>
                                             <td class="px-4 py-2 text-xs text-center text-slate-600 border-b">{{ $item['system_stock'] }}</td>
@@ -435,12 +452,50 @@
                                                     -
                                                 @endif
                                             </td>
+                                            <td class="px-4 py-2 text-xs text-right border-b whitespace-nowrap">
+                                                @if($diffValue === null || ($item['difference'] ?? 0) == 0)
+                                                    <span class="text-gray-400">-</span>
+                                                @elseif($diffValue > 0)
+                                                    <span class="text-blue-600 font-semibold">+Rp {{ number_format($diffValue) }}</span>
+                                                @else
+                                                    <span class="text-red-600 font-semibold">-Rp {{ number_format(abs($diffValue)) }}</span>
+                                                @endif
+                                            </td>
                                             <td class="px-4 py-2 text-xs text-slate-500 border-b">{{ $item['notes'] ?? '-' }}</td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
+
+                        {{-- Loss / Surplus summary --}}
+                        @if($detailOpname->status === 'completed')
+                            @php
+                                $lossValue = $detailOpname->loss_value;
+                                $surplusValue = $detailOpname->surplus_value;
+                                $nettoValue = $surplusValue - $lossValue;
+                            @endphp
+                            <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div class="px-4 py-3 rounded-lg bg-red-50 border border-red-100">
+                                    <p class="text-xxs uppercase font-bold text-red-400 mb-1">Total Loss</p>
+                                    <p class="text-sm font-bold {{ $lossValue > 0 ? 'text-red-600' : 'text-gray-400' }}">
+                                        {{ $lossValue > 0 ? '-Rp ' . number_format($lossValue) : 'Rp 0' }}
+                                    </p>
+                                </div>
+                                <div class="px-4 py-3 rounded-lg bg-blue-50 border border-blue-100">
+                                    <p class="text-xxs uppercase font-bold text-blue-400 mb-1">Total Surplus</p>
+                                    <p class="text-sm font-bold {{ $surplusValue > 0 ? 'text-blue-600' : 'text-gray-400' }}">
+                                        {{ $surplusValue > 0 ? '+Rp ' . number_format($surplusValue) : 'Rp 0' }}
+                                    </p>
+                                </div>
+                                <div class="px-4 py-3 rounded-lg bg-gray-50 border border-gray-200">
+                                    <p class="text-xxs uppercase font-bold text-gray-400 mb-1">Netto</p>
+                                    <p class="text-sm font-bold {{ $nettoValue < 0 ? 'text-red-600' : ($nettoValue > 0 ? 'text-blue-600' : 'text-gray-500') }}">
+                                        {{ $nettoValue < 0 ? '-' : ($nettoValue > 0 ? '+' : '') }}Rp {{ number_format(abs($nettoValue)) }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         @if(auth()->user()->isOwner() && $detailOpname->status === 'completed' && !$detailOpname->is_applied)
@@ -481,8 +536,15 @@
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                 <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">Apply Stock Adjustment</h3>
                                 <p class="text-sm text-gray-500 mb-4">
-                                    This will update product stock based on the actual stock counted during opname. The following products will be adjusted:
+                                    Stock will be adjusted by the difference found during counting, applied on top of the <span class="font-semibold">current</span> stock so transactions made after counting are preserved.
                                 </p>
+
+                                @if(collect($applyItems)->contains('stock_moved', true))
+                                    <div class="mb-3 px-3 py-2 rounded-lg bg-orange-50 border border-orange-200 text-xs text-orange-700">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                                        Some products had stock movement after being counted. The counted difference will be applied to their current stock.
+                                    </div>
+                                @endif
 
                                 @if(count($applyItems) > 0)
                                     <div class="overflow-auto max-h-64 border rounded-lg">
@@ -490,17 +552,20 @@
                                             <thead class="align-bottom sticky top-0 bg-gray-50">
                                                 <tr>
                                                     <th class="px-3 py-2 font-bold text-left text-xxs uppercase text-slate-400 border-b">Product</th>
-                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Old Stock</th>
+                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Counted Diff</th>
+                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Current Stock</th>
                                                     <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">New Stock</th>
-                                                    <th class="px-3 py-2 font-bold text-center text-xxs uppercase text-slate-400 border-b">Diff</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @foreach($applyItems as $item)
-                                                    <tr>
-                                                        <td class="px-3 py-2 text-xs font-semibold text-slate-700 border-b">{{ $item['product_name'] }}</td>
-                                                        <td class="px-3 py-2 text-xs text-center text-slate-600 border-b">{{ $item['system_stock'] }}</td>
-                                                        <td class="px-3 py-2 text-xs text-center font-semibold text-blue-600 border-b">{{ $item['actual_stock'] }}</td>
+                                                    <tr class="{{ !empty($item['stock_moved']) ? 'bg-orange-50' : '' }}">
+                                                        <td class="px-3 py-2 text-xs font-semibold text-slate-700 border-b">
+                                                            {{ $item['product_name'] }}
+                                                            @if(!empty($item['is_deleted']))
+                                                                <span class="ml-1 px-1.5 py-0.5 text-xxs rounded-full bg-gray-100 text-gray-500 font-semibold" title="Product has been deleted, adjustment will be skipped.">Deleted &mdash; skipped</span>
+                                                            @endif
+                                                        </td>
                                                         <td class="px-3 py-2 text-xs text-center border-b">
                                                             @if($item['difference'] > 0)
                                                                 <span class="text-green-600 font-semibold">+{{ $item['difference'] }}</span>
@@ -508,6 +573,8 @@
                                                                 <span class="text-red-600 font-semibold">{{ $item['difference'] }}</span>
                                                             @endif
                                                         </td>
+                                                        <td class="px-3 py-2 text-xs text-center text-slate-600 border-b">{{ $item['current_stock'] ?? '-' }}</td>
+                                                        <td class="px-3 py-2 text-xs text-center font-semibold text-blue-600 border-b">{{ $item['projected_stock'] ?? '-' }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

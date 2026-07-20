@@ -193,14 +193,23 @@ class StockOpname extends Component
             'actualStock.min' => 'Actual stock cannot be negative.',
         ]);
 
-        $item = StockOpnameItem::find($this->editingItemId);
+        $item = StockOpnameItem::with('product')->find($this->editingItemId);
         if (!$item) return;
 
+        // Re-snapshot the system stock at count time so the difference is
+        // measured against current stock, not the stale snapshot taken when
+        // the opname was created.
+        $systemStock = $item->product ? $item->product->stok : $item->system_stock;
+
         $item->update([
+            'system_stock' => $systemStock,
             'actual_stock' => $this->actualStock,
-            'difference' => $this->actualStock - $item->system_stock,
+            'difference' => $this->actualStock - $systemStock,
+            'unit_cost' => $item->product?->harga,
             'notes' => $this->itemNotes ?: null,
             'checked' => true,
+            'needs_recheck' => false,
+            'checked_at' => now(),
         ]);
 
         $this->cancelEdit();
@@ -217,6 +226,17 @@ class StockOpname extends Component
             $this->dispatchBrowserEvent('swal', [
                 'title' => 'Incomplete',
                 'text' => "There are still {$unchecked} products that haven't been checked.",
+                'icon' => 'warning'
+            ]);
+            return;
+        }
+
+        // Items whose product stock moved after counting must be re-counted
+        $needsRecheck = $this->activeOpname->items()->where('needs_recheck', true)->count();
+        if ($needsRecheck > 0) {
+            $this->dispatchBrowserEvent('swal', [
+                'title' => 'Re-check Needed',
+                'text' => "{$needsRecheck} product(s) had stock movement after being counted. Please re-check them first.",
                 'icon' => 'warning'
             ]);
             return;
@@ -300,7 +320,29 @@ class StockOpname extends Component
         }
 
         $this->applyingOpname = $opname;
-        $this->applyItems = $opname->items()->where('difference', '!=', 0)->get()->toArray();
+
+        // Preview using CURRENT stock: adjustment is applied as a delta on top
+        // of whatever the stock is now, so sales after counting are preserved.
+        $this->applyItems = $opname->items()->with('product')->where('difference', '!=', 0)->get()
+            ->map(function ($item) {
+                $data = $item->toArray();
+                $product = $item->product;
+
+                if ($product && !$product->trashed()) {
+                    $data['current_stock'] = $product->stok;
+                    $data['projected_stock'] = max(0, $product->stok + $item->difference);
+                    $data['stock_moved'] = $product->stok != $item->system_stock;
+                    $data['is_deleted'] = false;
+                } else {
+                    $data['current_stock'] = null;
+                    $data['projected_stock'] = null;
+                    $data['stock_moved'] = false;
+                    $data['is_deleted'] = true;
+                }
+
+                return $data;
+            })->toArray();
+
         $this->showApplyModal = true;
     }
 
@@ -373,8 +415,8 @@ class StockOpname extends Component
             $activeItems = $query->orderBy('checked')->orderBy('product_name')->get();
         }
 
-        // History
-        $history = StockOpnameModel::with(['triggeredBy', 'completedBy', 'appliedBy'])
+        // History (items.product loaded for loss/surplus valuation)
+        $history = StockOpnameModel::with(['triggeredBy', 'completedBy', 'appliedBy', 'items.product'])
             ->whereIn('status', ['completed', 'cancelled'])
             ->latest()
             ->paginate(10);
