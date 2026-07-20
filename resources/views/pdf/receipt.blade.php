@@ -107,7 +107,7 @@
                 <div class="header-left">
                     <img src="{{ public_path('assets/img/logo.png') }}" alt="Logo">
                     <p style="margin-top: 8px">Jl Mastrip 71 (Depan Ruko mastrip Square) <span
-                            style="margin-left: 10px">089696007000</span>
+                            style="margin-left: 10px">0896-3891-1151</span>
                     </p>
                 </div>
             </td>
