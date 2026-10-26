@@ -318,7 +318,7 @@
                                                     <span
                                                         class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
                                                     <span
-                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                        class="text-xs font-semibold">{{ $this->formatValue($key, $value) }}</span>
                                                 </div>
                                             @endif
                                         @endforeach
@@ -346,7 +346,7 @@
                                                         <span
                                                             class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
                                                         <span
-                                                            class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                            class="text-xs font-semibold">{{ $this->formatValue($key, $value) }}</span>
                                                     </div>
                                                 @endif
                                             @endforeach
@@ -372,7 +372,7 @@
                                                         <span
                                                             class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
                                                         <span
-                                                            class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                            class="text-xs font-semibold">{{ $this->formatValue($key, $value) }}</span>
                                                     </div>
                                                 @endif
                                             @endforeach
@@ -399,7 +399,7 @@
                                                     <span
                                                         class="text-xs text-gray-600">{{ ucwords(str_replace('_', ' ', $key)) }}:</span>
                                                     <span
-                                                        class="text-xs font-semibold">{{ is_array($value) ? json_encode($value) : $value }}</span>
+                                                        class="text-xs font-semibold">{{ $this->formatValue($key, $value) }}</span>
                                                 </div>
                                             @endif
                                         @endforeach

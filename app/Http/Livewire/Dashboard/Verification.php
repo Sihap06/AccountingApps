@@ -215,6 +215,31 @@ class Verification extends Component
         $this->emit('refreshData');
     }
 
+    /**
+     * Columns holding an amount of money, rendered as Rupiah in the
+     * old/new data comparison.
+     */
+    private const MONEY_KEYS = [
+        'biaya', 'modal', 'untung', 'potongan', 'fee_teknisi',
+        'harga', 'harga_jual', 'total',
+    ];
+
+    /**
+     * Renders one snapshot value for the comparison panels.
+     */
+    public function formatValue($key, $value)
+    {
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+
+        if (in_array($key, self::MONEY_KEYS, true) && is_numeric($value)) {
+            return 'Rp ' . number_format((float) $value, 0, ',', '.');
+        }
+
+        return $value;
+    }
+
     public function render()
     {
         $this->pendingCount = $this->getPendingCount();
