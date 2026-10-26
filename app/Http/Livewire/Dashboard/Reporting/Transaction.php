@@ -9,6 +9,7 @@ use App\Models\Transaction as ModelsTransaction;
 use App\Models\TransactionItem;
 use App\Models\PaymentMethod;
 use App\Models\PendingChange;
+use App\Traits\CalculatesTransactionProfit;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ use Livewire\Component;
 
 class Transaction extends Component
 {
+    use CalculatesTransactionProfit;
 
     public $isEdit = false;
     public $inventory = [];
@@ -155,25 +157,6 @@ class Transaction extends Component
         $this->isEdit = true;
 
         $this->dispatchBrowserEvent('reInitTwElement');
-    }
-
-    private function getPerhitungan($technical_id, $biaya, $modal)
-    {
-        if ($technical_id != null && $technical_id != '') {
-            $countModal = $biaya * 40 / 100;
-            $countUntung = $biaya * 60 / 100;
-            return [
-                'fee_teknisi' => $countModal,
-                'modal' => $countModal,
-                'untung' => $countUntung
-            ];
-        } else {
-            return [
-                'fee_teknisi' => 0,
-                'modal' => ($modal != null) ? $modal : 0,
-                'untung' => $biaya - $modal
-            ];
-        }
     }
 
     public function update()

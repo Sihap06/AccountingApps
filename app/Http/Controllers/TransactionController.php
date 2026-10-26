@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
+use App\Traits\CalculatesTransactionProfit;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
@@ -15,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
+    use CalculatesTransactionProfit;
+
     public function postTransaction(Request $request, $customer_id)
     {
         $items = $request->all();
@@ -254,39 +257,6 @@ class TransactionController extends Controller
     }
 
 
-
-    private function getPerhitungan($technical_id, $biaya, $modal)
-    {
-        if ($technical_id != null) {
-            $tecnician = Technician::findOrFail($technical_id);
-            
-            // Check if using sparepart (modal > 0) to determine which percentage to use
-            if ($modal > 0) {
-                // Using sparepart: fee based on (harga_jual - modal) * percent
-                $percentModal = $tecnician->percent_with_sparepart;
-                $countModal = ($biaya - $modal) * $percentModal / 100;
-            } else {
-                // Not using sparepart, use normal percent_fee
-                $percentModal = $tecnician->percent_fee;
-                $countModal = $biaya * $percentModal / 100;
-            }
-
-            $percentUntung = 100 - $percentModal;
-            $countUntung = $biaya * $percentUntung / 100;
-            
-            return [
-                'fee_teknisi' => $countModal,
-                'modal' => $modal > 0 ? $modal + $countModal : $countModal,
-                'untung' => $modal > 0 ? $biaya - $modal - $countModal : $countUntung
-            ];
-        } else {
-            return [
-                'fee_teknisi' => 0,
-                'modal' => ($modal != null) ? $modal : 0,
-                'untung' => $biaya - $modal
-            ];
-        }
-    }
 
     public function receipt()
     {

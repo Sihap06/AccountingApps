@@ -11,6 +11,7 @@ use App\Models\Technician;
 use App\Models\Transaction;
 use App\Models\TransactionItem;
 use App\Models\PendingChange;
+use App\Traits\CalculatesTransactionProfit;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,8 @@ use Livewire\Component;
 
 class UpdateTransaction extends Component
 {
+    use CalculatesTransactionProfit;
+
     public $transactionId;
     public $customer_id;
     public $paymentMethod;
@@ -135,46 +138,24 @@ class UpdateTransaction extends Component
         $this->dispatchBrowserEvent('refreshSelect');
     }
 
-    private function getPerhitungan($technical_id, $biaya, $modal)
-    {
-        if ($technical_id != null) {
-            $tecnician = Technician::findOrFail($technical_id);
-            $percentModal = $tecnician->percent_fee;
-            $percentUntung = 100 - $percentModal;
-            $countModal = $biaya * $percentModal / 100;
-            $countUntung = $biaya * $percentUntung / 100;
-            return [
-                'fee_teknisi' => $countModal,
-                'modal' => $countModal,
-                'untung' => $countUntung
-            ];
-        } else {
-            return [
-                'fee_teknisi' => 0,
-                'modal' => ($modal != null) ? $modal : 0,
-                'untung' => $biaya - $modal
-            ];
-        }
-    }
-
     /**
      * Resolve modal + profit figures for a pending item change, mirroring the
      * master-admin path. Without this the verification flow would store stale
      * modal/untung (e.g. profit stays at full biaya after a sparepart is added).
+     *
+     * Modal is always re-derived from the selected sparepart. The stored modal
+     * column already includes the technician fee, so feeding it back in would
+     * compound the fee on every edit.
      */
-    private function resolveItemPerhitungan(array $validateData, $fallbackModal)
+    private function resolveItemPerhitungan(array $validateData)
     {
-        $modal = $validateData['modal'];
+        $modal = 0;
 
         if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
             $product = Product::withTrashed()->find($validateData['product_id']);
             if ($product) {
                 $modal = $product->harga;
             }
-        }
-
-        if ((int) $modal == 0) {
-            $modal = $fallbackModal;
         }
 
         $effectiveBiaya = (int) $validateData['biaya'] - (int) $validateData['potongan'];
@@ -417,7 +398,7 @@ class UpdateTransaction extends Component
             $this->pendingActionData = [
                 'transaction' => $transaction->toArray(),
                 'validateData' => $validateData,
-                'perhitungan' => $this->resolveItemPerhitungan($validateData, $transaction->modal),
+                'perhitungan' => $this->resolveItemPerhitungan($validateData),
                 'editService' => $this->editService,
                 'warranty' => $this->warranty,
                 'warranty_type' => $this->warranty_type
@@ -462,10 +443,6 @@ class UpdateTransaction extends Component
         $transaction->potongan = $validateData['potongan'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
-        if ($validateData['modal'] == 0) {
-            $validateData['modal'] = $transaction->modal;
-        }
-
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
@@ -493,12 +470,21 @@ class UpdateTransaction extends Component
 
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
-
-                $validateData['modal'] = $newProduct->harga;
             }
 
 
             $transaction->product_id = $validateData['product_id'];
+        }
+
+        // Modal must always come from the sparepart price. The stored modal
+        // column already includes the technician fee, so reusing it here would
+        // compound the fee on every edit.
+        $validateData['modal'] = 0;
+        if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
+            $selectedProduct = Product::withTrashed()->find($validateData['product_id']);
+            if ($selectedProduct) {
+                $validateData['modal'] = $selectedProduct->harga;
+            }
         }
 
         // Recalculate profit/fee using net cost (cost - new discount).
@@ -583,7 +569,7 @@ class UpdateTransaction extends Component
             $this->pendingActionData = [
                 'transactionItem' => $transaction->toArray(),
                 'validateData' => $validateData,
-                'perhitungan' => $this->resolveItemPerhitungan($validateData, $transaction->modal),
+                'perhitungan' => $this->resolveItemPerhitungan($validateData),
                 'editService' => $this->editService,
                 'warranty' => $this->warranty,
                 'warranty_type' => $this->warranty_type
@@ -628,10 +614,6 @@ class UpdateTransaction extends Component
         $transaction->potongan = $validateData['potongan'];
         $transaction->technical_id = $validateData['technical_id'] === '' ? null : $validateData['technical_id'];
 
-        if ($validateData['modal'] == 0) {
-            $validateData['modal'] = $transaction->modal;
-        }
-
         if ($validateData['product_id'] != $transaction->product_id) {
             if ($transaction->product_id !== null) {
                 $currentProduct = Product::withTrashed()->findOrFail($transaction->product_id);
@@ -659,12 +641,21 @@ class UpdateTransaction extends Component
 
                 $newProduct->stok = $newProduct->stok - 1;
                 $newProduct->save();
-
-                $validateData['modal'] = $newProduct->harga;
             }
 
 
             $transaction->product_id = $validateData['product_id'];
+        }
+
+        // Modal must always come from the sparepart price. The stored modal
+        // column already includes the technician fee, so reusing it here would
+        // compound the fee on every edit.
+        $validateData['modal'] = 0;
+        if ($validateData['product_id'] !== null && $validateData['product_id'] !== '') {
+            $selectedProduct = Product::withTrashed()->find($validateData['product_id']);
+            if ($selectedProduct) {
+                $validateData['modal'] = $selectedProduct->harga;
+            }
         }
 
         // Recalculate profit/fee using net cost (cost - new discount).
