@@ -154,158 +154,195 @@
     </div>
 
     <!-- Tables Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Daily Income Table -->
-        <div class="bg-white dark:bg-slate-850 rounded-xl shadow-lg">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Daily Income Breakdown</h3>
+    @php
+        $peakIncome = $income->max('total') ?: 0;
+        $bestDay = $income->sortByDesc('total')->first();
+    @endphp
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Daily Income Breakdown -->
+        <div
+            class="lg:col-span-5 bg-white dark:bg-slate-850 rounded-xl shadow-lg flex flex-col h-[32rem] overflow-hidden">
+            <div class="shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Daily Income Breakdown</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {{ $income->count() }} active {{ Str::plural('day', $income->count()) }} in
+                            {{ $listMonth[$selectedMonth] }} {{ $selectedYear }}
+                        </p>
+                    </div>
+                    <span
+                        class="shrink-0 inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200">
+                        Rp {{ number_format($totalIncome, 0, ',', '.') }}
+                    </span>
+                </div>
+                @if ($bestDay)
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">
+                        Best day &middot;
+                        <span class="font-medium text-gray-700 dark:text-gray-200">
+                            {{ \Carbon\Carbon::parse($bestDay['tanggal'])->format('d M') }}
+                        </span>
+                        &middot; Rp {{ number_format($bestDay['total'], 0, ',', '.') }}
+                    </p>
+                @endif
             </div>
 
-            <div class="p-6">
-                <div class="overflow-x-auto max-h-96 overflow-y-auto">
-                    <table class="w-full">
-                        <thead class="sticky top-0 bg-white dark:bg-slate-850">
-                            <tr class="border-b border-gray-200 dark:border-gray-700">
-                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Date
-                                </th>
-                                <th class="py-3 px-4 text-right text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Amount
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @forelse ($income as $index => $item)
-                                <tr wire:key='income-{{ $index }}' wire:loading.remove
-                                    wire:target='selectedMonth, selectedYear'
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($item['tanggal'])->format('d F Y') }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                                        Rp {{ number_format($item['total'], 0, ',', '.') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
-                                        No income data available for this period
-                                    </td>
-                                </tr>
-                            @endforelse
+            <div class="flex-1 min-h-0 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                @forelse ($income as $index => $item)
+                    @php
+                        $share = $peakIncome > 0 ? max(0, min(100, ($item['total'] / $peakIncome) * 100)) : 0;
+                    @endphp
+                    <div wire:key='income-{{ $index }}' wire:loading.remove
+                        wire:target='selectedMonth, selectedYear'
+                        class="px-6 py-3 hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors">
+                        <div class="flex items-baseline justify-between gap-3">
+                            <span class="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                                {{ \Carbon\Carbon::parse($item['tanggal'])->format('d M Y') }}
+                            </span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                Rp {{ number_format($item['total'], 0, ',', '.') }}
+                            </span>
+                        </div>
+                        <div class="mt-2 h-1.5 w-full rounded-full bg-gray-100 dark:bg-slate-900 overflow-hidden">
+                            <div class="h-full rounded-full bg-gradient-to-r from-green-400 to-green-600"
+                                style="width: {{ round($share, 2) }}%"></div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="px-6 py-12 text-center text-sm text-gray-500 dark:text-gray-400">
+                        No income data available for this period
+                    </div>
+                @endforelse
 
-                            <!-- Loading skeleton -->
-                            @for ($i = 0; $i <= 5; $i++)
-                                <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
-                                    wire:target='selectedMonth, selectedYear'>
-                                    <td class="py-3 px-4">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                </tr>
-                            @endfor
-                        </tbody>
-                    </table>
-                </div>
+                <!-- Loading skeleton -->
+                @for ($i = 0; $i <= 5; $i++)
+                    <div wire:loading.class="block" class="hidden px-6 py-3" wire:loading.class.remove="hidden"
+                        wire:target='selectedMonth, selectedYear'>
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                            <div class="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                        </div>
+                        <div class="mt-2 h-1.5 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                    </div>
+                @endfor
             </div>
         </div>
 
-        <!-- Technician Fee Table -->
-        <div class="bg-white dark:bg-slate-850 rounded-xl shadow-lg">
-            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Technician Fees</h3>
-                    <span class="text-lg font-bold text-gray-900 dark:text-white">
-                        Rp {{ number_format($totalFeeTeknisi, 0, ',', '.') }}
-                    </span>
+        <!-- Technician Fees -->
+        <div
+            class="lg:col-span-7 bg-white dark:bg-slate-850 rounded-xl shadow-lg flex flex-col h-[32rem] overflow-hidden">
+            <div class="shrink-0 px-6 py-5 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Technician Fees</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            @if ($selectTechnician)
+                                {{ count($dataFeeTechnician) }} {{ Str::plural('job', count($dataFeeTechnician)) }}
+                                &middot; {{ $technician->firstWhere('id', $selectTechnician)?->name ?? 'Technician' }}
+                            @else
+                                Select a technician in the filters above
+                            @endif
+                        </p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Total Fee</p>
+                        <p class="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
+                            Rp {{ number_format($totalFeeTeknisi, 0, ',', '.') }}
+                        </p>
+                    </div>
                 </div>
             </div>
 
-
-            <div class="p-6">
-                <div class="overflow-x-auto max-h-96 overflow-y-auto">
-                    <table class="w-full">
-                        <thead class="sticky top-0 bg-white dark:bg-slate-850">
-                            <tr class="border-b border-gray-200 dark:border-gray-700">
-                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Date
-                                </th>
-                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Service
-                                </th>
-                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Sparepart
-                                </th>
-                                <th class="py-3 px-4 text-left text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Order ID
-                                </th>
-                                <th class="py-3 px-4 text-right text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-850">
-                                    Fee
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @forelse ($dataFeeTechnician as $index => $item)
-                                <tr wire:key='fee-{{ $index }}' wire:loading.remove
-                                    wire:target='selectedMonth, selectedYear, selectTechnician'
-                                    class="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                        {{ \Carbon\Carbon::parse($item['created_at'])->format('d/m/Y') }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-900 dark:text-white">
-                                        <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                            {{ $item['service'] }}
+            <div class="flex-1 min-h-0 overflow-y-auto">
+                <table class="w-full table-fixed">
+                    <thead class="sticky top-0 z-10 bg-white dark:bg-slate-850">
+                        <tr class="border-b border-gray-200 dark:border-gray-700">
+                            <th
+                                class="py-3 pl-6 pr-3 w-24 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-850">
+                                Date
+                            </th>
+                            <th
+                                class="py-3 px-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-850">
+                                Job Detail
+                            </th>
+                            <th
+                                class="py-3 pl-3 pr-6 w-32 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 bg-white dark:bg-slate-850">
+                                Fee
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        @forelse ($dataFeeTechnician as $index => $item)
+                            @php
+                                $sparepart = \App\Models\Product::getProductName($item['product_id']);
+                            @endphp
+                            <tr wire:key='fee-{{ $index }}' wire:loading.remove
+                                wire:target='selectedMonth, selectedYear, selectTechnician'
+                                class="hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors align-top">
+                                <td class="py-3 pl-6 pr-3 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                                    {{ \Carbon\Carbon::parse($item['created_at'])->format('d M') }}
+                                    <span class="block text-xs text-gray-400 dark:text-gray-500">
+                                        {{ \Carbon\Carbon::parse($item['created_at'])->format('Y') }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $item['service'] }}
+                                    </p>
+                                    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-1">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $sparepart ?: 'No sparepart' }}
                                         </span>
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                        {{ \App\Models\Product::getProductName($item['product_id']) ?? '-' }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400 font-mono">
-                                        {{ $item['order_transaction'] }}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-right font-medium text-gray-900 dark:text-white">
-                                        Rp {{ number_format($item['fee_teknisi'], 0, ',', '.') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="py-8 px-4 text-center text-gray-500 dark:text-gray-400">
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono text-gray-600 bg-gray-100 dark:bg-slate-900 dark:text-gray-300">
+                                            {{ $item['order_transaction'] }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td
+                                    class="py-3 pl-3 pr-6 text-sm text-right font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                    Rp {{ number_format($item['fee_teknisi'], 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="py-12 px-6 text-center">
+                                    <svg class="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                    <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
                                         @if ($selectTechnician)
                                             No fee data for selected technician in this period
                                         @else
                                             Please select a technician to view fee data
                                         @endif
-                                    </td>
-                                </tr>
-                            @endforelse
+                                    </p>
+                                </td>
+                            </tr>
+                        @endforelse
 
-                            <!-- Loading skeleton -->
-                            @for ($i = 0; $i <= 5; $i++)
-                                <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
-                                    wire:target='selectedMonth, selectedYear, selectTechnician'>
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                    <td class="py-3 px-4">
-                                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
-                                    </td>
-                                </tr>
-                            @endfor
-                        </tbody>
-                    </table>
-                </div>
+                        <!-- Loading skeleton -->
+                        @for ($i = 0; $i <= 5; $i++)
+                            <tr wire:loading.class="table-row" class="hidden" wire:loading.class.remove="hidden"
+                                wire:target='selectedMonth, selectedYear, selectTechnician'>
+                                <td class="py-3 pl-6 pr-3">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                </td>
+                                <td class="py-3 px-3">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                    <div class="h-3 w-2/3 mt-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse">
+                                    </div>
+                                </td>
+                                <td class="py-3 pl-3 pr-6">
+                                    <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+                                </td>
+                            </tr>
+                        @endfor
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
